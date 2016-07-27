@@ -1,0 +1,25 @@
+action<T>.Try(val, 3).OnFail(val, altPause).Go() // will try action up to 3 times, then try again up to 3 times using the altPause.
+
+action<T>.Try(val, 3).OnFail(val, altPause, 4).Go() // will try action up to 3 times, then try up to 4 times using the altPause.
+
+action<T>.Try(val, 3, myPause).OnFail(val	)
+
+when OnFail is provided...
+Onfail will run the parent.
+if the parent succeeds the value, status, and exceptions will be forwarded.
+If the parent fails the child will add the exceptions to it's collection and run.
+
+When the parent succeeds
+	The child will pass the results on.
+	The child will re
+
+
+action.Try(3).OnFail(altPause)
+
+action.Try(3).WithRandomPause(lower, upper).OnFail().Try(4)
+
+CallServer
+	.Try(hostA, 3)
+	.UsingTimedPause(delay)
+	.ThenTry(hostB, 3)
+		.UsingFibernacciPause(startTime).Go();

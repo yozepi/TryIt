@@ -77,7 +77,7 @@ namespace Retry
         }
 
 
-        #region ThenTry extensions
+        #region ThenTry extensions:
 
         public static ITryAndReturnValue<TResult> ThenTry<TResult>(this ITryAndReturnValue<TResult> tryit, int retries)
         {
@@ -159,7 +159,7 @@ namespace Retry
             return child;
         }
 
-        #endregion //ThenTry extensions
+        #endregion //ThenTry extensions:
 
     }
 }

@@ -11,7 +11,6 @@ namespace Retry.Tests.Unit.specs
 
     class TryIt_Action_Async_Methods : nspec
     {
-        //[Tag("focus")]
         void GoAsync_Method()
         {
             ITry subject = null;

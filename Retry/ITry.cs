@@ -27,16 +27,10 @@ namespace Retry
         Task GoAsync();
     }
 
-    public interface ITryAndReturnValue<TResult>
+    public interface ITryAndReturnValue<TResult> : ITry
     {
-        int RetryCount { get; }
-        int Attempts { get; }
-        IDelay Delay { get; }
-        List<Exception> ExceptionList { get; }
-        RetryStatus Status { get; }
-
-        TResult Go();
-        Task<TResult> GoAsync();
+        new TResult Go();
+        new Task<TResult> GoAsync();
         TResult GetResult();
     }
 

@@ -9,14 +9,14 @@ using System.Threading.Tasks;
 namespace Retry.Tests.Unit.Tests
 {
     [TestClass]
-    public class Tryit_Action_Method_Tests : nSpecTestHarness
+    public class TryitFunc_Method_Tests : nSpecTestHarness
     {
         [TestMethod]
-        public void Tryit_Action_Methods()
+public void Tryit_Func_Methods()
         {
             this.LoadSpecs(() =>
             {
-                Type[] types = { typeof(TryIt_Action_Methods), typeof(TryIt_Action_Async_Methods) };
+                Type[] types = { typeof(FuncTryIt_Methods), typeof(TryItFunc_Async_Methods) };
                 return types;
             });
             this.RunSpecs();

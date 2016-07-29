@@ -10,24 +10,27 @@ namespace Retry
     public abstract class Delay : IDelay
     {
 
-        static Delay()
+        private static IDelay _defaultDelay;
+        public static IDelay DefaultDelay
         {
-            DefaultDelay = NoPause();
-        }
+            get
+            {
+                if (_defaultDelay == null)
+                    _defaultDelay = new NoDelay();
 
-        static IDelay DefaultDelay { get; set; }
+                return _defaultDelay;
+            }
+            set { _defaultDelay = value; }
+        }
 
         #region static methods:
 
         public static IDelay Default()
         {
-            var delay = DefaultDelay;
-            if (delay == null)
-                delay = NoPause();
-            return delay;
+            return DefaultDelay;
         }
 
-        public static IDelay NoPause()
+        public static IDelay NoDelay()
         {
             return new NoDelay();
         }

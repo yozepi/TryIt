@@ -43,9 +43,8 @@
   <ItemGroup>
     <Compile Include="Action_TryIt_Classes.cs" />
     <Compile Include="BackoffDelay.cs" />
-    <Compile Include="Extensions\ITryAndReturnValueExtensions.cs" />
-    <Compile Include="FuncExcensions.cs" />
-    <Compile Include="Func_TryIt_Classes.cs" />
+    <Compile Include="Extensions\FuncExtensions.cs" />
+    <Compile Include="FuncTryIt_Classes.cs" />
     <Compile Include="IDelay.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RetryFailedException.cs" />
@@ -54,8 +53,9 @@
     <Compile Include="ITry.cs" />
     <Compile Include="Extensions\ITryExtensions.cs" />
     <Compile Include="TimedDelay.cs" />
-    <Compile Include="TryIt.cs" />
+    <Compile Include="TryIt_Action_Methods.cs" />
     <Compile Include="TryItBase.cs" />
+    <Compile Include="TryIt_Func_Methods.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

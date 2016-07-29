@@ -29,14 +29,14 @@ namespace Retry.Tests.Unit.specs
                 executionTime = DateTime.Now.Subtract(start);
             };
 
-            describe["NoDelay"] = () =>
+            describe["NoDelay class"] = () =>
             {
                 before = () => subject = new NoDelay();
                 it["should return without any delay"] = () =>
                     executionTime.TotalMilliseconds.As<int>().Should().Be(0);
             };
 
-            describe["TimedPause"] = () =>
+            describe["TimedDelay class"] = () =>
             {
                 var milliseconds = 100;
                 TimeSpan delay = TimeSpan.FromMilliseconds(milliseconds);
@@ -67,7 +67,7 @@ namespace Retry.Tests.Unit.specs
                 };
             };
 
-            describe["BackoffPause"] = () =>
+            describe["BackoffDelay class"] = () =>
             {
                 var milliseconds = 100;
                 TimeSpan delay = TimeSpan.FromMilliseconds(milliseconds);
@@ -79,7 +79,85 @@ namespace Retry.Tests.Unit.specs
                     executionTime.Should().BeGreaterOrEqualTo(TimeSpan.FromMilliseconds(expected));
                     executionTime.Should().BeLessOrEqualTo(TimeSpan.FromMilliseconds(expected + tolerance));
                 };
+
+                context["when the provided timespan is invalid"] = () =>
+                {
+                    it["should throw an ArgumentOutOfRange exception"] = () =>
+                    {
+                        Exception thrown = null;
+                        try
+                        {
+                            subject = new BackoffDelay(TimeSpan.MinValue);
+                        }
+                        catch (Exception ex)
+                        {
+                            thrown = ex;
+                        }
+
+                        thrown.Should().BeOfType<ArgumentOutOfRangeException>();
+                    };
+                };
             };
+        }
+
+        void Static_Delay_Methods()
+        {
+            describe["NoDelay() method"] = () =>
+             {
+                 it["should return an instance of NoDelay IDelay instance"] = () =>
+                 {
+                     var delay = Delay.NoDelay();
+                     delay.Should().BeOfType<NoDelay>();
+                 };
+             };
+
+            describe["Timed() method"] = () =>
+            {
+                IDelay delay = null;
+                TimeSpan delayTime = TimeSpan.FromMilliseconds(100);
+
+                before = () => delay = Delay.Timed(delayTime);
+
+                it["should return an instance of TimedDelay IDelay instance"] = () =>
+                    delay.Should().BeOfType<TimedDelay>();
+
+                it["should set the delay time correctly"] = () =>
+                    delay.As<TimedDelay>().PauseTime.Should().Be(delayTime);
+            };
+
+            describe["Backoff() method"] = () =>
+            {
+                IDelay delay = null;
+                TimeSpan delayTime = TimeSpan.FromMilliseconds(100);
+
+                before = () => delay = Delay.Backoff(delayTime);
+
+                it["should return an instance of BackoffDelay IDelay instance"] = () =>
+                    delay.Should().BeOfType<BackoffDelay>();
+
+                it["should set the delay time correctly"] = () =>
+                    delay.As<BackoffDelay>().InitialDelay.Should().Be(delayTime);
+            };
+
+            describe["DefaultDelay property"] = () =>
+            {
+                it["should return an NoDelay instance when not previously set"] = () =>
+                    Delay.DefaultDelay.Should().BeOfType<NoDelay>();
+
+                it["when set, DefaultDelay should return the value set"] = () =>
+                {
+                    Delay.DefaultDelay = new TimedDelay(TimeSpan.FromDays(1));
+                    Delay.DefaultDelay.Should().BeOfType<TimedDelay>();
+                };
+
+                it["when set to null, DefaultDelay should return a NoDelay instance"] = () =>
+                {
+                    Delay.DefaultDelay = null;
+                    Delay.DefaultDelay.Should().BeOfType<NoDelay>();
+                };
+            };
+
+
         }
     }
 }

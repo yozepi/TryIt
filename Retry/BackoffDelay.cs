@@ -8,17 +8,17 @@ namespace Retry
 {
     public class BackoffDelay : Delay
     {
-        public BackoffDelay(TimeSpan startTime)
+        public BackoffDelay(TimeSpan initialDelay)
         {
-            if (startTime < TimeSpan.Zero)
-                throw new ArgumentOutOfRangeException("Value must be greater than a zero TimeSpan", startTime, "pauseTime");
+            if (initialDelay < TimeSpan.Zero)
+                throw new ArgumentOutOfRangeException("Value must be greater than a zero TimeSpan", initialDelay, "initialDelay");
 
-            StartTime = startTime;
+            InitialDelay = initialDelay;
         }
-        public TimeSpan StartTime { get; private set; }
+        public TimeSpan InitialDelay { get; private set; }
         public override async Task WaitAsync(int tryCount)
         {
-            var ticks = (long)(StartTime.Ticks * Math.Pow(2, (tryCount - 1)));
+            var ticks = (long)(InitialDelay.Ticks * Math.Pow(2, (tryCount - 1)));
             await WaitAsync(TimeSpan.FromTicks(ticks));
 
         }

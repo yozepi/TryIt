@@ -24,15 +24,23 @@ namespace Retry
            {
                var action = GetAction();
                action();
-           },  TaskCreationOptions.AttachedToParent);
+           }, TaskCreationOptions.AttachedToParent);
         }
 
         protected virtual Action GetAction()
         {
             return Actor as Action;
         }
-    }
 
+        protected override bool HandleOnError(Delegate onError, Exception ex, int retryCount)
+        {
+            var theDelegate = onError as OnErrorDelegate;
+            if (theDelegate == null)
+                return true;
+
+            return theDelegate(ex, retryCount);
+        }
+    }
 
     public class ActionTryIt<T> : ActionTryIt
     {

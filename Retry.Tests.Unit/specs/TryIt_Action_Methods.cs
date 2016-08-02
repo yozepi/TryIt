@@ -59,14 +59,28 @@ namespace Retry.Tests.Unit.specs
 
             };
 
+            describe["TryIt.Try(Action action, int retries).OnError(OnErrorDelegate)"] = () =>
+            {
+                OnErrorDelegate errorDelegate = (ex, i) => { return true; };
+
+                act = () => subject = subject.OnError(errorDelegate);
+
+                it["should set the internal onError property"] = () =>
+                    subject.As<IInternalAccessor>().OnError.Should().BeSameAs(errorDelegate);
+
+                it["should return an ITry instance"] = () =>
+                    subject.Should().NotBeNull();
+
+            };
+
             describe["TryIt.Try(Action action, int retries).UsingDelay(IPause delay)"] = () =>
             {
-                IDelay newPause = null;
+                Delay newPause = null;
                 ITry result = null;
                 before = () =>
                 {
                     result = null;
-                    newPause = new Mock<IDelay>().Object;
+                    newPause = new Mock<Delay>().Object;
                 };
 
                 act = () =>
@@ -146,6 +160,57 @@ namespace Retry.Tests.Unit.specs
 
                     it["should record the number of attempts Try made"] = () =>
                         subject.Attempts.Should().Be(actionExecutionCount);
+
+                    describe["Try().OnError().Go"] = () =>
+                    {
+                        Exception delegateError = null;
+                        int errorTryCount = default(int);
+                        bool onErrorHasBeenCalled = false;
+
+                        OnErrorDelegate errorDelegate = null;
+                        before = () =>
+                        {
+                            onErrorHasBeenCalled = false;
+                            delegateError = null;
+                            errorTryCount = 0;
+
+                            errorDelegate = (e, i) =>
+                            {
+                                onErrorHasBeenCalled = true;
+                                errorTryCount = i;
+                                delegateError = e;
+                                return true;
+                            };
+
+                            subject.OnError(errorDelegate);
+                        };
+
+                        it["should call the OnError delegate"] = () =>
+                            onErrorHasBeenCalled.Should().BeTrue();
+
+                        context["when OnError() returns false"] = () =>
+                        {
+                            Exception expectedException = new Exception( "An unexpected Journey");
+
+                            beforeAll = () =>
+                            {
+                                subjectAction = () => { throw expectedException; };
+                            };
+                            before = () =>
+                            {
+                                errorDelegate = (e, i) => 
+                                { errorTryCount = i;
+                                    return false;
+                                };
+
+                                subject.OnError(errorDelegate);
+                            };
+
+                            it["should throw the exception"] = () =>
+                                thrown.Should().Be(expectedException);
+
+                        };
+                    };
                 };
 
                 context["when Try().Go() fails on every attempt"] = () =>
@@ -229,12 +294,12 @@ namespace Retry.Tests.Unit.specs
 
             describe["TryIt.Try(action, arg, retries).UsingDelay(delay)"] = () =>
             {
-                IDelay newPause = null;
+                Delay newPause = null;
                 ITry result = null;
                 before = () =>
                 {
                     result = null;
-                    newPause = new Mock<IDelay>().Object;
+                    newPause = new Mock<Delay>().Object;
                 };
 
                 act = () =>

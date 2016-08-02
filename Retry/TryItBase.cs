@@ -24,7 +24,7 @@ namespace Retry
             RetryCount = retries;
             Actor = actor;
 
-            Delay = Retry.Delay.Default();
+            Delay = Retry.Delay.DefaultDelay;
             ExceptionList = new List<Exception>();
         }
 
@@ -34,7 +34,7 @@ namespace Retry
 
         public int Attempts { get; private set; }
 
-        public IDelay Delay { get; private set; }
+        public Delay Delay { get; private set; }
 
         public List<Exception> ExceptionList { get; private set; }
 
@@ -87,8 +87,16 @@ namespace Retry
                 }
                 catch (Exception ex)
                 {
-                    accessor.ExceptionList.Add(ex);
-                    await accessor.Delay.WaitAsync(count);
+                    if (HandleOnError(_onError, ex, count))
+                    {
+                        accessor.ExceptionList.Add(ex);
+                        await accessor.Delay.WaitAsync(count);
+                    }
+                    else
+                    {
+                        accessor.Status = RetryStatus.Fail;
+                        throw;
+                    }
                 }
             }
 
@@ -104,11 +112,19 @@ namespace Retry
 
         public void Go()
         {
-            var task = Run();
-            task.Wait();
-            if (Status == RetryStatus.Fail)
+            try
             {
-                throw new RetryFailedException(ExceptionList);
+                var task = Run();
+                task.Wait();
+                if (Status == RetryStatus.Fail)
+                {
+                    throw new RetryFailedException(ExceptionList);
+                }
+            }
+            catch (AggregateException ex)
+            {
+
+                throw ex.InnerException;
             }
         }
 
@@ -123,6 +139,11 @@ namespace Retry
 
         protected abstract Task ExecuteActor();
 
+        protected abstract bool HandleOnError(Delegate onError, Exception ex, int retryCount);
+
+
+        private Delegate _onError = null;
+
         #region IInternalAccessor explicit:
 
         IInternalAccessor IInternalAccessor.Parent { get; set; }
@@ -135,7 +156,7 @@ namespace Retry
         IDelay IInternalAccessor.Delay
         {
             get { return this.Delay; }
-            set { this.Delay = value; }
+            set { this.Delay = (Delay)value; }
         }
 
         int IInternalAccessor.RetryCount { get { return this.RetryCount; } }
@@ -147,6 +168,11 @@ namespace Retry
 
         async Task IInternalAccessor.Run() { await this.Run(); }
 
+        Delegate IInternalAccessor.OnError
+        {
+            get { return _onError; }
+            set { _onError = value; }
+        }
         #endregion //IInternalAccessor explicit:
 
         #endregion //instance properties and methods:

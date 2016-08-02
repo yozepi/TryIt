@@ -16,7 +16,7 @@ namespace Retry
             PauseTime = pauseTime;
         }
         public TimeSpan PauseTime { get; private set; }
-        public override async Task WaitAsync(int tryCount)
+        protected override async Task WaitAsync(int tryCount)
         {
             await WaitAsync(PauseTime);
         }

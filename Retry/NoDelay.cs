@@ -11,7 +11,7 @@ namespace Retry
         public NoDelay()
             : base() { }
 
-        public override async Task WaitAsync(int tryCount)
+        protected override async Task WaitAsync(int tryCount)
         {
             return;
         }

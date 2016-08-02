@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace Retry
 {
+    public delegate bool OnErrorDelegate(Exception ex, int retryCount);
+    public delegate bool OnSuccessDelegate<TResult>(Exception ex, int retryCount, TResult result);
+    public delegate bool OnSuccessDelegate(Exception ex, int retryCount);
+
     public enum RetryStatus
     {
         NotStarted,
@@ -19,7 +23,7 @@ namespace Retry
     {
         int RetryCount { get; }
         int Attempts { get; }
-        IDelay Delay { get; }
+        Delay Delay { get; }
         List<Exception> ExceptionList { get; }
         RetryStatus Status { get; }
 
@@ -43,6 +47,7 @@ namespace Retry
         RetryStatus Status { get; set; }
         object Actor { get; }
 
+        Delegate OnError { get; set; }
         Task Run();
     }
 }

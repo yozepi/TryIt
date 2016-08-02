@@ -37,12 +37,12 @@ namespace Retry.Tests.Unit.specs
 
             describe["TryIt.Try(func, retries).UsingDelay(delay)"] = () =>
             {
-                IDelay newPause = null;
+                Delay newPause = null;
                 ITryAndReturnValue<string> result = null;
                 before = () =>
                 {
                     result = null;
-                    newPause = new Mock<IDelay>().Object;
+                    newPause = new Mock<Delay>().Object;
                 };
 
                 act = () =>

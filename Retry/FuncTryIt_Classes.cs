@@ -62,6 +62,11 @@ namespace Retry
         {
             return GetResult();
         }
+
+        protected override bool HandleOnError(Delegate onError, Exception ex, int retryCount)
+        {
+            return true;
+        }
     }
 
 

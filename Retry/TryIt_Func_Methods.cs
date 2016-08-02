@@ -65,7 +65,7 @@ namespace Retry
         #endregion //Try methods:
 
 
-        public static ITryAndReturnValue<TResult> UsingDelay<TResult>(this ITryAndReturnValue<TResult> tryit, IDelay delay)
+        public static ITryAndReturnValue<TResult> UsingDelay<TResult>(this ITryAndReturnValue<TResult> tryit, Delay delay)
         {
             if (delay == null)
                 throw new ArgumentNullException("delay");

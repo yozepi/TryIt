@@ -17,10 +17,23 @@ namespace Retry
 
         protected internal bool HasResult { get; set; }
 
-        public new TResult Go()
+        public TResult Go()
         {
-            base.Go();
-            return GetResult();
+            try
+            {
+                var task = Run();
+                task.Wait();
+                return GetResult();
+                if (Status == RetryStatus.Fail)
+                {
+                    throw new RetryFailedException(ExceptionList);
+                }
+            }
+            catch (AggregateException ex)
+            {
+
+                throw ex.InnerException;
+            }
         }
 
         public virtual new async Task<TResult> GoAsync()
@@ -44,6 +57,15 @@ namespace Retry
             }, TaskCreationOptions.AttachedToParent);
         }
 
+        protected override void HandleOnSuccess(int count)
+        {
+            var accessor = ParentOrSelf((x) => x.OnSuccess != null);
+            if (accessor != null)
+            {
+                (accessor.OnSuccess as OnSuccessDelegate<TResult>)?.Invoke(count, Result);
+            }
+        }
+
         protected abstract TResult ExecuteFunc();
 
         private TResult GetResult()
@@ -51,21 +73,13 @@ namespace Retry
             if (HasResult)
                 return Result;
 
-            var parent = ((IInternalAccessor)this).Parent as ITryAndReturnValue<TResult>;
-            if (parent == null)
-                return default(TResult);
+            return (((IInternalAccessor)this).Parent as ITryAndReturnValue<TResult>).GetResult();
 
-            return parent.GetResult();
         }
 
         TResult ITryAndReturnValue<TResult>.GetResult()
         {
             return GetResult();
-        }
-
-        protected override bool HandleOnError(Delegate onError, Exception ex, int retryCount)
-        {
-            return true;
         }
     }
 

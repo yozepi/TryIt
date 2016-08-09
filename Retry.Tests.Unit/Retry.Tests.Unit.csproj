@@ -81,8 +81,8 @@
     <Compile Include="specs\Func_Extension_Methods.cs" />
     <Compile Include="specs\IDelay_Implementors.cs" />
     <Compile Include="specs\TryIt_Action_Async_Methods.cs" />
-    <Compile Include="specs\TryItFunc_Async_Methods.cs" />
-    <Compile Include="specs\FuncTryIt_Methods.cs" />
+    <Compile Include="specs\TryIt_Func_Async_Methods.cs" />
+    <Compile Include="specs\TryIt_Func_Methods.cs" />
     <Compile Include="specs\TryIt_Action_Methods.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tests\Action_Extension_Method_Tests .cs" />

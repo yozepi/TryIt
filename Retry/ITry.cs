@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 namespace Retry
 {
     public delegate bool OnErrorDelegate(Exception ex, int retryCount);
-    public delegate bool OnSuccessDelegate<TResult>(Exception ex, int retryCount, TResult result);
-    public delegate bool OnSuccessDelegate(Exception ex, int retryCount);
+    public delegate void OnSuccessDelegate(int retryCount);
+    public delegate void OnSuccessDelegate<TResult>(int retryCount, TResult result);
 
     public enum RetryStatus
     {
@@ -16,6 +16,7 @@ namespace Retry
         Running,
         Success,
         SuccessAfterRetries,
+        AllAttemptsRejected,
         Fail
     }
 
@@ -23,7 +24,7 @@ namespace Retry
     {
         int RetryCount { get; }
         int Attempts { get; }
-        Delay Delay { get; }
+        IDelay Delay { get; }
         List<Exception> ExceptionList { get; }
         RetryStatus Status { get; }
 
@@ -41,13 +42,9 @@ namespace Retry
     internal interface IInternalAccessor
     {
         IInternalAccessor Parent { get; set; }
-        int RetryCount { get; }
         IDelay Delay { get; set; }
-        List<Exception> ExceptionList { get; }
-        RetryStatus Status { get; set; }
         object Actor { get; }
-
-        Delegate OnError { get; set; }
-        Task Run();
+        OnErrorDelegate OnError { get; set; }
+        Delegate OnSuccess { get; set; }
     }
 }

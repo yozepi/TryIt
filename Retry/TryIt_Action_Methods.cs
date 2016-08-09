@@ -64,7 +64,7 @@ namespace Retry
         #endregion //Try methods:
 
 
-        public static ITry UsingDelay(this ITry tryit, Delay delay)
+        public static ITry UsingDelay(this ITry tryit, IDelay delay)
         {
             if (delay == null)
                 throw new ArgumentNullException("delay");
@@ -81,6 +81,16 @@ namespace Retry
             accessor.OnError = onError;
             return tryit;
         }
+
+
+        public static ITry OnSuccess(this ITry tryit, OnSuccessDelegate onSuccess)
+        {
+            var accessor = tryit as IInternalAccessor;
+            accessor.OnSuccess = onSuccess;
+            return tryit;
+        }
+
+
 
         #region ThenTry extensions:
 

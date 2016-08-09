@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Retry
 {
-    internal interface IDelay
+    public interface IDelay
     {
         Task WaitAsync(int tryCount);
     }

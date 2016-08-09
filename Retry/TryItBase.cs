@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Retry
 {
+    /// <summary>
+    /// TryItBase is the base class for the Action and Func based TryIt classes. Most of the real work takes place here.
+    /// </summary>
     public abstract class TryItBase : ITry, IInternalAccessor
     {
 
@@ -13,6 +16,11 @@ namespace Retry
 
         #region constructors
 
+        /// <summary>
+        /// Initializes a new instance of this class.
+        /// </summary>
+        /// <param name="retries"></param>
+        /// <param name="actor"></param>
         protected TryItBase(int retries, object actor)
         {
             if (retries < 1)
@@ -23,93 +31,137 @@ namespace Retry
 
             RetryCount = retries;
             Actor = actor;
-
-            Delay = Retry.Delay.DefaultDelay;
             ExceptionList = new List<Exception>();
         }
 
         #endregion //constructors
 
+        /// <summary>
+        /// An integer containing the maximum number of times the Action/Func will be attempted.
+        /// </summary>
+        /// <remarks>This value is local to this instance of the TryIt chain.</remarks>
         public int RetryCount { get; private set; }
 
+        /// <summary>
+        /// An integer containing the actual number of times the Action/Func has been attempted.
+        /// <remarks>This value is local to this instance of the TryIt chain.</remarks>
+        /// </summary>
         public int Attempts { get; private set; }
 
-        public Delay Delay { get; private set; }
+        /// <summary>
+        /// An IDelay used to calculate the delay between attempts. 
+        /// </summary>
+        /// <remarks>This value is local to this instance of the TryIt chain.</remarks>
+        public IDelay Delay { get; private set; }
 
         public List<Exception> ExceptionList { get; private set; }
 
+        /// <summary>
+        /// The accumulated status of the TryIt chain.
+        /// </summary>
         public RetryStatus Status { get; private set; }
 
+        /// <summary>
+        /// Contains the Action or Func that will be executed.
+        /// </summary>
+        /// <remarks>Ineritors cast this property to the apropriate value in the <see cref="ExecuteActor"/> method</remarks>
         protected object Actor { get; private set; }
 
-        async protected virtual Task Run()
+
+        /// <summary>
+        /// Runs the TryIt chain starting at this instance.
+        /// </summary>
+        /// <returns>Returns a task containing the running chain.</returns>
+        async protected Task Run()
         {
-            Attempts = 0;
-            var accessor = this as IInternalAccessor;
-            var parent = accessor.Parent;
-
-            accessor.ExceptionList.Clear();
-
-            if (parent != null)
+            try
             {
-                await parent.Run();
-                accessor.ExceptionList.AddRange(parent.ExceptionList);
-                if (parent.Status != RetryStatus.Fail)
-                {
-                    accessor.Status = parent.Status;
-                    return;
-                }
-            }
-            accessor.Status = RetryStatus.Running;
 
-            for (int count = 0; count < accessor.RetryCount; count++)
-            {
-                try
+                Attempts = 0;
+                ExceptionList.Clear();
+
+                if (_parent != null)
                 {
-                    Attempts++;
-                    await ExecuteActor();
-                    if (count == 0)
+                    await _parent.Run();
+                    ExceptionList.AddRange(_parent.ExceptionList);
+                    if (_parent.Status != RetryStatus.Fail)
                     {
-                        if (parent != null && parent.Status == RetryStatus.Fail)
+                        Status = _parent.Status;
+                        return;
+                    }
+                }
+                Status = RetryStatus.Running;
+
+                for (int count = 0; count < RetryCount; count++)
+                {
+                    try
+                    {
+                        Attempts++;
+                        await ExecuteActor();
+                        HandleOnSuccess(Attempts);
+                        if (count == 0)
                         {
-                            accessor.Status = RetryStatus.SuccessAfterRetries;
+                            if (_parent != null && _parent.Status == RetryStatus.Fail)
+                            {
+                                Status = RetryStatus.SuccessAfterRetries;
+                            }
+                            else
+                            {
+                                Status = RetryStatus.Success;
+                            }
                         }
                         else
                         {
-                            accessor.Status = RetryStatus.Success;
+                            Status = RetryStatus.SuccessAfterRetries;
+                        }
+                        break;
+                    }
+                    catch (Exception ex)
+                    {
+                        if (HandleOnError(ex, count))
+                        {
+                            ExceptionList.Add(ex);
+
+                            //Only wait if count hasn't ended.
+                            if (count + 1 < RetryCount)
+                            {
+                                var delaySource = ParentOrSelf((x) => x.Delay != null);
+                                IDelay delay;
+                                if (delaySource != null)
+                                    delay = delaySource.Delay;
+                                else
+                                    delay = Retry.Delay.DefaultDelay;
+
+                                await delay.WaitAsync(count);
+                            }
+                        }
+                        else
+                        {
+                            Status = RetryStatus.Fail;
+                            throw;
                         }
                     }
-                    else
-                    {
-                        accessor.Status = RetryStatus.SuccessAfterRetries;
-                    }
-                    break;
                 }
-                catch (Exception ex)
+
+                if (Status == RetryStatus.Running)
                 {
-                    if (HandleOnError(_onError, ex, count))
-                    {
-                        accessor.ExceptionList.Add(ex);
-                        await accessor.Delay.WaitAsync(count);
-                    }
-                    else
-                    {
-                        accessor.Status = RetryStatus.Fail;
-                        throw;
-                    }
+                    Status = RetryStatus.Fail;
                 }
-            }
 
-            if (accessor.Status == RetryStatus.Running)
+                return;
+            }
+            catch (Exception)
             {
-                accessor.Status = RetryStatus.Fail;
+                Status = RetryStatus.Fail;
+                throw;
             }
-
-            return;
 
         }
 
 
+        /// <summary>
+        /// Runs your action and retries if the action fails.
+        /// </summary>
         public void Go()
         {
             try
@@ -128,6 +180,11 @@ namespace Retry
             }
         }
 
+
+        /// <summary>
+        /// Runs your action as an awaitable task.
+        /// </summary>
+        /// <returns></returns>
         public async Task GoAsync()
         {
             await Run();
@@ -139,40 +196,66 @@ namespace Retry
 
         protected abstract Task ExecuteActor();
 
-        protected abstract bool HandleOnError(Delegate onError, Exception ex, int retryCount);
+        protected abstract void HandleOnSuccess(int count);
+
+        private bool HandleOnError(Exception ex, int retryCount)
+        {
+            var src = ParentOrSelf((x) => x.OnError != null);
+            if (src == null)
+                return true;
+
+            return src.OnError(ex, retryCount);
+        }
 
 
-        private Delegate _onError = null;
+
+        internal IInternalAccessor ParentOrSelf(Predicate<IInternalAccessor> predicate)
+        {
+
+            if (predicate(this))
+            {
+                return this;
+            }
+
+            if (_parent != null)
+            {
+                return _parent.ParentOrSelf(predicate);
+            }
+            return null;
+        }
 
         #region IInternalAccessor explicit:
 
-        IInternalAccessor IInternalAccessor.Parent { get; set; }
-        RetryStatus IInternalAccessor.Status
+        private TryItBase _parent;
+        IInternalAccessor IInternalAccessor.Parent
         {
-            get { return this.Status; }
-            set { this.Status = value; }
+            get { return _parent; }
+            set { _parent = value as TryItBase; }
         }
 
         IDelay IInternalAccessor.Delay
         {
             get { return this.Delay; }
-            set { this.Delay = (Delay)value; }
+            set { this.Delay = value; }
         }
-
-        int IInternalAccessor.RetryCount { get { return this.RetryCount; } }
-
-        List<Exception> IInternalAccessor.ExceptionList { get { return this.ExceptionList; } }
 
 
         object IInternalAccessor.Actor { get { return this.Actor; } }
 
-        async Task IInternalAccessor.Run() { await this.Run(); }
-
-        Delegate IInternalAccessor.OnError
+        private OnErrorDelegate _onError = null;
+        OnErrorDelegate IInternalAccessor.OnError
         {
             get { return _onError; }
             set { _onError = value; }
         }
+
+        Delegate _onSuccess = null;
+        Delegate IInternalAccessor.OnSuccess
+        {
+            get { return _onSuccess; }
+            set { _onSuccess = value; }
+        }
+
         #endregion //IInternalAccessor explicit:
 
         #endregion //instance properties and methods:

@@ -46,7 +46,7 @@
     <Compile Include="BackoffDelay.cs" />
     <Compile Include="Extensions\ActionExtensions.cs" />
     <Compile Include="Extensions\FuncExtensions.cs" />
-    <Compile Include="FuncTryIt_Classes.cs" />
+    <Compile Include="Func_TryIt_Classes.cs" />
     <Compile Include="IDelay.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RetryFailedException.cs" />

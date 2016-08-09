@@ -32,14 +32,16 @@ namespace Retry
             return Actor as Action;
         }
 
-        protected override bool HandleOnError(Delegate onError, Exception ex, int retryCount)
+        protected override void HandleOnSuccess(int count)
         {
-            var theDelegate = onError as OnErrorDelegate;
-            if (theDelegate == null)
-                return true;
-
-            return theDelegate(ex, retryCount);
+            var accessor = ParentOrSelf((x) => x.OnSuccess != null);
+            if (accessor != null)
+            {
+                (accessor.OnSuccess as OnSuccessDelegate)?.Invoke(count);
+            }
         }
+
+
     }
 
     public class ActionTryIt<T> : ActionTryIt
@@ -56,7 +58,7 @@ namespace Retry
             var action = Actor as Action<T>;
             return () => action(_arg);
         }
-      }
+    }
 
     public class ActionTryIt<T1, T2> : ActionTryIt
     {

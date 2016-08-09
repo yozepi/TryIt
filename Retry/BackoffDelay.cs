@@ -14,7 +14,7 @@ namespace Retry
     public class BackoffDelay : Delay
     {
         /// <summary>
-        /// Initializes a new instance of this class
+        /// Initializes a new instance of this class.
         /// </summary>
         /// <param name="initialDelay">A <see cref="TimeSpan"/> representing the initial delay to begin with.</param>
         /// <exception cref="ArgumentOutOfRangeException">Thrown if the provided TimeSpan is less than zero.</exception>
@@ -31,8 +31,7 @@ namespace Retry
         /// </summary>
         public TimeSpan InitialDelay { get; private set; }
 
-
-        protected override async Task WaitAsync(int tryCount)
+            protected override async Task WaitAsync(int tryCount)
         {
             var ticks = (long)(InitialDelay.Ticks * Math.Pow(2, (tryCount - 1)));
             await WaitAsync(TimeSpan.FromTicks(ticks));

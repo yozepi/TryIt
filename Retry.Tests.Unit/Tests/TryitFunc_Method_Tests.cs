@@ -16,7 +16,7 @@ public void Tryit_Func_Methods()
         {
             this.LoadSpecs(() =>
             {
-                Type[] types = { typeof(FuncTryIt_Methods), typeof(TryItFunc_Async_Methods) };
+                Type[] types = { typeof(TryIt_Func_Methods), typeof(TryIt_Func_Async_Methods) };
                 return types;
             });
             this.RunSpecs();

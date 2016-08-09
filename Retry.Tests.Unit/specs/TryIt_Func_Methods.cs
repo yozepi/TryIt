@@ -9,7 +9,7 @@ using FluentAssertions;
 
 namespace Retry.Tests.Unit.specs
 {
-    class FuncTryIt_Methods : nspec
+    class TryIt_Func_Methods : nspec
     {
         void Static_Func_TResult_TryItMethods()
         {
@@ -35,14 +35,47 @@ namespace Retry.Tests.Unit.specs
 
             before = () => subject = TryIt.Try(subjectFunc, retries);
 
+   
+            describe["TryIt.Try(func, retries).OnError(OnErrorDelegate)"] = () =>
+            {
+                OnErrorDelegate errorDelegate = (ex, i) => { return true; };
+                object onErrorResult = null;
+                before = () => onErrorResult = null;
+                act = () => onErrorResult = subject.OnError(errorDelegate);
+
+                it["should set the internal onError property"] = () =>
+                    onErrorResult.As<IInternalAccessor>().OnError.Should().BeSameAs(errorDelegate);
+
+                it["should return the subject"] = () =>
+                    subject.Should().BeSameAs(onErrorResult);
+
+            };
+
+            describe["TryIt.Try(func, retries).OnSuccess()"] = () =>
+            {
+                OnSuccessDelegate<string> successDelegate = null;
+                object onSuccessResult = null;
+                before = () => successDelegate = (i, r) => { };
+                act = () => onSuccessResult = subject.OnSuccess(successDelegate);
+
+                it["should set the internal oSuccess property"] = () =>
+                    onSuccessResult.As<IInternalAccessor>().OnSuccess.Should().BeSameAs(successDelegate);
+
+                it["should return the subject"] = () =>
+                    subject.Should().BeSameAs(onSuccessResult);
+
+            };
+
             describe["TryIt.Try(func, retries).UsingDelay(delay)"] = () =>
             {
-                Delay newPause = null;
+                Mock<IDelay> mockDelay = null;
+                IDelay newPause = null;
                 ITryAndReturnValue<string> result = null;
                 before = () =>
                 {
                     result = null;
-                    newPause = new Mock<Delay>().Object;
+                    mockDelay = new Mock<IDelay>();
+                    newPause = mockDelay.Object;
                 };
 
                 act = () =>
@@ -100,6 +133,36 @@ namespace Retry.Tests.Unit.specs
                     it["should throw an ArgumentOutOfRangeException"] = () =>
                         action.ShouldThrow<ArgumentOutOfRangeException>();
                 };
+            };
+
+            describe["TryIt.Try(func, retries).OnSuccess(onSuccessDelegate<T>).Go()"] = () =>
+            {
+                OnSuccessDelegate<string> successDelegate = null;
+                object testResult = null;
+                object result = null;
+                bool onSuccessCalled = false;
+                before = () =>
+                {
+                    testResult = null;
+                    result = null;
+                    onSuccessCalled = false;
+                    successDelegate = (i, r) => { testResult = r; onSuccessCalled = true; };
+                };
+                act = () => result = subject.OnSuccess(successDelegate).Go();
+
+                it["should call the onSuccessDelegate"] = () =>
+                    onSuccessCalled.Should().BeTrue();
+
+                it["should pass the result to the OnSuccess delegate"] = () =>
+                    testResult.Should().Be(expectedResult);
+
+                it["should return the expected result"] = () =>
+                    result.Should().Be(expectedResult);
+
+
+                it["should set the status to Success"] = () =>
+                    subject.Status.Should().Be(RetryStatus.Success);
+
             };
 
             describe["TryIt.Try(func, retries).ThenTry(retries)"] = () =>

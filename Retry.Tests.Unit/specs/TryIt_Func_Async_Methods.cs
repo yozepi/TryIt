@@ -8,7 +8,7 @@ using FluentAssertions;
 
 namespace Retry.Tests.Unit.specs
 {
-    class TryItFunc_Async_Methods : nspec
+    class TryIt_Func_Async_Methods : nspec
     {
         void GoAsync_Method()
         {

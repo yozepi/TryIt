@@ -9,6 +9,7 @@ using Moq;
 
 namespace Retry.Tests.Unit.specs
 {
+    
     class TryIt_Action_Methods : nspec
     {
         void Static_Action_TryIt_Methods()
@@ -73,7 +74,17 @@ namespace Retry.Tests.Unit.specs
 
             };
 
-            describe["TryIt.Try(Action action, int retries).UsingDelay(IPause delay)"] = () =>
+            describe["TryIt.Try(Action action, int retries).OnSuccess(OnSuccessDelegate)"] = () =>
+            {
+                OnSuccessDelegate successDelegate = (i) => { };
+
+                act = () => subject = subject.OnSuccess(successDelegate);
+
+                it["should set the internal onSuccess property"] = () =>
+                    subject.As<IInternalAccessor>().OnSuccess.Should().BeSameAs(successDelegate);
+
+            };
+            describe["TryIt.Try(Action action, int retries).UsingDelay(Delay delay)"] = () =>
             {
                 Delay newPause = null;
                 ITry result = null;
@@ -190,7 +201,7 @@ namespace Retry.Tests.Unit.specs
 
                         context["when OnError() returns false"] = () =>
                         {
-                            Exception expectedException = new Exception( "An unexpected Journey");
+                            Exception expectedException = new Exception("An unexpected Journey");
 
                             beforeAll = () =>
                             {
@@ -198,8 +209,9 @@ namespace Retry.Tests.Unit.specs
                             };
                             before = () =>
                             {
-                                errorDelegate = (e, i) => 
-                                { errorTryCount = i;
+                                errorDelegate = (e, i) =>
+                                {
+                                    errorTryCount = i;
                                     return false;
                                 };
 
@@ -235,6 +247,33 @@ namespace Retry.Tests.Unit.specs
                 };
             };
 
+            describe["TryIt.Try(action, retries).UsingDelay(delay).Go()"] = () =>
+            {
+                Mock<IDelay> newPause = null;
+                before = () =>
+                {
+                    thrown = null;
+                    subjectAction = () => { throw new Exception("You killed my father. Prepare to die!"); };
+                    newPause = new Mock<IDelay>();
+                };
+
+                act = () =>
+                {
+                    try
+                    {
+                        subject.UsingDelay(newPause.Object);
+                        subject.Go();
+                    }
+                    catch (Exception ex)
+                    {
+                        thrown = ex;
+                    }
+                };
+                it["should call the provided delay every time Try() fails (less 1"] = () =>
+                    newPause.Verify(m => m.WaitAsync(It.IsAny<int>()), Times.Exactly(retries-1));
+
+            };
+
             describe["TryIt.Try(action, retries).ThenTry(retries)"] = () =>
             {
                 ITry child = null;
@@ -242,8 +281,21 @@ namespace Retry.Tests.Unit.specs
                 it["should create a child TryIt instance"] = () =>
                     child.Should().NotBeNull();
 
+
                 it["the child should be distinct from it's parent"] = () =>
                     child.Should().NotBe(subject);
+
+                context["when the parent has OnError() set"] = () =>
+                {
+                    OnErrorDelegate onError = (i, e) => { return true; };
+                    before = () =>
+                    {
+                        child = subject.OnError(onError).ThenTry(3);
+                    };
+
+                    it["should use the OnError delegate of the parent"] = () =>
+                        child.As<TryItBase>().ParentOrSelf((x) => x.OnError != null).OnError.Should().Be(onError);
+                };
 
                 describe["TryIt.Try(action, retries).ThenTry(retries).Go()"] = () =>
                 {
@@ -252,7 +304,7 @@ namespace Retry.Tests.Unit.specs
                         subjectAction = () => { };
                     };
 
-                    act = () => subject.Go();
+                    act = () => child.Go();
 
                     context["when the first try succeeds"] = () =>
                     {
@@ -263,9 +315,197 @@ namespace Retry.Tests.Unit.specs
                             subject.Attempts.Should().Be(1);
                     };
 
+                    context["when Try() fails but ThenTry() succeeds"] = () =>
+                    {
+                        int errorCount = default(int);
+                        before = () => errorCount = default(int);
+
+                        beforeAll = () =>
+                        {
+                            subjectAction = () =>
+                              {
+                                  errorCount++;
+                                  if (errorCount <= retries)
+                                      throw new Exception("The train!");
+                              };
+                        };
+
+                        it["Try() should fail every time"] = () =>
+                            subject.Attempts.Should().Be(retries);
+
+                        it["Try() status should be Fail"] = () =>
+                            subject.Status.Should().Be(RetryStatus.Fail);
+
+
+                        it["ThenTry() should succeed after the first try"] = () =>
+                            child.Attempts.Should().Be(1);
+
+                        it["ThenTry() should set status to SuccessAfterRetries"] = () =>
+                            child.Status.Should().Be(RetryStatus.SuccessAfterRetries);
+                    };
+
                 };
+
+                describe["TryIt.Try(action, retries).OnError(delegate).ThenTry(retries).Go()"] = () =>
+                {
+                    OnErrorDelegate onError = null;
+                    act = () =>
+                    {
+                        subject = TryIt.Try(subjectAction, retries).OnError(onError);
+                        child = subject.ThenTry(retries);
+                        try
+                        {
+                            child.Go();
+                        }
+                        catch (Exception ex)
+                        {
+                            thrown = ex;
+                        }
+                    };
+                    context["when Try() succeeds"] = () =>
+                    {
+                        int onErrorCalled = default(int);
+                        before = () =>
+                        {
+                            thrown = null;
+                            onErrorCalled = default(int);
+                            onError = (e, i) => { onErrorCalled++; return true; };
+                        };
+
+                        it["should succeed without any failures and a status of Success"] = () =>
+                        {
+                            onErrorCalled.Should().Be(0);
+                            child.ExceptionList.Count.Should().Be(0);
+                            subject.Status.Should().Be(RetryStatus.Success);
+                            child.Status.Should().Be(RetryStatus.Success);
+                        };
+                    };
+
+                    context["when Try().ThenTry() both fail"] = () =>
+                    {
+                        int onErrorCalled = default(int);
+
+                        before = () =>
+                        {
+                            thrown = null;
+                            onErrorCalled = default(int);
+                            subjectAction = () => { throw new Exception("Welcome to the Machine!"); };
+                            onError = (e, i) => { onErrorCalled++; return true; };
+                        };
+
+                        it["should call onError for both Try() and ThenTry()"] = () =>
+                            onErrorCalled.Should().Be(retries * 2);
+
+                        it["should throw RetryFailedException"] = () =>
+                            thrown.Should().BeOfType<RetryFailedException>();
+                    };
+
+                    context["When OnError decides Try() should not continue"] = () =>
+                    {
+                        var expectedException = new Exception("Woah! What happened?");
+                        before = () =>
+                        {
+                            subjectAction = () => { throw expectedException; };
+                            onError = (e, i) => { return false; };
+                        };
+
+                        it["should throw the exception caught by OnError"] = () =>
+                        thrown.Should().Be(expectedException);
+
+                        it["status should be Fail"] = () =>
+                        {
+                            child.Status.Should().Be(RetryStatus.Fail);
+                            subject.Status.Should().Be(RetryStatus.Fail);
+                        };
+                    };
+
+                    context["when oError throws an exception"] = () =>
+                    {
+                        var expectedException = new Exception("I'm a new exception.");
+                        before = () =>
+                        {
+                            subjectAction = () => { throw new Exception("Woah! What happened?"); };
+                            onError = (e, i) => { throw expectedException; };
+                        };
+
+                        it["should throw the exception thrown by OnError"] = () =>
+                        thrown.Should().Be(expectedException);
+
+                        it["status should be Fail"] = () =>
+                        {
+                            child.Status.Should().Be(RetryStatus.Fail);
+                            subject.Status.Should().Be(RetryStatus.Fail);
+                        };
+                    };
+
+                };
+
+                describe["TryIt.Try(action, retries).OnSuccess(delegate).ThenTry(retries).Go()"] = () =>
+                {
+                    OnSuccessDelegate onSuccess = null;
+                    act = () =>
+                    {
+                        subjectAction = () => { };
+                        subject = TryIt.Try(subjectAction, retries).OnSuccess(onSuccess);
+                        child = subject.ThenTry(retries);
+                        try
+                        {
+                            child.Go();
+                        }
+                        catch (Exception ex)
+                        {
+                            thrown = ex;
+                        }
+                    };
+                    context["when OnSuccess does not throw"] = () =>
+                    {
+                        int onSuccessCalled = default(int);
+                        before = () =>
+                        {
+                            thrown = null;
+                            onSuccessCalled = default(int);
+                            onSuccess = (i) => { onSuccessCalled = i; };
+                        };
+
+                        it["should succeed without any failures and a status of Success"] = () =>
+                        {
+                            onSuccessCalled.Should().Be(1);
+                            child.ExceptionList.Count.Should().Be(0);
+                            subject.Status.Should().Be(RetryStatus.Success);
+                            child.Status.Should().Be(RetryStatus.Success);
+                        };
+                    };
+
+                    context["when OnSuccess throws an exception"] = () =>
+                    {
+                        int onSuccessCalled = default(int);
+                        before = () =>
+                        {
+                            thrown = null;
+                            onSuccessCalled = default(int);
+                            onSuccess = (i) => { onSuccessCalled++; throw new Exception("BARF!!"); };
+                        };
+                        it["should set a status of Fail"] = () =>
+                        {
+                            subject.Status.Should().Be(RetryStatus.Fail);
+                            child.Status.Should().Be(RetryStatus.Fail);
+                        };
+
+                        it["should call OnSuccess both in Try() and ThenTry()"] = () =>
+                            onSuccessCalled.Should().Be(retries * 2);
+
+                        it["should raise RetryFailedException"] = () =>
+                            thrown.Should().BeOfType<RetryFailedException>();
+                    };
+                };
+
             };
 
+        }
+
+        private bool onsuccess(int retryCount)
+        {
+            throw new NotImplementedException();
         }
 
         void Static_Action_T_TryIt_Methods()

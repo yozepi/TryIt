@@ -213,8 +213,11 @@ namespace Retry.Tests.Unit.specs
                         it["should set the Status to SuccessAfterRetries"] = () =>
                             child.Status.Should().Be(RetryStatus.SuccessAfterRetries);
 
-                        it["should have the exceptions of the parent in it's ExceptionsList"] = () =>
-                            child.ExceptionList.Count.Should().Be(retries);
+                        it["ThenTry() should not have any exceptions in it's ExceptionsList"] = () =>
+                            child.ExceptionList.Count.Should().Be(0);
+
+                        it["ThenTry().GetAllExceptions() should have the exceptions from Try()"] = () =>
+                            child.GetAllExceptions().Should().BeEquivalentTo(subject.ExceptionList);
 
                     };
                 };

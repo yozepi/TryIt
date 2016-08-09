@@ -169,8 +169,14 @@ namespace Retry.Tests.Unit.specs
                          it["ThenTry should have attempted the action only once"] = () =>
                             child.Attempts.Should().Be(1);
 
-                         it["should save exceptions in the ExceptionList"] = () =>
-                                   child.ExceptionList.Count.Should().Be(retries);
+                         it["Try() should have no exceptions in the ExceptionList"] = () =>
+                            subject.ExceptionList.Count.Should().Be(retries);
+
+                         it["ThenTry() should have no exceptions in the ExceptionList"] = () =>
+                            child.ExceptionList.Count.Should().Be(0);
+
+                         it["ThenTry().GetAllExceptions() should have Try()'s exceptions"] = () =>
+                            child.GetAllExceptions().Should().BeEquivalentTo(subject.ExceptionList);
 
                          it["should not throw any exceptions"] = () =>
                             thrown.Should().BeNull();

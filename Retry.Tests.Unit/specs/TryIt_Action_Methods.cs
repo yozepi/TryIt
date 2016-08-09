@@ -9,7 +9,7 @@ using Moq;
 
 namespace Retry.Tests.Unit.specs
 {
-    
+
     class TryIt_Action_Methods : nspec
     {
         void Static_Action_TryIt_Methods()
@@ -84,6 +84,7 @@ namespace Retry.Tests.Unit.specs
                     subject.As<IInternalAccessor>().OnSuccess.Should().BeSameAs(successDelegate);
 
             };
+
             describe["TryIt.Try(Action action, int retries).UsingDelay(Delay delay)"] = () =>
             {
                 Delay newPause = null;
@@ -172,6 +173,12 @@ namespace Retry.Tests.Unit.specs
                     it["should record the number of attempts Try made"] = () =>
                         subject.Attempts.Should().Be(actionExecutionCount);
 
+                    it["should contain an exception for every failed attempt"] = () =>
+                        subject.ExceptionList.Count.Should().Be(subject.Attempts - 1);
+
+                    it["subject.GetAllExceptions() should return the same exceptions in subject.ExceptionList"] = () =>
+                        subject.GetAllExceptions().Should().BeEquivalentTo(subject.ExceptionList);
+
                     describe["Try().OnError().Go"] = () =>
                     {
                         Exception delegateError = null;
@@ -235,8 +242,17 @@ namespace Retry.Tests.Unit.specs
                     it["should have attempted the action asmay times aa RetryCount"] = () =>
                         subject.Attempts.Should().Be(subject.RetryCount);
 
-                    it["should throw RetryFailedException"] = () =>
-                        thrown.Should().BeOfType<RetryFailedException>();
+                    it["should contain an exception for evry attempt"] = () =>
+                        subject.ExceptionList.Count.Should().Be(subject.Attempts);
+
+                    it["should throw RetryFailedException with all the subject exceptions"] = () =>
+                        {
+                            thrown.Should().BeOfType<RetryFailedException>();
+                            thrown.As<RetryFailedException>().ExceptionList.ShouldBeEquivalentTo(subject.ExceptionList);
+                        };
+
+                    it["subject.GetAllExceptions() should return the same exceptions in subject.ExceptionList"] = () =>
+                        subject.GetAllExceptions().Should().BeEquivalentTo(subject.ExceptionList);
                 };
 
                 context["when retries is an invalid value"] = () =>
@@ -270,7 +286,7 @@ namespace Retry.Tests.Unit.specs
                     }
                 };
                 it["should call the provided delay every time Try() fails (less 1"] = () =>
-                    newPause.Verify(m => m.WaitAsync(It.IsAny<int>()), Times.Exactly(retries-1));
+                    newPause.Verify(m => m.WaitAsync(It.IsAny<int>()), Times.Exactly(retries - 1));
 
             };
 
@@ -301,10 +317,21 @@ namespace Retry.Tests.Unit.specs
                 {
                     beforeAll = () =>
                     {
+                        thrown = null;
                         subjectAction = () => { };
                     };
-
-                    act = () => child.Go();
+                   
+                    act = () =>
+                    {
+                        try
+                        {
+                            child.Go();
+                        }
+                        catch (Exception ex)
+                        {
+                            thrown = ex;
+                        }
+                    };
 
                     context["when the first try succeeds"] = () =>
                     {
@@ -313,6 +340,10 @@ namespace Retry.Tests.Unit.specs
 
                         it["Try should have executed once"] = () =>
                             subject.Attempts.Should().Be(1);
+
+                        it["should have no exceptions"] = () =>
+                            child.GetAllExceptions().Count.Should().Be(0);
+
                     };
 
                     context["when Try() fails but ThenTry() succeeds"] = () =>
@@ -336,19 +367,48 @@ namespace Retry.Tests.Unit.specs
                         it["Try() status should be Fail"] = () =>
                             subject.Status.Should().Be(RetryStatus.Fail);
 
+                        it["Try() should contain an exception for every failure"] = () =>
+                            subject.ExceptionList.Count.Should().Be(retries);
 
                         it["ThenTry() should succeed after the first try"] = () =>
                             child.Attempts.Should().Be(1);
 
                         it["ThenTry() should set status to SuccessAfterRetries"] = () =>
                             child.Status.Should().Be(RetryStatus.SuccessAfterRetries);
+
+                        it["ThenTry() should contain no exceptions"] = () =>
+                            child.ExceptionList.Count.Should().Be(0);
+
+                        it["child.GetAllExceptions() should contain all the subject errors"] = () =>
+                            child.GetAllExceptions().Should().BeEquivalentTo(subject.ExceptionList);
+
                     };
 
+                    context["when both Try() and ThenTry() fail after every attempt"] = () =>
+                    {
+                        beforeAll = () =>
+                        {
+                            subjectAction = () => { throw new Exception("Goodbye cruel world!"); };
+                            subject = TryIt.Try(subjectAction, retries);
+                        };
+  
+                        it["Try() should have an exception for every attempt"] = () =>
+                            subject.ExceptionList.Count.Should().Be(retries);
+
+                        it["ThenTry() should have an exception for every attempt"] = () =>
+                            child.ExceptionList.Count.Should().Be(retries);
+
+                        it["ThenTry().GetAllExceptions() should have all the exceptions from both Try() and ThenTry()"] = () =>
+                            child.GetAllExceptions().Count.Should().Be(retries * 2);
+
+
+                    };
                 };
 
                 describe["TryIt.Try(action, retries).OnError(delegate).ThenTry(retries).Go()"] = () =>
                 {
                     OnErrorDelegate onError = null;
+                    before = () => subjectAction = () => { };
                     act = () =>
                     {
                         subject = TryIt.Try(subjectAction, retries).OnError(onError);
@@ -503,11 +563,6 @@ namespace Retry.Tests.Unit.specs
 
         }
 
-        private bool onsuccess(int retryCount)
-        {
-            throw new NotImplementedException();
-        }
-
         void Static_Action_T_TryIt_Methods()
         {
             ITry subject = null;
@@ -641,8 +696,8 @@ namespace Retry.Tests.Unit.specs
                         it["should set the Status to SuccessAfterRetries"] = () =>
                             child.Status.Should().Be(RetryStatus.SuccessAfterRetries);
 
-                        it["should have the exceptions of the parent in it's ExceptionsList"] = () =>
-                            child.ExceptionList.Count.Should().Be(retries);
+                        it["should not have the exceptions of the parent in it's ExceptionsList"] = () =>
+                            child.ExceptionList.Count.Should().Be(0);
 
                         context["when the initial try succeeds"] = () =>
                         {

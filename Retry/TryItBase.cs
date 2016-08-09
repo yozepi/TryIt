@@ -83,7 +83,6 @@ namespace Retry
                 if (_parent != null)
                 {
                     await _parent.Run();
-                    ExceptionList.AddRange(_parent.ExceptionList);
                     if (_parent.Status != RetryStatus.Fail)
                     {
                         Status = _parent.Status;
@@ -192,6 +191,34 @@ namespace Retry
             {
                 throw new RetryFailedException(ExceptionList);
             }
+        }
+
+        public List<Exception> GetAllExceptions()
+        {
+            List<Exception> result = new List<Exception>();
+            foreach (var item in GetChain())
+            {
+                result.AddRange(item.ExceptionList);
+            }
+
+            return result;
+        }
+
+        public LinkedList<ITry> GetChain()
+        {
+            LinkedList<ITry> result = new LinkedList<ITry>();
+            ITry item = null;
+            while(item != this)
+            {
+                item = (ITry)ParentOrSelf(i => i.Parent == item);
+                if (item != this)
+                {
+                    result.AddLast(item);
+                }
+            }
+            result.AddLast(this);
+
+            return result;
         }
 
         protected abstract Task ExecuteActor();

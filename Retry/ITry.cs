@@ -30,6 +30,10 @@ namespace Retry
 
         void Go();
         Task GoAsync();
+
+        List<Exception> GetAllExceptions();
+
+        LinkedList<ITry> GetChain();
     }
 
     public interface ITryAndReturnValue<TResult> : ITry

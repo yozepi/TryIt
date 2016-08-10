@@ -320,7 +320,7 @@ namespace Retry.Tests.Unit.specs
                         thrown = null;
                         subjectAction = () => { };
                     };
-                   
+
                     act = () =>
                     {
                         try
@@ -391,7 +391,7 @@ namespace Retry.Tests.Unit.specs
                             subjectAction = () => { throw new Exception("Goodbye cruel world!"); };
                             subject = TryIt.Try(subjectAction, retries);
                         };
-  
+
                         it["Try() should have an exception for every attempt"] = () =>
                             subject.ExceptionList.Count.Should().Be(retries);
 
@@ -561,6 +561,37 @@ namespace Retry.Tests.Unit.specs
 
             };
 
+            describe["TryIt.Try(action, retries).ThenTry(altAction, retries)"] = () =>
+            {
+                ITry child = null;
+                Action altAction = () => { };
+                act = () =>
+                {
+                    subject = TryIt.Try(subjectAction, retries);
+                    child = subject.ThenTry(altAction, retries);
+                };
+
+                it["ThenTry() should use the alternate action"] = () =>
+                    child.As<IInternalAccessor>().Actor.Should().BeSameAs(altAction);
+
+                context["TryIt.Try(action, retries).ThenTry(altAction, retries).Go()"] = () =>
+                {
+                    int altCalled = default(int);
+                    before = () =>
+                    {
+                        altAction = () => { altCalled++; };
+                        subjectAction = () => { throw new Exception("You killed my father. Prepare to die!"); };
+                        altCalled = default(int);
+                    };
+                    act = () =>
+                    {
+                          child.Go();
+                    };
+
+                    it["ThenTry() should have called the alternate action"] = () =>
+                        altCalled.Should().Be(1);
+                };
+            };
         }
 
         void Static_Action_T_TryIt_Methods()
@@ -724,6 +755,22 @@ namespace Retry.Tests.Unit.specs
                 };
             };
 
+            describe["TryIt.Try(action, retries).ThenTry(altAction<T>, retries)"] = () =>
+            {
+                ITry child = null;
+                Action<string> altAction = (a) => { };
+                act = () =>
+                {
+                    child = subject.ThenTry(altAction, expectedActionExecutionString, retries);
+                };
+
+                it["ThenTry() should use the alternate action"] = () =>
+                    child.As<IInternalAccessor>().Actor.Should().BeSameAs(altAction);
+
+                it["ThenTry() should accept the alternate argument"] = () =>
+                    child.As<ActionTryIt<string>>()._arg.Should().Be(expectedActionExecutionString);
+            };
+
         }
 
         void Static_Action_T1_T2_TryIt_Methods()
@@ -774,6 +821,27 @@ namespace Retry.Tests.Unit.specs
                     var asTryIt = child.As<ActionTryIt<string, int>>();
                     asTryIt._arg1.Should().Be(arg1);
                     asTryIt._arg2.Should().Be(arg2);
+                };
+            };
+
+            describe["TryIt.Try(action, retries).ThenTry(altAction<T1, T2>, retries)"] = () =>
+            {
+                ITry child = null;
+
+                Action<string, int> altAction = (a1, a2) => { };
+                act = () =>
+                {
+                    child = subject.ThenTry(altAction, arg1, arg2, retries);
+                };
+
+                it["ThenTry() should use the alternate action"] = () =>
+                    child.As<IInternalAccessor>().Actor.Should().BeSameAs(altAction);
+
+                it["ThenTry() should accept all the alternate arguments"] = () =>
+                {
+                    var actionTryIt = child.As<ActionTryIt<string, int>>();
+                    actionTryIt._arg1.Should().Be(arg1);
+                    actionTryIt._arg2.Should().Be(arg2);
                 };
             };
         }
@@ -830,6 +898,28 @@ namespace Retry.Tests.Unit.specs
                     asTryIt._arg1.Should().Be(arg1);
                     asTryIt._arg2.Should().Be(arg2);
                     asTryIt._arg3.Should().Be(arg3);
+                };
+            };
+
+            describe["TryIt.Try(action, retries).ThenTry(altAction<T1, T2, T3>, retries)"] = () =>
+            {
+                ITry child = null;
+ 
+                Action<string, int, double> altAction = (a1, a2, a3) => { };
+                act = () =>
+                {
+                    child = subject.ThenTry(altAction, arg1, arg2, arg3, retries);
+                };
+
+                it["ThenTry() should use the alternate action"] = () =>
+                    child.As<IInternalAccessor>().Actor.Should().BeSameAs(altAction);
+
+                it["ThenTry() should accept all the alternate arguments"] = () =>
+                {
+                    var actionTryIt = child.As<ActionTryIt<string, int, double>>();
+                    actionTryIt._arg1.Should().Be(arg1);
+                    actionTryIt._arg2.Should().Be(arg2);
+                    actionTryIt._arg3.Should().Be(arg3);
                 };
             };
         }
@@ -889,6 +979,29 @@ namespace Retry.Tests.Unit.specs
                     asTryIt._arg2.Should().Be(arg2);
                     asTryIt._arg3.Should().Be(arg3);
                     asTryIt._arg4.Should().Be(arg4);
+                };
+            };
+
+            describe["TryIt.Try(action, retries).ThenTry(altAction<T1, T2, T3, T4>, retries)"] = () =>
+            {
+                ITry child = null;
+
+                Action<string, int, double, long> altAction = (a1, a2, a3, a4) => { };
+                act = () =>
+                {
+                    child = subject.ThenTry(altAction, arg1, arg2, arg3, arg4, retries);
+                };
+
+                it["ThenTry() should use the alternate action"] = () =>
+                    child.As<IInternalAccessor>().Actor.Should().BeSameAs(altAction);
+
+                it["ThenTry() should accept all the alternate arguments"] = () =>
+                {
+                    var actionTryIt = child.As<ActionTryIt<string, int, double, long>>();
+                    actionTryIt._arg1.Should().Be(arg1);
+                    actionTryIt._arg2.Should().Be(arg2);
+                    actionTryIt._arg3.Should().Be(arg3);
+                    actionTryIt._arg4.Should().Be(arg4);
                 };
             };
         }
@@ -952,6 +1065,29 @@ namespace Retry.Tests.Unit.specs
                     asTryIt._arg5.Should().Be(arg5);
                 };
             };
+
+            describe["TryIt.Try(action, retries).ThenTry(altAction<T1, T2, T3, T4, T5>, retries)"] = () =>
+            {
+                ITry child = null;
+                 Action<string, int, double, long, string> altAction = (a1, a2, a3, a4, a5) => { };
+                act = () =>
+                {
+                    child = subject.ThenTry(altAction, arg1, arg2, arg3, arg4, arg5, retries);
+                };
+
+                it["ThenTry() should use the alternate action"] = () =>
+                    child.As<IInternalAccessor>().Actor.Should().BeSameAs(altAction);
+
+                it["ThenTry() should accept all the alternate arguments"] = () =>
+                {
+                    var actionTryIt = child.As<ActionTryIt<string, int, double, long, string>>();
+                    actionTryIt._arg1.Should().Be(arg1);
+                    actionTryIt._arg2.Should().Be(arg2);
+                    actionTryIt._arg3.Should().Be(arg3);
+                    actionTryIt._arg4.Should().Be(arg4);
+                    actionTryIt._arg5.Should().Be(arg5);
+                };
+            };
         }
 
         void Static_Action_T1_T2_T3_T4_T5_T6_TryIt_Methods()
@@ -988,11 +1124,57 @@ namespace Retry.Tests.Unit.specs
                 };
             };
 
-            describe["TryIt.Try(action, arg1, arg2, arg3, arg4,arg5, arg6, retries).Go()"] = () =>
+            describe["TryIt.Try(action, arg1, arg2, arg3, arg4, arg5, arg6, retries).Go()"] = () =>
             {
                 act = () => subject.Go();
                 it["should execute the action only once"] = () =>
                     subject.Attempts.Should().Be(1);
+            };
+
+            describe["TryIt.Try(action, arg1, arg2, arg3, arg4, arg5, arg6, retries).ThenTry(arg1, arg2, arg3, arg4, arg5, arg6, retries)"] = () =>
+            {
+                ITry child = null;
+                before = () => child = subject.ThenTry(arg1, arg2, arg3, arg4, arg5, arg6, 3);
+                it["should create a child TryIt instance"] = () =>
+                    child.Should().NotBeNull();
+
+                it["the child should be distinct from it's parent"] = () =>
+                    child.Should().NotBe(subject);
+
+                it["should set the arg1, arg2, arg3, arg4, arg5, arg6 internal properties on the child"] = () =>
+                {
+                    var asTryIt = child.As<ActionTryIt<string, int, double, long, string, bool>>();
+                    asTryIt._arg1.Should().Be(arg1);
+                    asTryIt._arg2.Should().Be(arg2);
+                    asTryIt._arg3.Should().Be(arg3);
+                    asTryIt._arg4.Should().Be(arg4);
+                    asTryIt._arg5.Should().Be(arg5);
+                    asTryIt._arg6.Should().Be(arg6);
+                };
+            };
+
+            describe["TryIt.Try(action, retries).ThenTry(altAction<T1, T2, T3, T4, T5,T6>, retries)"] = () =>
+            {
+                ITry child = null;
+                Action<string, int, double, long, string, bool> altAction = (a1, a2, a3, a4, a5, a6) => { };
+                act = () =>
+                {
+                    child = subject.ThenTry(altAction, arg1, arg2, arg3, arg4, arg5, arg6, retries);
+                };
+
+                it["ThenTry() should use the alternate action"] = () =>
+                    child.As<IInternalAccessor>().Actor.Should().BeSameAs(altAction);
+
+                it["ThenTry() should accept all the alternate arguments"] = () =>
+                {
+                    var actionTryIt = child.As<ActionTryIt<string, int, double, long, string, bool>>();
+                    actionTryIt._arg1.Should().Be(arg1);
+                    actionTryIt._arg2.Should().Be(arg2);
+                    actionTryIt._arg3.Should().Be(arg3);
+                    actionTryIt._arg4.Should().Be(arg4);
+                    actionTryIt._arg5.Should().Be(arg5);
+                    actionTryIt._arg6.Should().Be(arg6);
+                };
             };
         }
 
@@ -1037,6 +1219,54 @@ namespace Retry.Tests.Unit.specs
                 act = () => subject.Go();
                 it["should execute the action only once"] = () =>
                     subject.Attempts.Should().Be(1);
+            };
+
+            describe["TryIt.Try(action, arg1, arg2, arg3, arg4, arg5, arg6, arg7, retries).ThenTry(arg1, arg2, arg3, arg4, arg5, arg6, arg7, retries)"] = () =>
+            {
+                ITry child = null;
+                before = () => child = subject.ThenTry(arg1, arg2, arg3, arg4, arg5, arg6, arg7, 3);
+                it["should create a child TryIt instance"] = () =>
+                    child.Should().NotBeNull();
+
+                it["the child should be distinct from it's parent"] = () =>
+                    child.Should().NotBe(subject);
+
+                it["should set the arg1, arg2, arg3, arg4, arg5, arg6, arg7 internal properties on the child"] = () =>
+                {
+                    var asTryIt = child.As<ActionTryIt<string, int, double, long, string, bool, long>>();
+                    asTryIt._arg1.Should().Be(arg1);
+                    asTryIt._arg2.Should().Be(arg2);
+                    asTryIt._arg3.Should().Be(arg3);
+                    asTryIt._arg4.Should().Be(arg4);
+                    asTryIt._arg5.Should().Be(arg5);
+                    asTryIt._arg6.Should().Be(arg6);
+                    asTryIt._arg7.Should().Be(arg7);
+                };
+            };
+
+            describe["TryIt.Try(action, retries).ThenTry(altAction<T1, T2, T3, T4, T5, T6, T7>, retries)"] = () =>
+            {
+                ITry child = null;
+                Action<string, int, double, long, string, bool, long> altAction = (a1, a2, a3, a4, a5, a6, a7) => { };
+                act = () =>
+                {
+                    child = subject.ThenTry(altAction, arg1, arg2, arg3, arg4, arg5, arg6, arg7, retries);
+                };
+
+                it["ThenTry() should use the alternate action"] = () =>
+                    child.As<IInternalAccessor>().Actor.Should().BeSameAs(altAction);
+
+                it["ThenTry() should accept all the alternate arguments"] = () =>
+                {
+                    var actionTryIt = child.As<ActionTryIt<string, int, double, long, string, bool, long>>();
+                    actionTryIt._arg1.Should().Be(arg1);
+                    actionTryIt._arg2.Should().Be(arg2);
+                    actionTryIt._arg3.Should().Be(arg3);
+                    actionTryIt._arg4.Should().Be(arg4);
+                    actionTryIt._arg5.Should().Be(arg5);
+                    actionTryIt._arg6.Should().Be(arg6);
+                    actionTryIt._arg7.Should().Be(arg7);
+                };
             };
         }
 
@@ -1083,6 +1313,56 @@ namespace Retry.Tests.Unit.specs
                 act = () => subject.Go();
                 it["should execute the action only once"] = () =>
                     subject.Attempts.Should().Be(1);
+            };
+
+            describe["TryIt.Try(action, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, retries).ThenTry(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, retries)"] = () =>
+            {
+                ITry child = null;
+                before = () => child = subject.ThenTry(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, 3);
+                it["should create a child TryIt instance"] = () =>
+                    child.Should().NotBeNull();
+
+                it["the child should be distinct from it's parent"] = () =>
+                    child.Should().NotBe(subject);
+
+                it["should set the arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8 internal properties on the child"] = () =>
+                {
+                    var asTryIt = child.As<ActionTryIt<string, int, double, long, string, bool, long, int>>();
+                    asTryIt._arg1.Should().Be(arg1);
+                    asTryIt._arg2.Should().Be(arg2);
+                    asTryIt._arg3.Should().Be(arg3);
+                    asTryIt._arg4.Should().Be(arg4);
+                    asTryIt._arg5.Should().Be(arg5);
+                    asTryIt._arg6.Should().Be(arg6);
+                    asTryIt._arg7.Should().Be(arg7);
+                    asTryIt._arg8.Should().Be(arg8);
+                };
+            };
+
+            describe["TryIt.Try(action, retries).ThenTry(altAction<T1, T2, T3, T4, T5, T6, T7, T8>, retries)"] = () =>
+            {
+                ITry child = null;
+                Action<string, int, double, long, string, bool, long, int> altAction = (a1, a2, a3, a4, a5, a6, a7, a8) => { };
+                act = () =>
+                {
+                    child = subject.ThenTry(altAction, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, retries);
+                };
+
+                it["ThenTry() should use the alternate action"] = () =>
+                    child.As<IInternalAccessor>().Actor.Should().BeSameAs(altAction);
+
+                it["ThenTry() should accept all the alternate arguments"] = () =>
+                {
+                    var actionTryIt = child.As<ActionTryIt<string, int, double, long, string, bool, long, int>>();
+                    actionTryIt._arg1.Should().Be(arg1);
+                    actionTryIt._arg2.Should().Be(arg2);
+                    actionTryIt._arg3.Should().Be(arg3);
+                    actionTryIt._arg4.Should().Be(arg4);
+                    actionTryIt._arg5.Should().Be(arg5);
+                    actionTryIt._arg6.Should().Be(arg6);
+                    actionTryIt._arg7.Should().Be(arg7);
+                    actionTryIt._arg8.Should().Be(arg8);
+                };
             };
         }
 
@@ -1131,6 +1411,58 @@ namespace Retry.Tests.Unit.specs
                 act = () => subject.Go();
                 it["should execute the action only once"] = () =>
                     subject.Attempts.Should().Be(1);
+            };
+
+            describe["TryIt.Try(action, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, retries).ThenTry(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, retries)"] = () =>
+            {
+                ITry child = null;
+                before = () => child = subject.ThenTry(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, 3);
+                it["should create a child TryIt instance"] = () =>
+                    child.Should().NotBeNull();
+
+                it["the child should be distinct from it's parent"] = () =>
+                    child.Should().NotBe(subject);
+
+                it["should set the arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9 internal properties on the child"] = () =>
+                {
+                    var asTryIt = child.As<ActionTryIt<string, int, double, long, string, bool, long, int, string>>();
+                    asTryIt._arg1.Should().Be(arg1);
+                    asTryIt._arg2.Should().Be(arg2);
+                    asTryIt._arg3.Should().Be(arg3);
+                    asTryIt._arg4.Should().Be(arg4);
+                    asTryIt._arg5.Should().Be(arg5);
+                    asTryIt._arg6.Should().Be(arg6);
+                    asTryIt._arg7.Should().Be(arg7);
+                    asTryIt._arg8.Should().Be(arg8);
+                    asTryIt._arg9.Should().Be(arg9);
+                };
+            };
+
+            describe["TryIt.Try(action, retries).ThenTry(altAction<T1, T2, T3, T4, T5, T6, T7, T8, T9>, retries)"] = () =>
+            {
+                ITry child = null;
+                Action<string, int, double, long, string, bool, long, int, string> altAction = (a1, a2, a3, a4, a5, a6, a7, a8, a9) => { };
+                act = () =>
+                {
+                    child = subject.ThenTry(altAction, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, retries);
+                };
+
+                it["ThenTry() should use the alternate action"] = () =>
+                    child.As<IInternalAccessor>().Actor.Should().BeSameAs(altAction);
+
+                it["ThenTry() should accept all the alternate arguments"] = () =>
+                {
+                    var actionTryIt = child.As<ActionTryIt<string, int, double, long, string, bool, long, int, string>>();
+                    actionTryIt._arg1.Should().Be(arg1);
+                    actionTryIt._arg2.Should().Be(arg2);
+                    actionTryIt._arg3.Should().Be(arg3);
+                    actionTryIt._arg4.Should().Be(arg4);
+                    actionTryIt._arg5.Should().Be(arg5);
+                    actionTryIt._arg6.Should().Be(arg6);
+                    actionTryIt._arg7.Should().Be(arg7);
+                    actionTryIt._arg8.Should().Be(arg8);
+                    actionTryIt._arg9.Should().Be(arg9);
+                };
             };
         }
     }

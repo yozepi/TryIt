@@ -17,17 +17,17 @@ namespace Retry
 
         protected internal bool HasResult { get; set; }
 
-        public TResult Go()
+        new public TResult Go()
         {
             try
             {
                 var task = Run();
                 task.Wait();
-                return GetResult();
                 if (Status == RetryStatus.Fail)
                 {
                     throw new RetryFailedException(ExceptionList);
                 }
+                return GetResult();
             }
             catch (AggregateException ex)
             {
@@ -73,13 +73,8 @@ namespace Retry
             if (HasResult)
                 return Result;
 
-            return (((IInternalAccessor)this).Parent as ITryAndReturnValue<TResult>).GetResult();
+            return (((IInternalAccessor)this).Parent as FuncTryItBase<TActor, TResult>).GetResult();
 
-        }
-
-        TResult ITryAndReturnValue<TResult>.GetResult()
-        {
-            return GetResult();
         }
     }
 

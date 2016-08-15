@@ -293,7 +293,20 @@ namespace Retry
         }
 
 
-
+        /// <summary>
+        /// An optional policy (an <see cref="OnSuccessDelegate"/>) you can use to reject an otherwise successful try.
+        /// </summary>
+        /// <param name="tryit">The <see cref="ITry"/> this method extends.</param>
+        /// <param name="onSuccess">The <see cref="OnSuccessDelegate"/> delegate to execute when a try succeeds (does not throw any exceptions).</param>
+        /// <returns>Returns an ITry instance that you use to chain Then-try calls or to add OnError and OnSuccess policies.</returns>
+        /// <remarks>Normally TryIt will consider any action that does not throw an exception to be a success. You can override this behavior to test if your action really meets a success criteria.
+        /// <para>
+        /// Throw an exception to override typical behavior. The success will be ignored, your exception will be added to <see cref="ITry.ExceptionList"/> and your action will be retried.
+        /// </para>
+        /// <para>
+        /// Capture your exception in an <see cref="OnError(ITry, OnErrorDelegate)"/> policy to stop retrying and rethrow your exception.
+        /// </para>
+        /// </remarks>
         public static ITry OnSuccess(this ITry tryit, OnSuccessDelegate onSuccess)
         {
             var accessor = tryit as IInternalAccessor;

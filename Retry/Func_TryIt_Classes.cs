@@ -6,8 +6,14 @@ using System.Threading.Tasks;
 
 namespace Retry
 {
+    /// <summary>
+    /// The base class for all Func-based (ITryAndReturnValue) implementations.
+    /// </summary>
+    /// <typeparam name="TActor"></typeparam>
+    /// <typeparam name="TResult"></typeparam>
     public abstract class FuncTryItBase<TActor, TResult> : TryItBase, ITryAndReturnValue<TResult>
     {
+#pragma warning disable 1591
 
         internal FuncTryItBase(int retries, TActor actor)
             : base(retries, actor)
@@ -25,7 +31,7 @@ namespace Retry
                 task.Wait();
                 if (Status == RetryStatus.Fail)
                 {
-                    throw new RetryFailedException(ExceptionList);
+                    throw new RetryFailedException(GetAllExceptions());
                 }
                 return GetResult();
             }
@@ -41,7 +47,7 @@ namespace Retry
             await Run();
             if (Status == RetryStatus.Fail)
             {
-                throw new RetryFailedException(ExceptionList);
+                throw new RetryFailedException(GetAllExceptions());
             }
             return GetResult();
         }
@@ -316,4 +322,5 @@ namespace Retry
             return func(_arg1, _arg2, _arg3, _arg4, _arg5, _arg6, _arg7, _arg8, _arg9);
         }
     }
+#pragma warning restore 1591
 }

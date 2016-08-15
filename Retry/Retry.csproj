@@ -53,6 +53,7 @@
     <Compile Include="Delay.cs" />
     <Compile Include="NoDelay.cs" />
     <Compile Include="ITry.cs" />
+    <Compile Include="SuccessRejectedException.cs" />
     <Compile Include="TimedDelay.cs" />
     <Compile Include="TryIt_Action_Methods.cs" />
     <Compile Include="TryItBase.cs" />

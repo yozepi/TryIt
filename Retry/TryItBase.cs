@@ -24,7 +24,7 @@ namespace Retry
         protected TryItBase(int retries, object actor)
         {
             if (retries < 1)
-                throw new ArgumentOutOfRangeException("times", retries, "Value must be greater than zero (0).");
+                throw new ArgumentOutOfRangeException("retries", retries, "Value must be greater than zero (0).");
 
             if (actor == null)
                 throw new ArgumentNullException("actor");
@@ -54,6 +54,9 @@ namespace Retry
         /// <remarks>This value is local to this instance of the TryIt chain.</remarks>
         public IDelay Delay { get; private set; }
 
+        /// <summary>
+        /// The list of exceptions that have occurred while trying the Action/Func
+        /// </summary>
         public List<Exception> ExceptionList { get; private set; }
 
         /// <summary>
@@ -169,7 +172,7 @@ namespace Retry
                 task.Wait();
                 if (Status == RetryStatus.Fail)
                 {
-                    throw new RetryFailedException(ExceptionList);
+                    throw new RetryFailedException(GetAllExceptions());
                 }
             }
             catch (AggregateException ex)
@@ -189,10 +192,15 @@ namespace Retry
             await Run();
             if (Status == RetryStatus.Fail)
             {
-                throw new RetryFailedException(ExceptionList);
+                throw new RetryFailedException(GetAllExceptions());
             }
         }
 
+
+        /// <summary>
+        /// Returns the list of all exceptions up to this point in the Try-ThenTry chain.
+        /// </summary>
+        /// <returns></returns>
         public List<Exception> GetAllExceptions()
         {
             List<Exception> result = new List<Exception>();
@@ -204,6 +212,11 @@ namespace Retry
             return result;
         }
 
+
+        /// <summary>
+        /// Returns a linked list of all instances of ITry chained to this instance.
+        /// </summary>
+        /// <returns></returns>
         public LinkedList<ITry> GetChain()
         {
             LinkedList<ITry> result = new LinkedList<ITry>();
@@ -221,8 +234,16 @@ namespace Retry
             return result;
         }
 
+        /// <summary>
+        /// Implementors extend this method to execute the Func/Action.
+        /// </summary>
+        /// <returns></returns>
         protected abstract Task ExecuteActor();
 
+        /// <summary>
+        /// Implementors execute this action to handle success policy calls.
+        /// </summary>
+        /// <param name="count"></param>
         protected abstract void HandleOnSuccess(int count);
 
         private bool HandleOnError(Exception ex, int retryCount)

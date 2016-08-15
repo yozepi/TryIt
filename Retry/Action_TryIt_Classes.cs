@@ -6,8 +6,12 @@ using System.Threading.Tasks;
 
 namespace Retry
 {
+    /// <summary>
+    /// The base class for all Action-based (ITry) instances.
+    /// </summary>
     public class ActionTryIt : TryItBase
     {
+#pragma warning disable 1591
         internal ActionTryIt(int retries, Action action)
            : base(retries, action)
         {
@@ -21,11 +25,11 @@ namespace Retry
         async protected override Task ExecuteActor()
         {
             await Task.Factory.StartNew(() =>
-           {
-               var action = GetAction();
-               action();
-           }, TaskCreationOptions.AttachedToParent);
-        }
+            {
+                var action = GetAction();
+                action();
+            }, TaskCreationOptions.AttachedToParent);
+    }
 
         protected virtual Action GetAction()
         {
@@ -268,3 +272,4 @@ namespace Retry
         }
     }
 }
+#pragma warning restore 1591

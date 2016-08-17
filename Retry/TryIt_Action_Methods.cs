@@ -269,6 +269,52 @@ namespace Retry
             return new TaskTryIt(retries, func);
         }
 
+
+        /// <summary>
+        /// Try the provided <see cref="Func{Task}"/> the specified number of times.
+        /// </summary>
+        /// <typeparam name="T">The <see cref="Type"/> of the argument passed to the action.</typeparam>
+        /// <param name="func">The <see cref="Func{T, Task}"/> to try.</param>
+        /// <param name="arg">The argument passed into the action.</param>
+        /// <param name="retries">The number of times the action will be tried before giving up and throwing a <see cref="RetryFailedException"/>.</param>
+        /// <returns>Returns an ITry instance that you use to chain Then-try calls or to add OnError and OnSuccess policies.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when The action parameter is null.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when retries is less than 1.</exception>
+        /// <remarks>
+        /// TryIt treats functions that return tasks a little differently than you may expect. Instead of returning the Task, 
+        /// it attempts execute it. This is because a task by itself can't be retried. And, since
+        /// the task (presumably) hasn't finnished running yet when it has returned, theres no way
+        /// to test it within try-retry context.
+        /// </remarks>
+        public static ITry Try<T>(Func<T, Task> func, T arg, int retries)
+        {
+            return new TaskTryIt<T>(retries, arg, func);
+        }
+
+
+        /// <summary>
+        /// Try the provided <see cref="Func{Task}"/> the specified number of times.
+        /// </summary>
+        /// <typeparam name="T1">The <see cref="Type"/> of the first argument passed to the action.</typeparam>
+        /// <typeparam name="T2">The <see cref="Type"/> of the second argument passed to the action.</typeparam>
+        /// <param name="action">The <see cref="Action{T, T2}"/> instance to try.</param>
+        /// <param name="arg1">The first argument passed into the action.</param>
+        /// <param name="arg2">The second argument passed into the action.</param>
+        /// <param name="retries">The number of times the action will be tried before giving up and throwing a <see cref="RetryFailedException"/>.</param>
+        /// <exception cref="ArgumentNullException">Thrown when The action parameter is null.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when retries is less than 1.</exception>
+        /// <remarks>
+        /// TryIt treats functions that return tasks a little differently than you may expect. Instead of returning the Task, 
+        /// it attempts execute it. This is because a task by itself can't be retried. And, since
+        /// the task (presumably) hasn't finnished running yet when it has returned, theres no way
+        /// to test it within try-retry context.
+        /// </remarks>
+        public static ITry Try<T1, T2>(Func<T1, T2, Task> func, T1 arg1, T2 arg2, int retries)
+        {
+            return new TaskTryIt<T1, T2>(retries, arg1, arg2, func);
+        }
+
+
         #endregion //Try Task methods:
 
 
@@ -352,7 +398,7 @@ namespace Retry
             IInternalAccessor child;
             if (parent.GetType() == typeof(TaskTryIt))
             {
-                child = new TaskTryIt(retries, parent.Actor);
+                child = new TaskTryIt(retries, parent.Actor as Func<Task>);
             }
             else
             {
@@ -370,12 +416,29 @@ namespace Retry
             return child;
         }
 
+        public static ITry ThenTry(this ITry tryit, Func<Task> altFunc, int retries)
+        {
+            IInternalAccessor parent = tryit as IInternalAccessor;
+            var child = new TaskTryIt(retries, altFunc);
+            ((IInternalAccessor)child).Parent = parent;
+            return child;
+        }
+
+
         public static ITry ThenTry<T>(this ITry tryit, T arg, int retries)
         {
             IInternalAccessor parent = tryit as IInternalAccessor;
-            var child = new ActionTryIt<T>(retries, arg, parent.Actor as Action<T>);
-            ((IInternalAccessor)child).Parent = parent;
-            return child;
+            IInternalAccessor child;
+            if (parent.GetType() == typeof(TaskTryIt<T>))
+            {
+                child = new TaskTryIt<T>(retries, arg, parent.Actor as Func<T, Task>);
+            }
+            else
+            {
+                child = new ActionTryIt<T>(retries, arg, parent.Actor as Action<T>);
+            }
+            child.Parent = parent;
+            return child as ITry;
         }
 
         public static ITry ThenTry<T>(this ITry tryit, Action<T> altAction, T arg, int retries)
@@ -386,18 +449,42 @@ namespace Retry
             return child;
         }
 
+        public static ITry ThenTry<T>(this ITry tryit, Func<T, Task> altFunc, T arg, int retries)
+        {
+            IInternalAccessor parent = tryit as IInternalAccessor;
+            var child = new TaskTryIt<T>(retries, arg, altFunc);
+            ((IInternalAccessor)child).Parent = parent;
+            return child;
+        }
+
         public static ITry ThenTry<T1, T2>(this ITry tryit, T1 arg1, T2 arg2, int retries)
         {
             IInternalAccessor parent = tryit as IInternalAccessor;
-            var child = new ActionTryIt<T1, T2>(retries, arg1, arg2, parent.Actor as Action<T1, T2>);
-            ((IInternalAccessor)child).Parent = parent;
-            return child;
+            IInternalAccessor child;
+            if (parent.GetType() == typeof(TaskTryIt<T1, T2>))
+            {
+                child = new TaskTryIt<T1, T2>(retries, arg1, arg2, parent.Actor as Func<T1, T2, Task>);
+            }
+            else
+            {
+                child = new ActionTryIt<T1, T2>(retries, arg1, arg2, parent.Actor as Action<T1, T2>);
+            }
+            child.Parent = parent;
+            return child as ITry;
         }
 
         public static ITry ThenTry<T1, T2>(this ITry tryit, Action<T1, T2> altAction, T1 arg1, T2 arg2, int retries)
         {
             IInternalAccessor parent = tryit as IInternalAccessor;
             var child = new ActionTryIt<T1, T2>(retries, arg1, arg2, altAction);
+            ((IInternalAccessor)child).Parent = parent;
+            return child;
+        }
+
+        public static ITry ThenTry<T1, T2>(this ITry tryit, Func<T1, T2, Task> altFunc, T1 arg1, T2 arg2, int retries)
+        {
+            IInternalAccessor parent = tryit as IInternalAccessor;
+            var child = new TaskTryIt<T1, T2>(retries, arg1, arg2, altFunc);
             ((IInternalAccessor)child).Parent = parent;
             return child;
         }

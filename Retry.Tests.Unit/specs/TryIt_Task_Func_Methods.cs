@@ -10,7 +10,7 @@ namespace Retry.Tests.Unit.specs
 {
     class TryIt_Task_Func_Methods : nspec
     {
-        void Static_Func_Task_TryIt_Methods()
+        void Static_Func_Task_TryIt_Method()
         {
             int retries = 3;
             bool taskExecuted = false;
@@ -239,21 +239,19 @@ namespace Retry.Tests.Unit.specs
 
         }
 
-        void Static_Func_T_Task_TryIt_Methods()
+        void Static_Func_T_Task_TryIt_Method()
         {
             int arg = int.MinValue;
             int retries = 42;
-            bool taskExecuted = false;
             string expectedResult = "Hello from a Task!";
             Func<int, Task<string>> subjectAction = null;
             ITryAndReturnValue<string> subject = null;
             before = () =>
             {
-                taskExecuted = false;
                 subject = null;
                 subjectAction = (i) =>
                 {
-                    return Task<string>.Factory.StartNew(() => { taskExecuted = true; return expectedResult; });
+                    return Task<string>.Factory.StartNew(() => { return expectedResult; });
                 };
                 act = () => subject = TryIt.Try(subjectAction, arg, retries);
             };

@@ -21,7 +21,7 @@ namespace Retry
         /// </summary>
         /// <param name="retries"></param>
         /// <param name="actor"></param>
-        protected TryItBase(int retries, System.Delegate actor)
+        protected TryItBase(int retries, Delegate actor)
         {
             if (retries < 1)
                 throw new ArgumentOutOfRangeException("retries", retries, "Value must be greater than zero (0).");
@@ -177,7 +177,6 @@ namespace Retry
             }
             catch (AggregateException ex)
             {
-
                 throw ex.InnerException;
             }
         }

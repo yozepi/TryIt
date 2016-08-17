@@ -33,10 +33,10 @@ namespace Retry.Tests.Unit.specs
 
             };
 
-            before = () => subject = TryIt.Try(subjectFunc, retries);
+            act = () => subject = TryIt.Try(subjectFunc, retries);
 
    
-            describe["TryIt.Try(func, retries).OnError(OnErrorDelegate)"] = () =>
+            describe["TryIt.Try(func, retries).OnError()"] = () =>
             {
                 OnErrorDelegate errorDelegate = (ex, i) => { return true; };
                 object onErrorResult = null;
@@ -49,13 +49,81 @@ namespace Retry.Tests.Unit.specs
                 it["should return the subject"] = () =>
                     subject.Should().BeSameAs(onErrorResult);
 
+                describe["TryIt.Try(func, retries).OnError(OnErrorDelegate).Go()"] = () =>
+                {
+                    int errorDelegateCallCount = default(int);
+                    before = () => errorDelegateCallCount = default(int);
+                    act = () =>
+                    {
+                        try
+                        {
+                            subject.Go();
+                        }
+                        catch (Exception ex)
+                        {
+                            thrown = ex;
+                        }
+                    };
+
+                    context["when there are no exceptions to test"] = () =>
+                    {
+                        before = () => errorDelegate = (ex, i) => { errorDelegateCallCount++; return true; };
+                        it["OnError delegate should never be called"] = () =>
+                            errorDelegateCallCount.Should().Be(0);
+                    };
+
+                    context["when all exceptions pass the policy set by the delegate"] = () =>
+                    {
+                        before = () =>
+                        {
+                            errorDelegate = (ex, i) => { errorDelegateCallCount++; return true; };
+                            subjectFunc = () => { throw new Exception(); };
+                        };
+
+                        it["should throw RetryFailedException"] = () =>
+                            thrown.Should().BeOfType<RetryFailedException>();
+
+                        it["should check the OnError police once for everey failed attempt"] = () =>
+                        {
+                            errorDelegateCallCount.Should().NotBe(0);
+                            errorDelegateCallCount.Should().Be(subject.Attempts);
+                        };
+                    };
+
+                    context["when the exception fails the policy set by the delegate"] = () =>
+                    {
+                        Exception expectedException = new Exception("I Failed!");
+                        before = () =>
+                        {
+                            subjectFunc = () => { throw expectedException; };
+                            errorDelegate = (ex, i) => { return false; };
+                        };
+
+                        it["should throw the exception"] = () =>
+                            thrown.Should().Be(expectedException);
+                    };
+
+                    context["when the delegate throws an exception"] = () =>
+                    {
+                        Exception expectedException = new InvalidOperationException("Can't do that!");
+                        before = () =>
+                        {
+                            subjectFunc = () => { throw new Exception(); };
+                            errorDelegate = (ex, i) => { throw expectedException; };
+                        };
+
+                        it["should throw the exception"] = () =>
+                            thrown.Should().Be(expectedException);
+                    };
+
+                };
             };
 
             describe["TryIt.Try(func, retries).OnSuccess()"] = () =>
             {
                 OnSuccessDelegate<string> successDelegate = null;
                 object onSuccessResult = null;
-                before = () => successDelegate = (i, r) => { };
+                beforeAll = () => successDelegate = (i, r) => { };
                 act = () => onSuccessResult = subject.OnSuccess(successDelegate);
 
                 it["should set the internal oSuccess property"] = () =>
@@ -64,45 +132,92 @@ namespace Retry.Tests.Unit.specs
                 it["should return the subject"] = () =>
                     subject.Should().BeSameAs(onSuccessResult);
 
-            };
-
-            describe["TryIt.Try(func, retries).OnSuccess(onSuccessDelegate<T>).Go()"] = () =>
-            {
-                OnSuccessDelegate<string> successDelegate = null;
-                object testResult = null;
-                object result = null;
-                bool onSuccessCalled = false;
-                before = () =>
+                describe["TryIt.Try(func, retries).OnSuccess(onSuccessDelegate<T>).Go()"] = () =>
                 {
-                    subjectFunc = () => expectedResult;
-                    testResult = null;
-                    result = null;
-                    onSuccessCalled = false;
-                    successDelegate = (i, r) => { testResult = r; onSuccessCalled = true; };
+                    object testResult = null;
+                    object result = null;
+                    bool onSuccessCalled = false;
+                    beforeAll = () =>
+                    {
+                        subjectFunc = () => expectedResult;
+                        testResult = null;
+                        result = null;
+                        onSuccessCalled = false;
+                        successDelegate = (i, r) => { testResult = r; onSuccessCalled = true; };
+                    };
+                    act = () =>
+                    {
+                        subject = TryIt.Try(subjectFunc, retries);
+                        try
+                        {
+                            result = subject.OnSuccess(successDelegate).Go();
+                        }
+                        catch (Exception ex)
+                        {
+
+                            thrown = ex;
+                        }
+                    };
+
+                    it["should call the onSuccessDelegate"] = () =>
+                        onSuccessCalled.Should().BeTrue();
+
+                    it["should pass the result to the OnSuccess delegate"] = () =>
+                        testResult.Should().Be(expectedResult);
+
+                    it["should return the expected result"] = () =>
+                        result.Should().Be(expectedResult);
+
+
+                    it["should set the status to Success"] = () =>
+                        subject.Status.Should().Be(RetryStatus.Success);
+
+                    context["when the OnSuccess delegate throws an exception (policy fail)"] = () =>
+                    {
+
+                        Exception expectedException = new NotImplementedException();
+
+                        before = () =>
+                        {
+                            successDelegate = (i, r) =>
+                            {
+                                if (subject.ExceptionList.Count == 0)
+                                    throw expectedException;
+                            };
+                        };
+
+                        it["should put the exception into the exceptions list"] = () =>
+                            subject.ExceptionList.Should().Contain(expectedException);
+
+                        it["should set status to SuccessAfterRetries"] = () =>
+                            subject.Status.Should().Be(RetryStatus.SuccessAfterRetries);    
+                    };
+
+                    context["when every successful attempt throws an exception (policy fail)"] = () =>
+                    {
+
+                        Exception expectedException = new NotImplementedException();
+
+                        before = () =>
+                        {
+                            successDelegate = (i, r) =>
+                            {
+                                throw expectedException;
+                            };
+                        };
+
+                        it["should set status to Fail"] = () =>
+                            subject.Status.Should().Be(RetryStatus.Fail);
+
+                        it["every policy exception should be in the ExceptionList"] = () =>
+                            subject.ExceptionList.Where(x => x == expectedException)
+                                .Count().Should().Be(subject.ExceptionList.Count);
+
+                        it["should throw RetryFailedException"] = () =>
+                            thrown.Should().BeOfType<RetryFailedException>();
+
+                    };
                 };
-                act = () =>
-                {
-                    subjectFunc = () => expectedResult;
-                    testResult = null;
-                    result = null;
-                    onSuccessCalled = false;
-                    successDelegate = (i, r) => { testResult = r; onSuccessCalled = true; };
-                    subject = TryIt.Try(subjectFunc, retries);
-                    result = subject.OnSuccess(successDelegate).Go();
-                };
-
-                it["should call the onSuccessDelegate"] = () =>
-                    onSuccessCalled.Should().BeTrue();
-
-                it["should pass the result to the OnSuccess delegate"] = () =>
-                    testResult.Should().Be(expectedResult);
-
-                it["should return the expected result"] = () =>
-                    result.Should().Be(expectedResult);
-
-
-                it["should set the status to Success"] = () =>
-                    subject.Status.Should().Be(RetryStatus.Success);
 
             };
 
@@ -113,6 +228,7 @@ namespace Retry.Tests.Unit.specs
                 ITryAndReturnValue<string> result = null;
                 before = () =>
                 {
+                    thrown = null;
                     result = null;
                     mockDelay = new Mock<IDelay>();
                     newPause = mockDelay.Object;
@@ -230,14 +346,14 @@ namespace Retry.Tests.Unit.specs
                             };
                         };
 
-                        before = () =>
+                        act = () =>
                         {
                             funcExecutedCount = default(int);
                             subject = TryIt.Try(subjectFunc, retries);
                             child = subject.ThenTry(retries);
+                            child.Go();
                         };
 
-                        act = () => child.Go();
 
                         it["should return the result of Func"] = () =>
                             altSubjectResult.Should().Be(altSubjectResult);

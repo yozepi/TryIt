@@ -85,10 +85,13 @@
     <Compile Include="specs\TryIt_Func_Methods.cs" />
     <Compile Include="specs\TryIt_Action_Methods.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="specs\TryIt_Task_Action_Methods.cs" />
+    <Compile Include="specs\TryIt_Task_Func_Methods.cs" />
     <Compile Include="Tests\Action_Extension_Method_Tests .cs" />
     <Compile Include="Tests\Func_Extension_Method_Tests.cs" />
     <Compile Include="Tests\IDelay_Implementor_Tests .cs" />
-    <Compile Include="Tests\TryitFunc_Method_Tests.cs" />
+    <Compile Include="Tests\Tryit_Task_Method_Tests.cs" />
+    <Compile Include="Tests\Tryit_Func_Method_Tests.cs" />
     <Compile Include="Tests\Tryit_Action_Method_Tests.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -248,6 +248,32 @@ namespace Retry
         #endregion //Try methods:
 
 
+        #region Try Task methods:
+
+        /// <summary>
+        /// Try the provided <see cref="Func{Task}"/> the specified number of times.
+        /// </summary>
+        /// <param name="func">The <see cref="Func{Task}"/> to try.</param>
+        /// <param name="retries">The number of times the action will be tried before giving up and throwing a <see cref="RetryFailedException"/>.</param>
+        /// <returns>Returns an ITry instance that you use to chain Then-try calls or to add OnError and OnSuccess policies.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when The action parameter is null.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when retries is less than 1.</exception>
+        /// <remarks>
+        /// TryIt treats functions that return tasks a little differently than you may expect. Instead of returning the Task, 
+        /// it attempts execute it. This is because a task by itself can't be retried. And, since
+        /// the task (presumably) hasn't finnished running yet when it has returned, theres no way
+        /// to test it within try-retry context.
+        /// </remarks>
+        public static ITry Try(Func<Task> func, int retries)
+        {
+            return new TaskTryIt(retries, func);
+        }
+
+        #endregion //Try Task methods:
+
+
+        #region UsingDelay, OnError, OnSuccess
+
         /// <summary>
         /// Provide an optional delay policy for pausing between tries.
         /// </summary>
@@ -314,6 +340,8 @@ namespace Retry
             return tryit;
         }
 
+        
+        #endregion //UsingDelay, OnError, OnSuccess
 
 
         #region ThenTry extensions:
@@ -321,9 +349,17 @@ namespace Retry
         public static ITry ThenTry(this ITry tryit, int retries)
         {
             IInternalAccessor parent = tryit as IInternalAccessor;
-            var child = new ActionTryIt(retries, parent.Actor as Action);
-            ((IInternalAccessor)child).Parent = parent;
-            return child;
+            IInternalAccessor child;
+            if (parent.GetType() == typeof(TaskTryIt))
+            {
+                child = new TaskTryIt(retries, parent.Actor);
+            }
+            else
+            {
+                child = new ActionTryIt(retries, parent.Actor as Action);
+            }
+            child.Parent = parent;
+            return child as ITry;
         }
 
         public static ITry ThenTry(this ITry tryit, Action altAction, int retries)

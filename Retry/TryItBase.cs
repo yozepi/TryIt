@@ -21,7 +21,7 @@ namespace Retry
         /// </summary>
         /// <param name="retries"></param>
         /// <param name="actor"></param>
-        protected TryItBase(int retries, object actor)
+        protected TryItBase(int retries, System.Delegate actor)
         {
             if (retries < 1)
                 throw new ArgumentOutOfRangeException("retries", retries, "Value must be greater than zero (0).");
@@ -68,7 +68,7 @@ namespace Retry
         /// Contains the Action or Func that will be executed.
         /// </summary>
         /// <remarks>Ineritors cast this property to the apropriate value in the <see cref="ExecuteActor"/> method</remarks>
-        protected object Actor { get; private set; }
+        protected Delegate Actor { get; private set; }
 
 
         /// <summary>
@@ -288,7 +288,7 @@ namespace Retry
         }
 
 
-        object IInternalAccessor.Actor { get { return this.Actor; } }
+        Delegate IInternalAccessor.Actor { get { return Actor; } }
 
         private OnErrorDelegate _onError = null;
         OnErrorDelegate IInternalAccessor.OnError

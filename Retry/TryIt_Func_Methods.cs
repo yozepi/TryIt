@@ -65,6 +65,23 @@ namespace Retry
         #endregion //Try methods:
 
 
+        #region Try Task methods:
+
+        public static ITryAndReturnValue<TResult> Try<TResult>(Func<Task<TResult>> func, int retries)
+        {
+            return new TaskTryItAndReturnResult<TResult>(retries, func);
+        }
+
+
+        public static ITryAndReturnValue<TResult> Try<T, TResult>(Func<T, Task<TResult>> func, T arg, int retries)
+        {
+            return new TaskTryItAndReturnResult<T, TResult>(retries, arg, func);
+        }
+
+        #endregion //Try Task methods:
+
+        #region UsingDelay, OnError, OnSuccess
+
         public static ITryAndReturnValue<TResult> UsingDelay<TResult>(this ITryAndReturnValue<TResult> tryit, IDelay delay)
         {
             if (delay == null)
@@ -90,23 +107,41 @@ namespace Retry
             return tryit;
         }
 
+        #endregion //UsingDelay, OnError, OnSuccess
+
 
         #region ThenTry extensions:
 
         public static ITryAndReturnValue<TResult> ThenTry<TResult>(this ITryAndReturnValue<TResult> tryit, int retries)
         {
             IInternalAccessor parent = tryit as IInternalAccessor;
-            var child = new FuncTryIt<TResult>(retries, parent.Actor as Func<TResult>);
-            ((IInternalAccessor)child).Parent = parent;
-            return child;
+            IInternalAccessor child;
+            if (parent.GetType() == typeof(TaskTryItAndReturnResult<TResult>))
+            {
+                child = new TaskTryItAndReturnResult<TResult>(retries, parent.Actor as Func<Task<TResult>>);
+            }
+            else
+            {
+                child = new FuncTryIt<TResult>(retries, parent.Actor as Func<TResult>);
+            }
+            child.Parent = parent;
+            return child as ITryAndReturnValue<TResult>;
         }
 
         public static ITryAndReturnValue<TResult> ThenTry<T, TResult>(this ITryAndReturnValue<TResult> tryit, T arg, int retries)
         {
             IInternalAccessor parent = tryit as IInternalAccessor;
-            var child = new FuncTryIt<T, TResult>(retries, arg, parent.Actor as Func<T, TResult>);
-            ((IInternalAccessor)child).Parent = parent;
-            return child;
+            IInternalAccessor child;
+            if (parent.GetType() == typeof(TaskTryItAndReturnResult<T, TResult>))
+            {
+                child = new TaskTryItAndReturnResult<T, TResult>(retries, arg, parent.Actor as Func<T, Task<TResult>>);
+            }
+            else
+            {
+                child = new FuncTryIt<T, TResult>(retries, arg, parent.Actor as Func<T, TResult>);
+            }
+            child.Parent = parent;
+            return child as ITryAndReturnValue<TResult>;
         }
 
         public static ITryAndReturnValue<TResult> ThenTry<T1, T2, TResult>(this ITryAndReturnValue<TResult> tryit, T1 arg1, T2 arg2, int retries)

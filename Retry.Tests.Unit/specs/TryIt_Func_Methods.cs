@@ -66,6 +66,46 @@ namespace Retry.Tests.Unit.specs
 
             };
 
+            describe["TryIt.Try(func, retries).OnSuccess(onSuccessDelegate<T>).Go()"] = () =>
+            {
+                OnSuccessDelegate<string> successDelegate = null;
+                object testResult = null;
+                object result = null;
+                bool onSuccessCalled = false;
+                before = () =>
+                {
+                    subjectFunc = () => expectedResult;
+                    testResult = null;
+                    result = null;
+                    onSuccessCalled = false;
+                    successDelegate = (i, r) => { testResult = r; onSuccessCalled = true; };
+                };
+                act = () =>
+                {
+                    subjectFunc = () => expectedResult;
+                    testResult = null;
+                    result = null;
+                    onSuccessCalled = false;
+                    successDelegate = (i, r) => { testResult = r; onSuccessCalled = true; };
+                    subject = TryIt.Try(subjectFunc, retries);
+                    result = subject.OnSuccess(successDelegate).Go();
+                };
+
+                it["should call the onSuccessDelegate"] = () =>
+                    onSuccessCalled.Should().BeTrue();
+
+                it["should pass the result to the OnSuccess delegate"] = () =>
+                    testResult.Should().Be(expectedResult);
+
+                it["should return the expected result"] = () =>
+                    result.Should().Be(expectedResult);
+
+
+                it["should set the status to Success"] = () =>
+                    subject.Status.Should().Be(RetryStatus.Success);
+
+            };
+
             describe["TryIt.Try(func, retries).UsingDelay(delay)"] = () =>
             {
                 Mock<IDelay> mockDelay = null;
@@ -133,36 +173,28 @@ namespace Retry.Tests.Unit.specs
                     it["should throw an ArgumentOutOfRangeException"] = () =>
                         action.ShouldThrow<ArgumentOutOfRangeException>();
                 };
-            };
 
-            describe["TryIt.Try(func, retries).OnSuccess(onSuccessDelegate<T>).Go()"] = () =>
-            {
-                OnSuccessDelegate<string> successDelegate = null;
-                object testResult = null;
-                object result = null;
-                bool onSuccessCalled = false;
-                before = () =>
+                context["when every attempt fails"] = () =>
                 {
-                    testResult = null;
-                    result = null;
-                    onSuccessCalled = false;
-                    successDelegate = (i, r) => { testResult = r; onSuccessCalled = true; };
+                    act = () =>
+                    {
+                        subjectFunc = () =>
+                        {
+                            throw new Exception("I tried. I failed.");
+                        };
+                        subject = TryIt.Try(subjectFunc, retries);
+                        try
+                        {
+                            subject.Go();
+                        }
+                        catch (Exception ex)
+                        {
+                            thrown = ex;
+                        }
+                    };
+                    it["should throw RetryFailedException exception"] = () =>
+                        thrown.Should().BeOfType<RetryFailedException>();
                 };
-                act = () => result = subject.OnSuccess(successDelegate).Go();
-
-                it["should call the onSuccessDelegate"] = () =>
-                    onSuccessCalled.Should().BeTrue();
-
-                it["should pass the result to the OnSuccess delegate"] = () =>
-                    testResult.Should().Be(expectedResult);
-
-                it["should return the expected result"] = () =>
-                    result.Should().Be(expectedResult);
-
-
-                it["should set the status to Success"] = () =>
-                    subject.Status.Should().Be(RetryStatus.Success);
-
             };
 
             describe["TryIt.Try(func, retries).ThenTry(retries)"] = () =>

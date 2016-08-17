@@ -9,14 +9,14 @@ namespace Retry
     /// <summary>
     /// The base class for all Func-based (ITryAndReturnValue) implementations.
     /// </summary>
-    /// <typeparam name="TActor"></typeparam>
+    /// <typeparam name="Delegate"></typeparam>
     /// <typeparam name="TResult"></typeparam>
-    public abstract class FuncTryItBase<TActor, TResult> : TryItBase, ITryAndReturnValue<TResult>
+    public abstract class FuncTryItBase<TResult> : TryItBase, ITryAndReturnValue<TResult>
     {
 #pragma warning disable 1591
 
-        internal FuncTryItBase(int retries, TActor actor)
-            : base(retries, actor)
+        internal FuncTryItBase(int retries, Delegate actor)
+              : base(retries, actor)
         { }
 
         protected TResult Result { get; set; }
@@ -56,10 +56,15 @@ namespace Retry
         {
             Result = default(TResult);
             HasResult = false;
-            await Task.Factory.StartNew(() =>
+            Result = await RunTask();
+            HasResult = true;
+         }
+
+        protected virtual Task<TResult> RunTask()
+        {
+            return Task<TResult>.Factory.StartNew(() =>
             {
-                Result = ExecuteFunc();
-                HasResult = true;
+                return ExecuteFunc();
             }, TaskCreationOptions.AttachedToParent);
         }
 
@@ -79,13 +84,13 @@ namespace Retry
             if (HasResult)
                 return Result;
 
-            return (((IInternalAccessor)this).Parent as FuncTryItBase<TActor, TResult>).GetResult();
+            return (((IInternalAccessor)this).Parent as FuncTryItBase<TResult>).GetResult();
 
         }
     }
 
 
-    public class FuncTryIt<TResult> : FuncTryItBase<Func<TResult>, TResult>
+    public class FuncTryIt<TResult> : FuncTryItBase<TResult>
     {
         internal FuncTryIt(int retries, Func<TResult> func)
             : base(retries, func)
@@ -98,7 +103,7 @@ namespace Retry
         }
     }
 
-    public class FuncTryIt<T, TResult> : FuncTryItBase<Func<T, TResult>, TResult>
+    public class FuncTryIt<T, TResult> : FuncTryItBase<TResult>
     {
         internal T _arg;
 
@@ -115,7 +120,7 @@ namespace Retry
         }
     }
 
-    public class FuncTryIt<T1, T2, TResult> : FuncTryItBase<Func<T1, T2, TResult>, TResult>
+    public class FuncTryIt<T1, T2, TResult> : FuncTryItBase<TResult>
     {
         internal T1 _arg1;
         internal T2 _arg2;
@@ -134,7 +139,7 @@ namespace Retry
         }
     }
 
-    public class FuncTryIt<T1, T2, T3, TResult> : FuncTryItBase<Func<T1, T2, T3, TResult>, TResult>
+    public class FuncTryIt<T1, T2, T3, TResult> : FuncTryItBase<TResult>
     {
         internal T1 _arg1;
         internal T2 _arg2;
@@ -155,7 +160,7 @@ namespace Retry
         }
     }
 
-    public class FuncTryIt<T1, T2, T3, T4, TResult> : FuncTryItBase<Func<T1, T2, T3, T4, TResult>, TResult>
+    public class FuncTryIt<T1, T2, T3, T4, TResult> : FuncTryItBase<TResult>
     {
         internal T1 _arg1;
         internal T2 _arg2;
@@ -178,7 +183,7 @@ namespace Retry
         }
     }
 
-    public class FuncTryIt<T1, T2, T3, T4, T5, TResult> : FuncTryItBase<Func<T1, T2, T3, T4, T5, TResult>, TResult>
+    public class FuncTryIt<T1, T2, T3, T4, T5, TResult> : FuncTryItBase<TResult>
     {
         internal T1 _arg1;
         internal T2 _arg2;
@@ -203,7 +208,7 @@ namespace Retry
         }
     }
 
-    public class FuncTryIt<T1, T2, T3, T4, T5, T6, TResult> : FuncTryItBase<Func<T1, T2, T3, T4, T5, T6, TResult>, TResult>
+    public class FuncTryIt<T1, T2, T3, T4, T5, T6, TResult> : FuncTryItBase<TResult>
     {
         internal T1 _arg1;
         internal T2 _arg2;
@@ -230,7 +235,7 @@ namespace Retry
         }
     }
 
-    public class FuncTryIt<T1, T2, T3, T4, T5, T6, T7, TResult> : FuncTryItBase<Func<T1, T2, T3, T4, T5, T6, T7, TResult>, TResult>
+    public class FuncTryIt<T1, T2, T3, T4, T5, T6, T7, TResult> : FuncTryItBase<TResult>
     {
         internal T1 _arg1;
         internal T2 _arg2;
@@ -259,7 +264,7 @@ namespace Retry
         }
     }
 
-    public class FuncTryIt<T1, T2, T3, T4, T5, T6, T7, T8, TResult> : FuncTryItBase<Func<T1, T2, T3, T4, T5, T6, T7, T8, TResult>, TResult>
+    public class FuncTryIt<T1, T2, T3, T4, T5, T6, T7, T8, TResult> : FuncTryItBase<TResult>
     {
         internal T1 _arg1;
         internal T2 _arg2;
@@ -290,7 +295,7 @@ namespace Retry
         }
     }
 
-    public class FuncTryIt<T1, T2, T3, T4, T5, T6, T7, T8, T9, TResult> : FuncTryItBase<Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, TResult>, TResult>
+    public class FuncTryIt<T1, T2, T3, T4, T5, T6, T7, T8, T9, TResult> : FuncTryItBase<TResult>
     {
         internal T1 _arg1;
         internal T2 _arg2;

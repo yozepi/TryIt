@@ -17,7 +17,7 @@ namespace Retry
         {
         }
 
-        protected ActionTryIt(int retries, object action)
+        protected ActionTryIt(int retries, Delegate action)
          : base(retries, action)
         {
         }

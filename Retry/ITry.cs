@@ -160,7 +160,7 @@ namespace Retry
     {
         IInternalAccessor Parent { get; set; }
         IDelay Delay { get; set; }
-        object Actor { get; }
+        Delegate Actor { get; }
         OnErrorDelegate OnError { get; set; }
         Delegate OnSuccess { get; set; }
     }

@@ -8,11 +8,11 @@ using FluentAssertions;
 
 namespace Retry.Tests.Unit.specs
 {
-    class TryIt_Func_Async_Methods : nspec
+    class Retry_Funcs_ASYNC : nspec
     {
         void GoAsync_Method()
         {
-            ITryAndReturnValue<string> subject = null;
+            Builders.FuncRetryBuilder<string> subject = null;
             Func<string> subjectFunction = null;
             string expectedResult = "You were expecting me.";
             string actualResult = null;

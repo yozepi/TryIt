@@ -20,60 +20,60 @@ namespace Retry_Samples
 
         static async Task MainAsync(string[] args)
         {
-            string response = null;
+                        string response = null;
 
-            response = Try_A_Method();
-            Console.WriteLine("Try a method - Response length: {0}", response.Length);
+                        response = Try_A_Method();
+                        Console.WriteLine("Try a method - Response length: {0}", response.Length);
 
-            response = await Try_A_Method_Async();
-            Console.WriteLine("Try a method ASYNC - Response length: {0}", response.Length);
+                        response = await Try_A_Method_Async();
+                        Console.WriteLine("Try a method ASYNC - Response length: {0}", response.Length);
 
-            response = Try_A_Task();
-            Console.WriteLine("Try a task - Response length: {0}", response.Length);
+                        response = Try_A_Task();
+                        Console.WriteLine("Try a task - Response length: {0}", response.Length);
 
-            response = await Try_A_Task_Async();
-            Console.WriteLine("Try a task ASYNC - Response length: {0}", response.Length);
+                        response = await Try_A_Task_Async();
+                        Console.WriteLine("Try a task ASYNC - Response length: {0}", response.Length);
 
-            response = Try_A_Method_A_B();
-            Console.WriteLine("Try and retry a method (A, B) - Response length: {0}", response.Length);
+                        response = Try_A_Method_A_B();
+                        Console.WriteLine("Try and retry a method (A, B) - Response length: {0}", response.Length);
 
-            response = await Try_A_Method_A_B_Async();
-            Console.WriteLine("Try and retry a method (A, B) ASYNC - Response length: {0}", response.Length);
+                        response = await Try_A_Method_A_B_Async();
+                        Console.WriteLine("Try and retry a method (A, B) ASYNC - Response length: {0}", response.Length);
 
-            response = Try_A_Task_A_B();
-            Console.WriteLine("Try and retry a task (A, B) - Response length: {0}", response.Length);
+                        response = Try_A_Task_A_B();
+                        Console.WriteLine("Try and retry a task (A, B) - Response length: {0}", response.Length);
 
-            response = await Try_A_Task_A_B_Async();
-            Console.WriteLine("Try and retry a task (A, B) ASYNC - Response length: {0}", response.Length);
-
-
-
-            Console.WriteLine();
-            Console.WriteLine("Try/retry a method quickly then try/retry with a backoff delay (A, B)");
-            response = Try_Method_Quick_Then_BackOff();
-            Console.WriteLine("Response: \"{0}\"", response);
-
-            Console.WriteLine();
-            Console.WriteLine("Try/retry a method quickly then try/retry with a backoff delay (A, B) ASYNC");
-            RunTask(Try_Method_Quick_Then_BackOff_Async());
+                        response = await Try_A_Task_A_B_Async();
+                        Console.WriteLine("Try and retry a task (A, B) ASYNC - Response length: {0}", response.Length);
 
 
-            Console.WriteLine();
-            Console.WriteLine("Try/retry a task quickly then try/retry with a backoff delay (A, B)");
-            response = Try_Task_Quick_Then_BackOff();
-            Console.WriteLine("Response: \"{0}\"", response);
 
-            Console.WriteLine();
-            Console.WriteLine("Try/retry a task quickly then try/retry with a backoff delay (A, B) ASYNC");
-            RunTask(Try_Task_Quick_Then_BackOff_Async());
+                        Console.WriteLine();
+                        Console.WriteLine("Try/retry a method quickly then try/retry with a backoff delay (A, B)");
+                        response = Try_Method_Quick_Then_BackOff();
+                        Console.WriteLine("Response: \"{0}\"", response);
 
-            Console.WriteLine();
-            Console.WriteLine("Preformance Comparison...");
-            Action testAction = () => { };
-            Console.Write("When calling the method directly: ");
-            PerformanceTest(testAction);
-            Console.Write("When calling via Try: ");
-            PerformanceTest(TryIt.Try(testAction, 1).Go);
+                        Console.WriteLine();
+                        Console.WriteLine("Try/retry a method quickly then try/retry with a backoff delay (A, B) ASYNC");
+                        RunTask(Try_Method_Quick_Then_BackOff_Async());
+
+
+                        Console.WriteLine();
+                        Console.WriteLine("Try/retry a task quickly then try/retry with a backoff delay (A, B)");
+                        response = Try_Task_Quick_Then_BackOff();
+                        Console.WriteLine("Response: \"{0}\"", response);
+
+                        Console.WriteLine();
+                        Console.WriteLine("Try/retry a task quickly then try/retry with a backoff delay (A, B) ASYNC");
+                        RunTask(Try_Task_Quick_Then_BackOff_Async());
+
+                        Console.WriteLine();
+                        Console.WriteLine("Preformance Comparison...");
+                        Action testAction = () => { };
+                        Console.Write("When calling the method directly: ");
+                        PerformanceTest(testAction);
+                        Console.Write("When calling via Try: ");
+                        PerformanceTest(TryIt.Try(testAction, 1).Go);
         }
 
         private static void PerformanceTest(Action testAction)
@@ -87,16 +87,15 @@ namespace Retry_Samples
                 testAction();
             }
             var end = DateTime.Now.Subtract(start);
-            Console.WriteLine("{0} ms ({1} iterations)", end.TotalMilliseconds, i);
+            Console.WriteLine("{0} ms ({1:###,###,##0} iterations)", end.TotalMilliseconds, i);
         }
 
         static void RunTask(Task<string> task)
         {
             var start = DateTime.Now;
             var ticks = 0;
-            while (task.GetAwaiter().IsCompleted == false)
+            while (!task.GetAwaiter().IsCompleted)
             {
-                //Console.WriteLine(task.Status);
                 ticks++;
             }
             var sts = task.Status;
@@ -130,9 +129,9 @@ namespace Retry_Samples
             var url = "http://www.google.com";
             using (var request = new WebClient())
             {
-                 string response = await TryIt.Try((u) => request.DownloadString(u), url, 3)
-                    .UsingDelay(Delay.Backoff(TimeSpan.FromMilliseconds(200)))
-                    .GoAsync();
+                string response = await TryIt.Try((u) => request.DownloadString(u), url, 3)
+                   .UsingDelay(Delay.Backoff(TimeSpan.FromMilliseconds(200)))
+                   .GoAsync();
                 return response;
             }
         }
@@ -178,8 +177,8 @@ namespace Retry_Samples
 
             using (var request = new WebClient())
             {
-                Func<string, string> func  = request.DownloadString;
-                string response = func.Try(urlA, 3)
+                Func<string, string> func = request.DownloadString;
+                string response = TryIt.Try((url) => request.DownloadString(url), urlA, 3)
                     .UsingDelay(backoff)
                     .ThenTry(urlB, 3).UsingDelay(backoff)
                     .Go();
@@ -199,9 +198,9 @@ namespace Retry_Samples
             using (var request = new WebClient())
             {
                 Func<string, string> func = request.DownloadString;
-                string response =  await func.Try(urlA, 3)
+                string response = await func.Try(urlA, 3)
                    .UsingDelay(backoff)
-                    .ThenTry(urlB, 3).UsingDelay(backoff)
+                    .ThenTry(urlB, 3)
                     .GoAsync();
                 return response;
             }
@@ -221,7 +220,7 @@ namespace Retry_Samples
             {
                 string response = TryIt.Try((u) => request.DownloadStringTaskAsync(u), urlA, 3)
                     .UsingDelay(backoff)
-                    .ThenTry(urlB, 3).UsingDelay(backoff)
+                    .ThenTry(urlB, 3)
                     .Go();
                 return response;
             }
@@ -240,7 +239,7 @@ namespace Retry_Samples
             {
                 string response = await TryIt.Try((u) => request.DownloadStringTaskAsync(u), urlA, 3)
                     .UsingDelay(backoff)
-                    .ThenTry(urlB, 3).UsingDelay(backoff)
+                    .ThenTry(urlB, 3)
                     .GoAsync();
                 return response;
             }
@@ -265,7 +264,7 @@ namespace Retry_Samples
                     .ThenTry(connA, 6).UsingDelay(Delay.Backoff(TimeSpan.FromMilliseconds(100)))
 
                     //...finaly try connB 6 times with using a backoff delay.
-                    .ThenTry(connB, 6).UsingDelay(Delay.Backoff(TimeSpan.FromMilliseconds(100)))
+                    .ThenTry(connB, 6)
 
                     .Go();
                 return result;
@@ -299,7 +298,7 @@ namespace Retry_Samples
                     .ThenTry(connA, 6).UsingDelay(Delay.Backoff(TimeSpan.FromMilliseconds(100)))
 
                     //...finaly try connB 6 times with using a backoff delay.
-                    .ThenTry(connB, 6).UsingDelay(Delay.Backoff(TimeSpan.FromMilliseconds(100)))
+                    .ThenTry(connB, 6)
 
                     .GoAsync();
             }

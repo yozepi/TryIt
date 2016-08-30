@@ -31,11 +31,13 @@ namespace Retry
         /// </summary>
         public TimeSpan InitialDelay { get; private set; }
 
-            protected override async Task WaitAsync(int tryCount)
+#pragma warning disable 1591
+        protected override async Task WaitAsync(int tryCount)
         {
             var ticks = (long)(InitialDelay.Ticks * Math.Pow(2, (tryCount - 1)));
             await WaitAsync(TimeSpan.FromTicks(ticks));
 
         }
+#pragma warning restore 1591
     }
 }

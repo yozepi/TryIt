@@ -5,15 +5,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Retry.Builders;
 
 namespace Retry.Tests.Unit.specs
 {
 
-    class TryIt_Action_Async_Methods : nspec
+    class Retry_actions_ASYNC : nspec
     {
         void GoAsync_Method()
         {
-            ITry subject = null;
+            ActionRetryBuilder subject = null;
             Action subjectAction = null;
             int retries = 3;
 
@@ -64,6 +65,7 @@ namespace Retry.Tests.Unit.specs
 
                     beforeAll = () => subjectAction = () =>
                     {
+                        thrown = null;
                         actionExecutionCount++;
                         if (actionExecutionCount < retries)
                             throw new Exception("Something Changed!");
@@ -112,20 +114,12 @@ namespace Retry.Tests.Unit.specs
 
             describe["TryIt.Try(action, retries).ThenTry(retries).GoAsync()"] = () =>
             {
-                ITry child = null;
+                ActionRetryBuilder child = null;
                 Exception thrown = null;
                 actAsync = async () =>
                 {
-                    thrown = null;
                     child = subject.ThenTry(retries);
-                    try
-                    {
-                        await child.GoAsync();
-                    }
-                    catch (Exception ex)
-                    {
-                        thrown = ex;
-                    }
+                    await child.GoAsync();
                 };
 
                 context["when the action succeeds after the first try"] = () =>
@@ -141,9 +135,6 @@ namespace Retry.Tests.Unit.specs
                     it["should try the action only once"] = () =>
                        subject.Attempts.Should().Be(1);
 
-                    it["Should never have called ThenTry"] = () =>
-                        child.Attempts.Should().Be(0);
-
                     it["should not throw any exceptions"] = () =>
                        thrown.Should().BeNull();
 
@@ -154,8 +145,9 @@ namespace Retry.Tests.Unit.specs
                      context["and ThenTry succeeds"] = () =>
                      {
 
-                         beforeAll = () => subjectAction = () => 
-                         { actionExecutionCount++;
+                         beforeAll = () => subjectAction = () =>
+                         {
+                             actionExecutionCount++;
                              if (child.Attempts == 0)
                                  throw new Exception("Help meeee!!!");
                          };
@@ -163,27 +155,18 @@ namespace Retry.Tests.Unit.specs
                          it["child status should be SuccessAfterRetries"] = () =>
                             child.Status.Should().Be(RetryStatus.SuccessAfterRetries);
 
-                         it["Try should have attempted the action once for each retry"] = () =>
-                            subject.Attempts.Should().Be(retries);
+                         it["should have attempted the action once for each retry"] = () =>
+                            subject.Attempts.Should().Be(retries + 1);
 
-                         it["ThenTry should have attempted the action only once"] = () =>
-                            child.Attempts.Should().Be(1);
-
-                         it["Try() should have no exceptions in the ExceptionList"] = () =>
+                         it["should have exceptions in the ExceptionList"] = () =>
                             subject.ExceptionList.Count.Should().Be(retries);
-
-                         it["ThenTry() should have no exceptions in the ExceptionList"] = () =>
-                            child.ExceptionList.Count.Should().Be(0);
-
-                         it["ThenTry().GetAllExceptions() should have Try()'s exceptions"] = () =>
-                            child.GetAllExceptions().Should().BeEquivalentTo(subject.ExceptionList);
 
                          it["should not throw any exceptions"] = () =>
                             thrown.Should().BeNull();
 
                      };
                  };
-            }; 
+            };
         }
     }
 }

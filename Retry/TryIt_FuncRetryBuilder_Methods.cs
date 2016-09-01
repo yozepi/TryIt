@@ -82,7 +82,7 @@ namespace Retry
         #endregion //Try methods:
 
 
-        #region UsingDelay, OnError, OnSuccess
+        #region UsingDelay, WithErrorPolicy, OnSuccess
 
         public static FuncRetryBuilder<TResult> UsingDelay<TResult>(this FuncRetryBuilder<TResult> builder, IDelay delay)
         {
@@ -91,10 +91,10 @@ namespace Retry
 
         }
 
-        public static FuncRetryBuilder<TResult> OnError<TResult>(this FuncRetryBuilder<TResult> builder, OnErrorDelegate onError)
+        public static FuncRetryBuilder<TResult> WithErrorPolicy<TResult>(this FuncRetryBuilder<TResult> builder, ErrorPolicyDelegate errorPolicy)
         {
             return builder
-                .SetOnError(onError) as FuncRetryBuilder<TResult>;
+                .SetErrorPolicy(errorPolicy) as FuncRetryBuilder<TResult>;
         }
 
         public static FuncRetryBuilder<TResult> OnSuccess<TResult>(this FuncRetryBuilder<TResult> builder, OnSuccessDelegate<TResult> onSuccess)
@@ -103,7 +103,7 @@ namespace Retry
                 .SetOnSuccess(onSuccess) as FuncRetryBuilder<TResult>;
         }
 
-        #endregion //UsingDelay, OnError, OnSuccess
+        #endregion //UsingDelay, WithErrorPolicy, OnSuccess
 
 
         #region ThenTry extensions:

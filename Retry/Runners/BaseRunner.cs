@@ -29,7 +29,7 @@ namespace Retry.Runners
 
         public IDelay Delay { get; set; }
 
-        public OnErrorDelegate OnError { get; set; }
+        public ErrorPolicyDelegate ErrorPolicy { get; set; }
 
         public Delegate OnSuccess { get; set; }
 
@@ -59,7 +59,7 @@ namespace Retry.Runners
                 }
                 catch (Exception ex)
                 {
-                    if (HandleOnError(ex, count))
+                    if (HandleErrorPolicy(ex, count))
                     {
                         ExceptionList.Add(ex);
 
@@ -77,7 +77,7 @@ namespace Retry.Runners
                     }
                     else
                     {
-                        ExceptionList.Add(new OnErrorPolicyException(ex));
+                        ExceptionList.Add(new ErrorPolicyException(ex));
                         Status = RetryStatus.Fail;
                         break;
                     }
@@ -105,17 +105,17 @@ namespace Retry.Runners
         /// <param name="count"></param>
         protected abstract void HandleOnSuccess(int count);
 
-        private bool HandleOnError(Exception ex, int retryCount)
+        private bool HandleErrorPolicy(Exception ex, int retryCount)
         {
-            if (OnError == null)
+            if (ErrorPolicy == null)
                 return true;
-            return OnError(ex, retryCount);
+            return ErrorPolicy(ex, retryCount);
         }
 
         internal virtual void CopySettings(BaseRunner targetRunner)
         {
             targetRunner.Delay = Delay;
-            targetRunner.OnError = OnError;
+            targetRunner.ErrorPolicy = ErrorPolicy;
             targetRunner.OnSuccess = OnSuccess;
             targetRunner.RetryCount = RetryCount;
             targetRunner.Actor = Actor;

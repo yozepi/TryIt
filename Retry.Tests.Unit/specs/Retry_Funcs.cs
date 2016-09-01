@@ -38,20 +38,20 @@ namespace Retry.Tests.Unit.specs
             act = () => subject = TryIt.Try(subjectFunc, retries);
 
 
-            describe["TryIt.Try(func, retries).OnError()"] = () =>
+            describe["TryIt.Try(func, retries).WithErrorPolicy()"] = () =>
             {
-                OnErrorDelegate errorDelegate = (ex, i) => { return true; };
-                object onErrorResult = null;
-                before = () => onErrorResult = null;
-                act = () => onErrorResult = subject.OnError(errorDelegate);
+                ErrorPolicyDelegate errorDelegate = (ex, i) => { return true; };
+                object errorPolicyResult = null;
+                before = () => errorPolicyResult = null;
+                act = () => errorPolicyResult = subject.WithErrorPolicy(errorDelegate);
 
-                it["should set the internal onError property"] = () =>
-                    subject.LastRunner.OnError.Should().BeSameAs(errorDelegate);
+                it["should set the internal ErrorPolicy property"] = () =>
+                    subject.LastRunner.ErrorPolicy.Should().BeSameAs(errorDelegate);
 
                 it["should return the subject"] = () =>
-                    subject.Should().BeSameAs(onErrorResult);
+                    subject.Should().BeSameAs(errorPolicyResult);
 
-                describe["TryIt.Try(func, retries).OnError(OnErrorDelegate).Go()"] = () =>
+                describe["TryIt.Try(func, retries).WithErrorPolicy(ErrorPolicyDelegate).Go()"] = () =>
                 {
                     int errorDelegateCallCount = default(int);
                     before = () => errorDelegateCallCount = default(int);
@@ -70,7 +70,7 @@ namespace Retry.Tests.Unit.specs
                     context["when there are no exceptions to test"] = () =>
                     {
                         before = () => errorDelegate = (ex, i) => { errorDelegateCallCount++; return true; };
-                        it["OnError delegate should never be called"] = () =>
+                        it["ErrorPolicyDelegate should never be called"] = () =>
                             errorDelegateCallCount.Should().Be(0);
                     };
 
@@ -85,7 +85,7 @@ namespace Retry.Tests.Unit.specs
                         it["should throw RetryFailedException"] = () =>
                             thrown.Should().BeOfType<RetryFailedException>();
 
-                        it["should check the OnError police once for everey failed attempt"] = () =>
+                        it["should check the ErrorPolicyDelegate once for everey failed attempt"] = () =>
                         {
                             errorDelegateCallCount.Should().NotBe(0);
                             errorDelegateCallCount.Should().Be(subject.Attempts);
@@ -110,15 +110,15 @@ namespace Retry.Tests.Unit.specs
                         it["should throw the RetryFailedException"] = () =>
                             thrown.Should().BeOfType<RetryFailedException>();
 
-                        it["ExceptionList should contain an OnErrorPolicyException exception"] = () =>
+                        it["ExceptionList should contain an ErrorPolicyException exception"] = () =>
                             thrown.As<RetryFailedException>()
-                            .ExceptionList.FirstOrDefault(x => x.GetType() == typeof(OnErrorPolicyException))
+                            .ExceptionList.FirstOrDefault(x => x.GetType() == typeof(ErrorPolicyException))
                             .Should().NotBeNull();
 
-                        it["OnErrorPolicyException's inner exception should be the expected exception"] = () =>
+                        it["ErrorPolicyException's inner exception should be the expected exception"] = () =>
                              thrown.As<RetryFailedException>()
-                            .ExceptionList.First(x => x.GetType() == typeof(OnErrorPolicyException))
-                            .As<OnErrorPolicyException>()
+                            .ExceptionList.First(x => x.GetType() == typeof(ErrorPolicyException))
+                            .As<ErrorPolicyException>()
                             .InnerException.Should().BeSameAs(expectedException);
 
                     };

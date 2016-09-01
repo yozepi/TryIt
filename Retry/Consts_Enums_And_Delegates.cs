@@ -7,14 +7,14 @@ using System.Threading.Tasks;
 namespace Retry
 {
     /// <summary>
-    /// Pass an instance of this delegate to the <see cref="TryIt.OnError(ITry, OnErrorDelegate)"/>
-    /// and the <see cref="TryIt.OnError{TResult}(ITryAndReturnValue{TResult}, OnErrorDelegate)"/> extension methods.
+    /// Pass an instance of this delegate to the 
+    /// <see cref="TryIt.WithErrorPolicy{TResult}(Builders.FuncRetryBuilder{TResult}, ErrorPolicyDelegate)"/> extension methods.
     /// </summary>
     /// <param name="ex">The exception that has been caught.</param>
     /// <param name="attemptCount">A count of the execution attempts so far.</param>
     /// <returns>Returning true will cause TryIt.Try (or ThenTry) to continue.
     /// Returning false will stop retrying and raise the exception. </returns>
-    public delegate bool OnErrorDelegate(Exception ex, int attemptCount);
+    public delegate bool ErrorPolicyDelegate(Exception ex, int attemptCount);
 
     /// <summary>
     /// Pass an instance of this deletate to the <see cref="TryIt.OnSuccess(ITry, OnSuccessDelegate)" /> extension method.

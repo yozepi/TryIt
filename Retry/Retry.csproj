@@ -49,7 +49,7 @@
     <Compile Include="Consts_Enums_And_Delegates.cs" />
     <Compile Include="Extensions\ActionExtensions.cs" />
     <Compile Include="Extensions\FuncExtensions.cs" />
-    <Compile Include="OnErrorPolicyException.cs" />
+    <Compile Include="ErrorPolicyException.cs" />
     <Compile Include="Runners\ActionRunners.cs" />
     <Compile Include="Runners\FuncRunners.cs" />
     <Compile Include="Runners\BaseRunner.cs" />

@@ -62,7 +62,7 @@ namespace Retry
         /// <param name="arg1">The first argument passed into the action.</param>
         /// <param name="arg2">The second argument passed into the action.</param>
         /// <param name="retries">The number of times the action will be tried before giving up and throwing a <see cref="RetryFailedException"/>.</param>
-        /// <returns>Returns an ITry instance that you use to chain Then-try calls or to add OnError and OnSuccess policies.</returns>
+        /// <returns>Returns an ITry instance that you use to chain Then-try calls or to add error and success policies.</returns>
         /// <exception cref="ArgumentNullException">Thrown when The action parameter is null.</exception>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when retries is less than 1.</exception>
         public static ActionRetryBuilder Try<T1, T2>(Action<T1, T2> action, T1 arg1, T2 arg2, int retries)
@@ -85,7 +85,7 @@ namespace Retry
         ///// <param name="arg2">The second argument passed into the action.</param>
         ///// <param name="arg3">The third argument passed into the action.</param>
         ///// <param name="retries">The number of times the action will be tried before giving up and throwing a <see cref="RetryFailedException"/>.</param>
-        ///// <returns>Returns an ITry instance that you use to chain Then-try calls or to add OnError and OnSuccess policies.</returns>
+        ///// <returns>Returns an ITry instance that you use to chain Then-try calls or to add error and success policies.</returns>
         ///// <exception cref="ArgumentNullException">Thrown when The action parameter is null.</exception>
         ///// <exception cref="ArgumentOutOfRangeException">Thrown when retries is less than 1.</exception>
         public static ActionRetryBuilder Try<T1, T2, T3>(Action<T1, T2, T3> action, T1 arg1, T2 arg2, T3 arg3, int retries)
@@ -110,7 +110,7 @@ namespace Retry
         /// <param name="arg3">The third argument passed into the action.</param>
         /// <param name="arg4">The fourth argument passed into the action.</param>
         /// <param name="retries">The number of times the action will be tried before giving up and throwing a <see cref="RetryFailedException"/>.</param>
-        /// <returns>Returns an ITry instance that you use to chain Then-try calls or to add OnError and OnSuccess policies.</returns>
+        /// <returns>Returns an ITry instance that you use to chain Then-try calls or to add error and success policies.</returns>
         /// <exception cref="ArgumentNullException">Thrown when The action parameter is null.</exception>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when retries is less than 1.</exception>
         public static ActionRetryBuilder Try<T1, T2, T3, T4>(Action<T1, T2, T3, T4> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4, int retries)
@@ -137,7 +137,7 @@ namespace Retry
         ///// <param name="arg4">The fourth argument passed into the action.</param>
         ///// <param name="arg5">The fifth argument passed into the action.</param>
         ///// <param name="retries">The number of times the action will be tried before giving up and throwing a <see cref="RetryFailedException"/>.</param>
-        ///// <returns>Returns an ITry instance that you use to chain Then-try calls or to add OnError and OnSuccess policies.</returns>
+        ///// <returns>Returns an ITry instance that you use to chain Then-try calls or to add error and success policies.</returns>
         ///// <exception cref="ArgumentNullException">Thrown when The action parameter is null.</exception>
         ///// <exception cref="ArgumentOutOfRangeException">Thrown when retries is less than 1.</exception>
         //public static ITry Try<T1, T2, T3, T4, T5>(Action<T1, T2, T3, T4, T5> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, int retries)
@@ -163,7 +163,7 @@ namespace Retry
         ///// <param name="arg5">The fifth argument passed into the action.</param>
         ///// <param name="arg6">The sixth argument passed into the action.</param>
         ///// <param name="retries">The number of times the action will be tried before giving up and throwing a <see cref="RetryFailedException"/>.</param>
-        ///// <returns>Returns an ITry instance that you use to chain Then-try calls or to add OnError and OnSuccess policies.</returns>
+        ///// <returns>Returns an ITry instance that you use to chain Then-try calls or to add error and success policies.</returns>
         ///// <exception cref="ArgumentNullException">Thrown when The action parameter is null.</exception>
         ///// <exception cref="ArgumentOutOfRangeException">Thrown when retries is less than 1.</exception>
         //public static ITry Try<T1, T2, T3, T4, T5, T6>(Action<T1, T2, T3, T4, T5, T6> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, int retries)
@@ -192,7 +192,7 @@ namespace Retry
         ///// <param name="arg6">The sixth argument passed into the action.</param>
         ///// <param name="arg7">The seventh argument passed into the action.</param>
         ///// <param name="retries">The number of times the action will be tried before giving up and throwing a <see cref="RetryFailedException"/>.</param>
-        ///// <returns>Returns an ITry instance that you use to chain Then-try calls or to add OnError and OnSuccess policies.</returns>
+        ///// <returns>Returns an ITry instance that you use to chain Then-try calls or to add error and success policies.</returns>
         ///// <exception cref="ArgumentNullException">Thrown when The action parameter is null.</exception>
         ///// <exception cref="ArgumentOutOfRangeException">Thrown when retries is less than 1.</exception>
         //public static ITry Try<T1, T2, T3, T4, T5, T6, T7>(Action<T1, T2, T3, T4, T5, T6, T7> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, int retries)
@@ -222,7 +222,7 @@ namespace Retry
         ///// <param name="arg7">The seventh argument passed into the action.</param>
         ///// <param name="arg8">The eighth argument passed into the action.</param>
         ///// <param name="retries">The number of times the action will be tried before giving up and throwing a <see cref="RetryFailedException"/>.</param>
-        ///// <returns>Returns an ITry instance that you use to chain Then-try calls or to add OnError and OnSuccess policies.</returns>
+        ///// <returns>Returns an ITry instance that you use to chain Then-try calls or to add error and success policies.</returns>
         ///// <exception cref="ArgumentNullException">Thrown when The action parameter is null.</exception>
         ///// <exception cref="ArgumentOutOfRangeException">Thrown when retries is less than 1.</exception>
         //public static ITry Try<T1, T2, T3, T4, T5, T6, T7, T8>(Action<T1, T2, T3, T4, T5, T6, T7, T8> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, int retries)
@@ -254,7 +254,7 @@ namespace Retry
         ///// <param name="arg8">The eighth argument passed into the action.</param>
         ///// <param name="arg9">The nineth argument passed into the action.</param>
         ///// <param name="retries">The number of times the action will be tried before giving up and throwing a <see cref="RetryFailedException"/>.</param>
-        ///// <returns>Returns an ITry instance that you use to chain Then-try calls or to add OnError and OnSuccess policies.</returns>
+        ///// <returns>Returns an ITry instance that you use to chain Then-try calls or to add error and success policies.</returns>
         ///// <exception cref="ArgumentNullException">Thrown when The action parameter is null.</exception>
         ///// <exception cref="ArgumentOutOfRangeException">Thrown when retries is less than 1.</exception>
         //public static ITry Try<T1, T2, T3, T4, T5, T6, T7, T8, T9>(Action<T1, T2, T3, T4, T5, T6, T7, T8, T9> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, T9 arg9, int retries)
@@ -317,7 +317,7 @@ namespace Retry
         #endregion //Try Task methods:
 
 
-        #region UsingDelay, OnError, OnSuccess
+        #region UsingDelay, WithErrorPolicy, OnSuccess
 
         /// <summary>
         /// Provide an optional delay policy for pausing between tries.
@@ -338,13 +338,13 @@ namespace Retry
 
 
         /// <summary>
-        /// An optional policy (an <see cref="OnErrorDelegate"/>) you can pass to override typical retry on error behavior.
+        /// An optional policy (an <see cref="ErrorPolicyDelegate"/>) you can pass to override typical retry on error behavior.
         /// </summary>
         /// <param name="builder">The <see cref="ITry"/> this method extends.</param>
-        /// <param name="onError">The <see cref="OnErrorDelegate"/> to execute when an exception occurs in you action.</param>
+        /// <param name="errorPolicy">The <see cref="ErrorPolicyDelegate"/> to execute when an exception occurs in you action.</param>
         /// <returns></returns>
         /// <remarks>
-        /// Normally Tryit will capture an error when trying and try again. You can provide an <see cref="OnErrorDelegate"/> to override this behavior.
+        /// Normally Tryit will capture an error when trying and try again. You can provide an <see cref="ErrorPolicyDelegate"/> to override this behavior.
         /// <para>
         ///     Returning false from this delegate will cause the Try-ThenTry chain to stop and the exception to be thrown.
         /// </para>
@@ -355,9 +355,9 @@ namespace Retry
         ///     Returning true will cause normal behavior - recording the exception and retrying.
         /// </para>
         /// </remarks>
-        public static ActionRetryBuilder OnError(this ActionRetryBuilder builder, OnErrorDelegate onError)
+        public static ActionRetryBuilder WithErrorPolicy(this ActionRetryBuilder builder, ErrorPolicyDelegate errorPolicy)
         {
-            builder.SetOnError(onError);
+            builder.SetErrorPolicy(errorPolicy);
             return builder;
         }
 
@@ -373,7 +373,7 @@ namespace Retry
         /// Throw an exception to override typical behavior. The success will be ignored, your exception will be added to <see cref="ITry.ExceptionList"/> and your action will be retried.
         /// </para>
         /// <para>
-        /// Capture your exception in an <see cref="OnError(ActionRetryBuilder, OnErrorDelegate)"/> policy to stop retrying and rethrow your exception.
+        /// Capture your exception in an <see cref="WithErrorPolicy(ActionRetryBuilder, ErrorPolicyDelegate)"/> policy to stop retrying and rethrow your exception.
         /// </para>
         /// </remarks>
         public static ActionRetryBuilder OnSuccess(this ActionRetryBuilder builder, OnSuccessDelegate onSuccess)
@@ -383,7 +383,7 @@ namespace Retry
         }
 
 
-        #endregion //UsingDelay, OnError, OnSuccess
+        #endregion //UsingDelay, WithErrorPolicy, OnSuccess
 
 
         #region ThenTry extensions:

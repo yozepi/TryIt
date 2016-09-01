@@ -69,14 +69,14 @@ namespace Retry.Tests.Unit.specs
 
             };
 
-            describe["TryIt.Try(Action action, int retries).OnError(OnErrorDelegate)"] = () =>
+            describe["TryIt.Try(Action action, int retries).WithErrorPolicy(ErrorPolicyDelegate)"] = () =>
             {
-                OnErrorDelegate errorDelegate = (ex, i) => { return true; };
+                ErrorPolicyDelegate errorDelegate = (ex, i) => { return true; };
 
-                act = () => subject = subject.OnError(errorDelegate);
+                act = () => subject = subject.WithErrorPolicy(errorDelegate);
 
-                it["should set the internal onError property"] = () =>
-                    subject.LastRunner.OnError.Should().BeSameAs(errorDelegate);
+                it["should set the internal ErrorPolicy property"] = () =>
+                    subject.LastRunner.ErrorPolicy.Should().BeSameAs(errorDelegate);
 
                 it["should return a Builder instance"] = () =>
                     subject.Should().BeOfType<ActionRetryBuilder>();
@@ -186,34 +186,34 @@ namespace Retry.Tests.Unit.specs
                         subject.ExceptionList.Count.Should().Be(subject.Attempts - 1);
 
 
-                    describe["Try().OnError().Go"] = () =>
+                    describe["Try().WithErrorPolicy().Go"] = () =>
                     {
                         Exception delegateError = null;
                         int errorTryCount = default(int);
-                        bool onErrorHasBeenCalled = false;
+                        bool errorPolicyHasBeenCalled = false;
 
-                        OnErrorDelegate errorDelegate = null;
+                        ErrorPolicyDelegate errorDelegate = null;
                         before = () =>
                         {
-                            onErrorHasBeenCalled = false;
+                            errorPolicyHasBeenCalled = false;
                             delegateError = null;
                             errorTryCount = 0;
 
                             errorDelegate = (e, i) =>
                             {
-                                onErrorHasBeenCalled = true;
+                                errorPolicyHasBeenCalled = true;
                                 errorTryCount = i;
                                 delegateError = e;
                                 return true;
                             };
 
-                            subject.OnError(errorDelegate);
+                            subject.WithErrorPolicy(errorDelegate);
                         };
 
-                        it["should call the OnError delegate"] = () =>
-                            onErrorHasBeenCalled.Should().BeTrue();
+                        it["should call the ErrorPolicy delegate"] = () =>
+                            errorPolicyHasBeenCalled.Should().BeTrue();
 
-                        context["when OnError() returns false"] = () =>
+                        context["when ErrorPolicyDelegate returns false"] = () =>
                         {
                             Exception expectedException = new Exception("An unexpected Journey");
 
@@ -229,21 +229,21 @@ namespace Retry.Tests.Unit.specs
                                     return false;
                                 };
 
-                                subject.OnError(errorDelegate);
+                                subject.WithErrorPolicy(errorDelegate);
                             };
 
                             it["should not throw an exception"] = () =>
                                 thrown.Should().BeOfType<RetryFailedException>();
 
-                            it["should have OnErrorPolicyException in the exceptionlist"] = () =>
+                            it["should have ErrorPolicyException in the exceptionlist"] = () =>
                                 thrown.As<RetryFailedException>()
-                                .ExceptionList.FirstOrDefault(x => x.GetType() == typeof(OnErrorPolicyException))
+                                .ExceptionList.FirstOrDefault(x => x.GetType() == typeof(ErrorPolicyException))
                                 .Should().NotBeNull();
 
-                            it["OnErrorPolicyException's inner exception should be the expected exception"] = () =>
+                            it["ErrorPolicyException's inner exception should be the expected exception"] = () =>
                                  thrown.As<RetryFailedException>()
-                                .ExceptionList.First(x => x.GetType() == typeof(OnErrorPolicyException))
-                                .As<OnErrorPolicyException>()
+                                .ExceptionList.First(x => x.GetType() == typeof(ErrorPolicyException))
+                                .As<ErrorPolicyException>()
                                 .InnerException.Should().BeSameAs(expectedException);
 
                         };
@@ -317,16 +317,16 @@ namespace Retry.Tests.Unit.specs
                     subject.Runners.Count.Should().Be(2);
 
 
-                context["when the parent has OnError() set"] = () =>
+                context["when the parent has ErrorPolicy set"] = () =>
                 {
-                    OnErrorDelegate onError = (i, e) => { return true; };
+                    ErrorPolicyDelegate errorPolicy = (i, e) => { return true; };
                     before = () =>
                     {
-                        child = subject.OnError(onError).ThenTry(3);
+                        child = subject.WithErrorPolicy(errorPolicy).ThenTry(3);
                     };
 
-                    it["should use the OnError delegate of the parent"] = () =>
-                        child.LastRunner.OnError.Should().Be(onError);
+                    it["should use the ErrorPolicy delegate of the parent"] = () =>
+                        child.LastRunner.ErrorPolicy.Should().Be(errorPolicy);
                 };
 
                 describe["TryIt.Try(action, retries).ThenTry(retries).Go()"] = () =>
@@ -402,13 +402,13 @@ namespace Retry.Tests.Unit.specs
                     };
                 };
 
-                describe["TryIt.Try(action, retries).OnError(delegate).ThenTry(retries).Go()"] = () =>
+                describe["TryIt.Try(action, retries).WithErrorPolicy(delegate).ThenTry(retries).Go()"] = () =>
                 {
-                    OnErrorDelegate onError = null;
+                    ErrorPolicyDelegate errorPolicy = null;
                     before = () => subjectAction = () => { };
                     act = () =>
                     {
-                        subject = TryIt.Try(subjectAction, retries).OnError(onError);
+                        subject = TryIt.Try(subjectAction, retries).WithErrorPolicy(errorPolicy);
                         child = subject.ThenTry(retries);
                         try
                         {
@@ -421,17 +421,17 @@ namespace Retry.Tests.Unit.specs
                     };
                     context["when Try() succeeds"] = () =>
                     {
-                        int onErrorCalled = default(int);
+                        int errorPolicyCalled = default(int);
                         before = () =>
                         {
                             thrown = null;
-                            onErrorCalled = default(int);
-                            onError = (e, i) => { onErrorCalled++; return true; };
+                            errorPolicyCalled = default(int);
+                            errorPolicy = (e, i) => { errorPolicyCalled++; return true; };
                         };
 
                         it["should succeed without any failures and a status of Success"] = () =>
                         {
-                            onErrorCalled.Should().Be(0);
+                            errorPolicyCalled.Should().Be(0);
                             subject.ExceptionList.Count.Should().Be(0);
                             subject.Status.Should().Be(RetryStatus.Success);
                         };
@@ -439,24 +439,24 @@ namespace Retry.Tests.Unit.specs
 
                     context["when Try().ThenTry() both fail"] = () =>
                     {
-                        int onErrorCalled = default(int);
+                        int errorPolicyCalled = default(int);
 
                         before = () =>
                         {
                             thrown = null;
-                            onErrorCalled = default(int);
+                            errorPolicyCalled = default(int);
                             subjectAction = () => { throw new Exception("Welcome to the Machine!"); };
-                            onError = (e, i) => { onErrorCalled++; return true; };
+                            errorPolicy = (e, i) => { errorPolicyCalled++; return true; };
                         };
 
-                        it["should call onError for both Try() and ThenTry()"] = () =>
-                            onErrorCalled.Should().Be(retries * 2);
+                        it["should call ErrorPolicy for both Try() and ThenTry()"] = () =>
+                            errorPolicyCalled.Should().Be(retries * 2);
 
                         it["should throw RetryFailedException"] = () =>
                             thrown.Should().BeOfType<RetryFailedException>();
                     };
 
-                    context["When OnError decides Try() should not continue"] = () =>
+                    context["When ErrorPolicy decides Try() should not continue"] = () =>
                     {
                         var expectedException = new Exception("Woah! What happened?");
                         Exception capturedEx = null;
@@ -467,7 +467,7 @@ namespace Retry.Tests.Unit.specs
                                 if (subject.ExceptionList.Count == 0)
                                     throw expectedException;
                             };
-                            onError = (e, i) =>
+                            errorPolicy = (e, i) =>
                             {
                                 if (subject.ExceptionList.Count == 0)
                                     return false;
@@ -491,10 +491,10 @@ namespace Retry.Tests.Unit.specs
                         before = () =>
                         {
                             subjectAction = () => { throw new Exception("Woah! What happened?"); };
-                            onError = (e, i) => { throw expectedException; };
+                            errorPolicy = (e, i) => { throw expectedException; };
                         };
 
-                        it["should throw the exception thrown by OnError"] = () =>
+                        it["should throw the exception thrown by ErrorPolicy"] = () =>
                         thrown.Should().Be(expectedException);
 
                         it["status should be Fail"] = () =>

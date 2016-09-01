@@ -79,32 +79,42 @@ namespace Retry.Builders
 
 
             var runnerLink = Runners.First;
-            while (runnerLink != null)
+            try
             {
-                var runner = runnerLink.Value;
-                await runner.RunAsync();
-                Attempts += runner.Attempts;
-                ExceptionList.AddRange(runner.ExceptionList);
 
-                if (runner.Status == RetryStatus.Success)
+                while (runnerLink != null)
                 {
-                    runningStatus = runningStatus == RetryStatus.Fail ?
-                        RetryStatus.SuccessAfterRetries : RetryStatus.Success;
-                }
-                else
-                {
-                    runningStatus = runner.Status;
-                }
+                    var runner = runnerLink.Value;
+                    await runner.RunAsync();
+                    Attempts += runner.Attempts;
+                    ExceptionList.AddRange(runner.ExceptionList);
+
+                    if (runner.Status == RetryStatus.Success)
+                    {
+                        runningStatus = runningStatus == RetryStatus.Fail ?
+                            RetryStatus.SuccessAfterRetries : RetryStatus.Success;
+                    }
+                    else
+                    {
+                        runningStatus = runner.Status;
+                    }
 
 
-                if (runningStatus == RetryStatus.Success
-                    || runningStatus == RetryStatus.SuccessAfterRetries)
-                {
-                    Winner = runner;
-                    break;
+                    if (runningStatus == RetryStatus.Success
+                        || runningStatus == RetryStatus.SuccessAfterRetries)
+                    {
+                        Winner = runner;
+                        break;
+                    }
+                    runnerLink = runnerLink.Next;
                 }
-                runnerLink = runnerLink.Next;
             }
+            catch (Exception)
+            {
+                Status = RetryStatus.Fail;
+                throw;
+            }
+
             Status = runningStatus;
             if (Status == RetryStatus.Fail)
             {
@@ -141,9 +151,9 @@ namespace Retry.Builders
             return this;
         }
 
-        internal BaseBuilder SetOnError(OnErrorDelegate onErrorDelegate)
+        internal BaseBuilder SetErrorPolicy(ErrorPolicyDelegate errorPolicyDelegate)
         {
-            LastRunner.OnError = onErrorDelegate;
+            LastRunner.ErrorPolicy = errorPolicyDelegate;
             return this;
         }
 

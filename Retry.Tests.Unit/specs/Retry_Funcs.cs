@@ -466,6 +466,39 @@ namespace Retry.Tests.Unit.specs
 
                 };
             };
+
+            describe["TryIt.Try(func, retries).ThenTry(altFunc, retries)"] = () =>
+            {
+                FuncRetryBuilder<string> child = null;
+                Func<int, string> altFunc = (a1) => { return "Hello world!"; };
+                act = () =>
+                {
+                    subject = TryIt.Try(subjectFunc, arg, retries);
+                    child = subject.ThenTry(altFunc, arg, retries);
+                };
+
+                it["ThenTry() should use the alternate func"] = () =>
+                    child.LastRunner.Actor.Should().BeSameAs(altFunc);
+
+                context["TryIt.Try(func, retries).ThenTry(altFunc, retries).Go()"] = () =>
+                {
+                    int altCalled = default(int);
+                    before = () =>
+                    {
+                        altFunc = (a1) => { altCalled++; return "SWAK!"; };
+                        subjectFunc = (a1) => { throw new Exception("You killed my father. Prepare to die!"); };
+                        altCalled = default(int);
+                    };
+                    act = () =>
+                    {
+                        child.Go();
+                    };
+
+                    it["ThenTry() should have called the alternate action"] = () =>
+                        altCalled.Should().Be(1);
+                };
+            };
+
         }
 
         void with_2_arguments()
@@ -787,5 +820,6 @@ namespace Retry.Tests.Unit.specs
                 };
             };
         }
+
     }
 }

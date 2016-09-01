@@ -168,47 +168,51 @@ namespace Retry
                  .SetRetryCount(retries) as FuncRetryBuilder<TResult>;
         }
 
-        //        public static ITryAndReturnValue<TResult> ThenTry<T1, T2, T3, T4, T5, TResult>(this ITryAndReturnValue<TResult> tryit, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, int retries)
-        //        {
-        //            IInternalAccessor parent = tryit as IInternalAccessor;
-        //            var child = new FuncTryIt<T1, T2, T3, T4, T5, TResult>(retries, arg1, arg2, arg3, arg4, arg5, parent.Actor as Func<T1, T2, T3, T4, T5, TResult>);
-        //            ((IInternalAccessor)child).Parent = parent;
-        //            return child;
-        //        }
-
-        //        public static ITryAndReturnValue<TResult> ThenTry<T1, T2, T3, T4, T5, T6, TResult>(this ITryAndReturnValue<TResult> tryit, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, int retries)
-        //        {
-        //            IInternalAccessor parent = tryit as IInternalAccessor;
-        //            var child = new FuncTryIt<T1, T2, T3, T4, T5, T6, TResult>(retries, arg1, arg2, arg3, arg4, arg5, arg6, parent.Actor as Func<T1, T2, T3, T4, T5, T6, TResult>);
-        //            ((IInternalAccessor)child).Parent = parent;
-        //            return child;
-        //        }
-
-        //        public static ITryAndReturnValue<TResult> ThenTry<T1, T2, T3, T4, T5, T6, T7, TResult>(this ITryAndReturnValue<TResult> tryit, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, int retries)
-        //        {
-        //            IInternalAccessor parent = tryit as IInternalAccessor;
-        //            var child = new FuncTryIt<T1, T2, T3, T4, T5, T6, T7, TResult>(retries, arg1, arg2, arg3, arg4, arg5, arg6, arg7, parent.Actor as Func<T1, T2, T3, T4, T5, T6, T7, TResult>);
-        //            ((IInternalAccessor)child).Parent = parent;
-        //            return child;
-        //        }
-
-        //        public static ITryAndReturnValue<TResult> ThenTry<T1, T2, T3, T4, T5, T6, T7, T8, TResult>(this ITryAndReturnValue<TResult> tryit, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, int retries)
-        //        {
-        //            IInternalAccessor parent = tryit as IInternalAccessor;
-        //            var child = new FuncTryIt<T1, T2, T3, T4, T5, T6, T7, T8, TResult>(retries, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, parent.Actor as Func<T1, T2, T3, T4, T5, T6, T7, T8, TResult>);
-        //            ((IInternalAccessor)child).Parent = parent;
-        //            return child;
-        //        }
-
-        //        public static ITryAndReturnValue<TResult> ThenTry<T1, T2, T3, T4, T5, T6, T7, T8, T9, TResult>(this ITryAndReturnValue<TResult> tryit, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, T9 arg9, int retries)
-        //        {
-        //            IInternalAccessor parent = tryit as IInternalAccessor;
-        //            var child = new FuncTryIt<T1, T2, T3, T4, T5, T6, T7, T8, T9, TResult>(retries, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, parent.Actor as Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, TResult>);
-        //            ((IInternalAccessor)child).Parent = parent;
-        //            return child;
-        //        }
-
         #endregion //ThenTry extensions:
+
+        #region ThenTry using Alt Func extensions:
+
+        public static FuncRetryBuilder<TResult> ThenTry<TResult>(this FuncRetryBuilder<TResult> builder, Func<TResult> altFunc, int retries)
+        {
+            return builder
+                .AddRunner(new FuncRunner<TResult>())
+                .SetActor(altFunc)
+                .SetRetryCount(retries) as FuncRetryBuilder<TResult>;
+        }
+
+        public static FuncRetryBuilder<TResult> ThenTry<T, TResult>(this FuncRetryBuilder<TResult> builder, Func<T, TResult> altFunc, T arg, int retries)
+        {
+            return builder
+                .AddRunner(new FuncRunner<T, TResult>(arg))
+                .SetActor(altFunc)
+                .SetRetryCount(retries) as FuncRetryBuilder<TResult>;
+        }
+
+        public static FuncRetryBuilder<TResult> ThenTry<T1, T2, TResult>(this FuncRetryBuilder<TResult> builder, Func<T1, T2, TResult> altFunc, T1 arg1, T2 arg2, int retries)
+        {
+            return builder
+                .AddRunner(new FuncRunner<T1, T2, TResult>(arg1, arg2))
+                .SetActor(altFunc)
+                .SetRetryCount(retries) as FuncRetryBuilder<TResult>;
+        }
+
+        public static FuncRetryBuilder<TResult> ThenTry<T1, T2, T3, TResult>(this FuncRetryBuilder<TResult> builder, Func<T1, T2, T3, TResult> altFunc, T1 arg1, T2 arg2, T3 arg3, int retries)
+        {
+            return builder
+                .AddRunner(new FuncRunner<T1, T2, T3, TResult>(arg1, arg2, arg3))
+                .SetActor(altFunc)
+                .SetRetryCount(retries) as FuncRetryBuilder<TResult>;
+        }
+
+        public static FuncRetryBuilder<TResult> ThenTry<T1, T2, T3, T4, TResult>(this FuncRetryBuilder<TResult> builder, Func<T1, T2, T3, T4, TResult> altFunc, T1 arg1, T2 arg2, T3 arg3, T4 arg4, int retries)
+        {
+            return builder
+                .AddRunner(new FuncRunner<T1, T2, T3, T4, TResult>(arg1, arg2, arg3, arg4))
+                .SetActor(altFunc)
+                .SetRetryCount(retries) as FuncRetryBuilder<TResult>;
+        }
+
+        #endregion //ThenTry using Alt Func extensions:
 
     }
 }

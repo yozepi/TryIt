@@ -40,7 +40,7 @@ namespace Retry.Tests.Unit.Tests
         {
             this.LoadSpecs(() =>
             {
-                Type[] types = { typeof(Retry_Funcs), typeof(Retry_Funcs_ASYNC) };
+                Type[] types = { typeof(Retry_Funcs), typeof(Retry_Funcs_ASYNC), typeof(Retry_WithAlternate_Funcs) };
                 return types;
             });
             this.RunSpecs();

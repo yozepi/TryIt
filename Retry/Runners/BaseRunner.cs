@@ -77,8 +77,9 @@ namespace Retry.Runners
                     }
                     else
                     {
+                        ExceptionList.Add(new OnErrorPolicyException(ex));
                         Status = RetryStatus.Fail;
-                        throw;
+                        break;
                     }
                 }
             }

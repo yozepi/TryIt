@@ -14,6 +14,7 @@ namespace Retry.Tests.Unit.specs
 
     class Retry_Actions : nspec
     {
+
         void with_no_arguments()
         {
             ActionRetryBuilder subject = null;
@@ -231,8 +232,19 @@ namespace Retry.Tests.Unit.specs
                                 subject.OnError(errorDelegate);
                             };
 
-                            it["should throw the exception"] = () =>
-                                thrown.Should().Be(expectedException);
+                            it["should not throw an exception"] = () =>
+                                thrown.Should().BeOfType<RetryFailedException>();
+
+                            it["should have OnErrorPolicyException in the exceptionlist"] = () =>
+                                thrown.As<RetryFailedException>()
+                                .ExceptionList.FirstOrDefault(x => x.GetType() == typeof(OnErrorPolicyException))
+                                .Should().NotBeNull();
+
+                            it["OnErrorPolicyException's inner exception should be the expected exception"] = () =>
+                                 thrown.As<RetryFailedException>()
+                                .ExceptionList.First(x => x.GetType() == typeof(OnErrorPolicyException))
+                                .As<OnErrorPolicyException>()
+                                .InnerException.Should().BeSameAs(expectedException);
 
                         };
                     };
@@ -447,17 +459,30 @@ namespace Retry.Tests.Unit.specs
                     context["When OnError decides Try() should not continue"] = () =>
                     {
                         var expectedException = new Exception("Woah! What happened?");
+                        Exception capturedEx = null;
                         before = () =>
                         {
-                            subjectAction = () => { throw expectedException; };
-                            onError = (e, i) => { return false; };
+                            capturedEx = null;
+                            subjectAction = () => {
+                                if (subject.ExceptionList.Count == 0)
+                                    throw expectedException;
+                            };
+                            onError = (e, i) =>
+                            {
+                                if (subject.ExceptionList.Count == 0)
+                                    return false;
+                                return true;
+                            };
                         };
 
-                        it["should throw the exception caught by OnError"] = () =>
-                        thrown.Should().Be(expectedException);
+                        it["should continue to ThenTry"] = () =>
+                            subject.Runners.Last.Value.Attempts.Should().Be(1);
 
-                        it["status should be Fail"] = () =>
-                            subject.Status.Should().Be(RetryStatus.Fail);
+                        it["No exception should be thrown"] = () =>
+                            thrown.Should().BeNull();
+
+                        it["status should be SuccessAfterRetries"] = () =>
+                            subject.Status.Should().Be(RetryStatus.SuccessAfterRetries);
                     };
 
                     context["when oError throws an exception"] = () =>

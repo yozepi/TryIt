@@ -49,6 +49,7 @@
     <Compile Include="Consts_Enums_And_Delegates.cs" />
     <Compile Include="Extensions\ActionExtensions.cs" />
     <Compile Include="Extensions\FuncExtensions.cs" />
+    <Compile Include="OnErrorPolicyException.cs" />
     <Compile Include="Runners\ActionRunners.cs" />
     <Compile Include="Runners\FuncRunners.cs" />
     <Compile Include="Runners\BaseRunner.cs" />
@@ -64,6 +65,9 @@
     <Compile Include="Builders\ActionRetryBuilder.cs" />
     <Compile Include="TryIt_FuncRetryBuilder_Methods.cs" />
     <Compile Include="TryIt_TaskTResult_Methods.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="TryIt.nuspec" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

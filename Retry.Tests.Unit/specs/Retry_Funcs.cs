@@ -92,7 +92,7 @@ namespace Retry.Tests.Unit.specs
                         };
                     };
 
-                    context["when the exception fails the policy set by the delegate"] = () =>
+                    context["when the exception fails the policy set by the delegate and the delegate returns false"] = () =>
                     {
                         Exception expectedException = new Exception("I Failed!");
                         before = () =>
@@ -101,8 +101,26 @@ namespace Retry.Tests.Unit.specs
                             errorDelegate = (ex, i) => { return false; };
                         };
 
-                        it["should throw the exception"] = () =>
-                            thrown.Should().Be(expectedException);
+                        it["should set the status to Failed"] = () =>
+                            subject.Status.Should().Be(RetryStatus.Fail);
+
+                        it["should try only once"] = () =>
+                            subject.Attempts.Should().Be(1);
+
+                        it["should throw the RetryFailedException"] = () =>
+                            thrown.Should().BeOfType<RetryFailedException>();
+
+                        it["ExceptionList should contain an OnErrorPolicyException exception"] = () =>
+                            thrown.As<RetryFailedException>()
+                            .ExceptionList.FirstOrDefault(x => x.GetType() == typeof(OnErrorPolicyException))
+                            .Should().NotBeNull();
+
+                        it["OnErrorPolicyException's inner exception should be the expected exception"] = () =>
+                             thrown.As<RetryFailedException>()
+                            .ExceptionList.First(x => x.GetType() == typeof(OnErrorPolicyException))
+                            .As<OnErrorPolicyException>()
+                            .InnerException.Should().BeSameAs(expectedException);
+
                     };
 
                     context["when the delegate throws an exception"] = () =>

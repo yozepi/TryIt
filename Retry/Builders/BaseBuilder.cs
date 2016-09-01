@@ -157,9 +157,9 @@ namespace Retry.Builders
             return this;
         }
 
-        internal BaseBuilder SetOnSuccess(Delegate onSuccessDelegate)
+        internal BaseBuilder SetSuccessPolicy(Delegate successPolicyDelegate)
         {
-            LastRunner.OnSuccess = onSuccessDelegate;
+            LastRunner.SuccessPolicy = successPolicyDelegate;
             return this;
         }
 

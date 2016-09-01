@@ -18,11 +18,11 @@ namespace Retry.Runners
             }, TaskCreationOptions.AttachedToParent);
         }
 
-        protected override void HandleOnSuccess(int count)
+        protected override void HandleSuccessPolicy(int count)
         {
-            if (OnSuccess != null)
+            if (SuccessPolicy != null)
             {
-                (OnSuccess as OnSuccessDelegate)?.Invoke(count);
+                (SuccessPolicy as SuccessPolicyDelegate)?.Invoke(count);
             }
         }
 

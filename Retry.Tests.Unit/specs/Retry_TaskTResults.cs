@@ -98,21 +98,21 @@ namespace Retry.Tests.Unit.specs
                 };
             };
 
-            describe["Tryit(Func<Task<>>, retries).OnSuccess().Go()"] = () =>
+            describe["Tryit(Func<Task<>>, retries).WithSuccessPolicy().Go()"] = () =>
             {
-                OnSuccessDelegate<string> onSuccess = null;
-                bool onSuccessCalled = false;
+                SuccessPolicyDelegate<string> successPolicy = null;
+                bool successPolicyCalled = false;
 
                 before = () =>
                 {
-                    onSuccessCalled = false;
-                    onSuccess = (i, s) => { onSuccessCalled = true; };
+                    successPolicyCalled = false;
+                    successPolicy = (i, s) => { successPolicyCalled = true; };
                 };
 
-                act = () => subject.OnSuccess(onSuccess).Go();
+                act = () => subject.WithSuccessPolicy(successPolicy).Go();
 
-                it["should call the OnSuccess delegate"] = () =>
-                onSuccessCalled.Should().BeTrue();
+                it["should call the SuccessPolicy delegate"] = () =>
+                successPolicyCalled.Should().BeTrue();
             };
 
             describe["Tryit(Func<Task<>>, retries).GoAsync()"] = () =>

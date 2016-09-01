@@ -17,19 +17,19 @@ namespace Retry
     public delegate bool ErrorPolicyDelegate(Exception ex, int attemptCount);
 
     /// <summary>
-    /// Pass an instance of this deletate to the <see cref="TryIt.OnSuccess(ITry, OnSuccessDelegate)" /> extension method.
+    /// Pass an instance of this deletate to the <see cref="TryIt.WithSuccessPolicy(Builders.ActionRetryBuilder, SuccessPolicyDelegate)" /> extension method.
     /// </summary>
     /// <param name="attemptCount">A count of the execution attempts so far.</param>
-    public delegate void OnSuccessDelegate(int attemptCount);
+    public delegate void SuccessPolicyDelegate(int attemptCount);
 
     /// <summary>
     /// Pass an instance of this deletate to the
-    /// <see cref="TryIt.OnSuccess{TResult}(ITryAndReturnValue{TResult}, OnSuccessDelegate{TResult})" /> extension method.
+    /// <see cref="TryIt.WithErrorPolicy{TResult}(Builders.FuncRetryBuilder{TResult}, ErrorPolicyDelegate)" /> extension method.
     /// </summary>
     /// <typeparam name="TResult">The type of the result returned upon a succesful try.</typeparam>
     /// <param name="attemptCount">A count of the execution attempts so far.</param>
     /// <param name="result">The result of the succesfull attempt.</param>
-    public delegate void OnSuccessDelegate<TResult>(int attemptCount, TResult result);
+    public delegate void SuccessPolicyDelegate<TResult>(int attemptCount, TResult result);
 
     /// <summary>
     /// Represents the state of the TryIt outcome.

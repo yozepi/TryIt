@@ -42,7 +42,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Action_TryIt_Classes.cs" />
     <Compile Include="BackoffDelay.cs" />
     <Compile Include="Builders\BaseBuilder.cs" />
     <Compile Include="Builders\FuncRetryBuilder.cs" />

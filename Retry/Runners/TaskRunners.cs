@@ -28,9 +28,9 @@ namespace Retry.Runners
 
         }
 
-        protected override void HandleOnSuccess(int count)
+        protected override void HandleSuccessPolicy(int count)
         {
-            (OnSuccess as OnSuccessDelegate)?.Invoke(count);
+            (SuccessPolicy as SuccessPolicyDelegate)?.Invoke(count);
         }
     }
 

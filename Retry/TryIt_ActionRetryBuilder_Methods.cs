@@ -317,7 +317,7 @@ namespace Retry
         #endregion //Try Task methods:
 
 
-        #region UsingDelay, WithErrorPolicy, OnSuccess
+        #region UsingDelay, WithErrorPolicy, WithSuccessPolicy
 
         /// <summary>
         /// Provide an optional delay policy for pausing between tries.
@@ -363,10 +363,10 @@ namespace Retry
 
 
         /// <summary>
-        /// An optional policy (an <see cref="OnSuccessDelegate"/>) you can use to reject an otherwise successful try.
+        /// An optional policy (an <see cref="SuccessPolicyDelegate"/>) you can use to reject an otherwise successful try.
         /// </summary>
         /// <param name="builder">The <see cref="ITry"/> this method extends.</param>
-        /// <param name="onSuccess">The <see cref="OnSuccessDelegate"/> delegate to execute when a try succeeds (does not throw any exceptions).</param>
+        /// <param name="successPolicy">The <see cref="SuccessPolicyDelegate"/> delegate to execute when a try succeeds (does not throw any exceptions).</param>
         /// <returns></returns>
         /// <remarks>Normally TryIt will consider any action that does not throw an exception to be a success. You can override this behavior to test if your action really meets a success criteria.
         /// <para>
@@ -376,14 +376,14 @@ namespace Retry
         /// Capture your exception in an <see cref="WithErrorPolicy(ActionRetryBuilder, ErrorPolicyDelegate)"/> policy to stop retrying and rethrow your exception.
         /// </para>
         /// </remarks>
-        public static ActionRetryBuilder OnSuccess(this ActionRetryBuilder builder, OnSuccessDelegate onSuccess)
+        public static ActionRetryBuilder WithSuccessPolicy(this ActionRetryBuilder builder, SuccessPolicyDelegate successPolicy)
         {
-            builder.SetOnSuccess(onSuccess);
+            builder.SetSuccessPolicy(successPolicy);
             return builder;
         }
 
 
-        #endregion //UsingDelay, WithErrorPolicy, OnSuccess
+        #endregion //UsingDelay, WithErrorPolicy, WithSuccessPolicy
 
 
         #region ThenTry extensions:

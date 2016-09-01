@@ -32,9 +32,9 @@ namespace Retry.Runners
             return func();
         }
 
-        protected override void HandleOnSuccess(int count)
+        protected override void HandleSuccessPolicy(int count)
         {
-            (OnSuccess as OnSuccessDelegate<TResult>)?.Invoke(count, Result);
+            (SuccessPolicy as SuccessPolicyDelegate<TResult>)?.Invoke(count, Result);
         }
     }
 

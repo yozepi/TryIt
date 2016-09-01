@@ -84,31 +84,31 @@ namespace Retry.Tests.Unit.specs
                 };
             };
 
-            describe["Tryit(Func<Task>, retries).OnSuccess()"] = () =>
+            describe["Tryit(Func<Task>, retries).SuccessPolicy()"] = () =>
             {
-                OnSuccessDelegate onSuccessDelegate = null;
-                bool onSuccessCalled = false;
+                SuccessPolicyDelegate successDelegate = null;
+                bool successPolicyCalled = false;
 
                 before = () =>
                 {
-                    onSuccessCalled = false;
-                    onSuccessDelegate = (i) => { onSuccessCalled = true; };
+                    successPolicyCalled = false;
+                    successDelegate = (i) => { successPolicyCalled = true; };
                 };
 
-                act = () => subject.OnSuccess(onSuccessDelegate);
+                act = () => subject.WithSuccessPolicy(successDelegate);
 
-                it["should set the OnSuccess delegate"] = () =>
-                    subject.LastRunner.OnSuccess.Should().Be(onSuccessDelegate);
+                it["should set the SuccessPolicy delegate"] = () =>
+                    subject.LastRunner.SuccessPolicy.Should().Be(successDelegate);
 
-                describe["Tryit(Func<Task>, retries).OnSuccess().Go()"] = () =>
+                describe["Tryit(Func<Task>, retries).WithSuccessPolicy().Go()"] = () =>
                 {
                     act = () => subject.Go();
 
                     it["should set status to Success"] = () =>
                         subject.Status.Should().Be(RetryStatus.Success);
 
-                    it["should call the OnSuccess delegate"] = () =>
-                        onSuccessCalled.Should().BeTrue();
+                    it["should call the SuccessPolicy delegate"] = () =>
+                        successPolicyCalled.Should().BeTrue();
                 };
             };
 

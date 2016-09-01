@@ -31,7 +31,7 @@ namespace Retry.Runners
 
         public ErrorPolicyDelegate ErrorPolicy { get; set; }
 
-        public Delegate OnSuccess { get; set; }
+        public Delegate SuccessPolicy { get; set; }
 
         public async Task RunAsync()
         {
@@ -46,7 +46,7 @@ namespace Retry.Runners
                 {
                     Attempts++;
                     await ExecuteActorAsync();
-                    HandleOnSuccess(Attempts);
+                    HandleSuccessPolicy(Attempts);
                     if (count == 0)
                     {
                         Status = RetryStatus.Success;
@@ -103,7 +103,7 @@ namespace Retry.Runners
         /// Implementors execute this action to handle success policy calls.
         /// </summary>
         /// <param name="count"></param>
-        protected abstract void HandleOnSuccess(int count);
+        protected abstract void HandleSuccessPolicy(int count);
 
         private bool HandleErrorPolicy(Exception ex, int retryCount)
         {
@@ -116,7 +116,7 @@ namespace Retry.Runners
         {
             targetRunner.Delay = Delay;
             targetRunner.ErrorPolicy = ErrorPolicy;
-            targetRunner.OnSuccess = OnSuccess;
+            targetRunner.SuccessPolicy = SuccessPolicy;
             targetRunner.RetryCount = RetryCount;
             targetRunner.Actor = Actor;
         }

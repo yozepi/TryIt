@@ -83,14 +83,14 @@ namespace Retry.Tests.Unit.specs
 
             };
 
-            describe["TryIt.Try(Action action, int retries).OnSuccess(OnSuccessDelegate)"] = () =>
+            describe["TryIt.Try(Action action, int retries).WithSuccessPolicy(SuccessPolicyDelegate)"] = () =>
             {
-                OnSuccessDelegate successDelegate = (i) => { };
+                SuccessPolicyDelegate successDelegate = (i) => { };
 
-                act = () => subject = subject.OnSuccess(successDelegate);
+                act = () => subject = subject.WithSuccessPolicy(successDelegate);
 
-                it["should set the internal onSuccess property"] = () =>
-                    subject.LastRunner.OnSuccess.Should().BeSameAs(successDelegate);
+                it["should set the internal SuccessPolicy property"] = () =>
+                    subject.LastRunner.SuccessPolicy.Should().BeSameAs(successDelegate);
 
             };
 
@@ -506,13 +506,13 @@ namespace Retry.Tests.Unit.specs
 
                 };
 
-                describe["TryIt.Try(action, retries).OnSuccess(delegate).ThenTry(retries).Go()"] = () =>
+                describe["TryIt.Try(action, retries).WithSuccessPolicy(delegate).ThenTry(retries).Go()"] = () =>
                 {
-                    OnSuccessDelegate onSuccess = null;
+                    SuccessPolicyDelegate successDelegate = null;
                     act = () =>
                     {
                         subjectAction = () => { };
-                        subject = TryIt.Try(subjectAction, retries).OnSuccess(onSuccess);
+                        subject = TryIt.Try(subjectAction, retries).WithSuccessPolicy(successDelegate);
                         child = subject.ThenTry(retries);
                         try
                         {
@@ -523,33 +523,33 @@ namespace Retry.Tests.Unit.specs
                             thrown = ex;
                         }
                     };
-                    context["when OnSuccess does not throw"] = () =>
+                    context["when SuccessPolicy does not throw"] = () =>
                     {
-                        int onSuccessCalled = default(int);
+                        int successPolicyCalled = default(int);
                         before = () =>
                         {
                             thrown = null;
-                            onSuccessCalled = default(int);
-                            onSuccess = (i) => { onSuccessCalled = i; };
+                            successPolicyCalled = default(int);
+                            successDelegate = (i) => { successPolicyCalled = i; };
                         };
 
                         it["should succeed without any failures and a status of Success"] = () =>
                         {
-                            onSuccessCalled.Should().Be(1);
+                            successPolicyCalled.Should().Be(1);
                             child.ExceptionList.Count.Should().Be(0);
                             subject.Status.Should().Be(RetryStatus.Success);
                             child.Status.Should().Be(RetryStatus.Success);
                         };
                     };
 
-                    context["when OnSuccess throws an exception"] = () =>
+                    context["when SuccessPolicy throws an exception"] = () =>
                     {
-                        int onSuccessCalled = default(int);
+                        int successPolicyCalled = default(int);
                         before = () =>
                         {
                             thrown = null;
-                            onSuccessCalled = default(int);
-                            onSuccess = (i) => { onSuccessCalled++; throw new Exception("BARF!!"); };
+                            successPolicyCalled = default(int);
+                            successDelegate = (i) => { successPolicyCalled++; throw new Exception("BARF!!"); };
                         };
                         it["should set a status of Fail"] = () =>
                         {
@@ -557,8 +557,8 @@ namespace Retry.Tests.Unit.specs
                             child.Status.Should().Be(RetryStatus.Fail);
                         };
 
-                        it["should call OnSuccess both in Try() and ThenTry()"] = () =>
-                            onSuccessCalled.Should().Be(retries * 2);
+                        it["should call SuccessPolicy both in Try() and ThenTry()"] = () =>
+                            successPolicyCalled.Should().Be(retries * 2);
 
                         it["should raise RetryFailedException"] = () =>
                             thrown.Should().BeOfType<RetryFailedException>();

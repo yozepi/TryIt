@@ -494,6 +494,29 @@ namespace Retry_Samples
             return result;
         }
 
+        static string Try_WithSuccess_Policy()
+        {
+            var url = "http://www.google.com";
+            var backoff = Delay.Backoff(TimeSpan.FromMilliseconds(200));
+            string response = TryIt.Try(DownloadString, url, 3)
+                .UsingDelay(backoff)
+                .WithSuccessPolicy((result, trycount) =>
+                {
+                    if (string.IsNullOrEmpty(result))
+                        throw new InvalidOperationException("Unacceptable results!");
+                })
+                .WithErrorPolicy((ex, tryCount) =>
+                {
+                    if (ex.GetType() == typeof(InvalidOperationException))
+                        return false;
+                    return true;
+                })
+                .Go();
+            return response;
+
+        }
+
+
         static async Task<string> Try_Task_Quick_Then_BackOff_Async()
         {
             string connA = "Connection string A";

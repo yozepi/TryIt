@@ -27,9 +27,9 @@ namespace Retry
     /// <see cref="TryIt.WithErrorPolicy{TResult}(Builders.FuncRetryBuilder{TResult}, ErrorPolicyDelegate)" /> extension method.
     /// </summary>
     /// <typeparam name="TResult">The type of the result returned upon a succesful try.</typeparam>
-    /// <param name="attemptCount">A count of the execution attempts so far.</param>
     /// <param name="result">The result of the succesfull attempt.</param>
-    public delegate void SuccessPolicyDelegate<TResult>(int attemptCount, TResult result);
+    /// <param name="attemptCount">A count of the execution attempts so far.</param>
+    public delegate void SuccessPolicyDelegate<TResult>(TResult result, int attemptCount);
 
     /// <summary>
     /// Represents the state of the TryIt outcome.

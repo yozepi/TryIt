@@ -105,7 +105,7 @@ namespace Retry.Tests.Unit.specs
                 before = () =>
                 {
                     successPolicyCalled = false;
-                    successPolicy = (i, s) => { successPolicyCalled = true; };
+                    successPolicy = (s, i) => { successPolicyCalled = true; };
                 };
 
                 act = () => subject.WithSuccessPolicy(successPolicy).Go();

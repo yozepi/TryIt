@@ -34,7 +34,7 @@ namespace Retry.Runners
 
         protected override void HandleSuccessPolicy(int count)
         {
-            (SuccessPolicy as SuccessPolicyDelegate<TResult>)?.Invoke(count, Result);
+            (SuccessPolicy as SuccessPolicyDelegate<TResult>)?.Invoke(Result, count);
         }
     }
 

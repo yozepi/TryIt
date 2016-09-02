@@ -143,7 +143,7 @@ namespace Retry.Tests.Unit.specs
             {
                 SuccessPolicyDelegate<string> successDelegate = null;
                 object successPolicyResult = null;
-                beforeAll = () => successDelegate = (i, r) => { };
+                beforeAll = () => successDelegate = (r, i) => { };
                 act = () => successPolicyResult = subject.WithSuccessPolicy(successDelegate);
 
                 it["should set the internal SuccessPolicy property"] = () =>
@@ -163,7 +163,7 @@ namespace Retry.Tests.Unit.specs
                         testResult = null;
                         result = null;
                         successPolicyCalled = false;
-                        successDelegate = (i, r) => { testResult = r; successPolicyCalled = true; };
+                        successDelegate = (r, i) => { testResult = r; successPolicyCalled = true; };
                     };
                     act = () =>
                     {
@@ -199,7 +199,7 @@ namespace Retry.Tests.Unit.specs
 
                         before = () =>
                         {
-                            successDelegate = (i, r) =>
+                            successDelegate = (r, i) =>
                             {
                                 if (subject.LastRunner.ExceptionList.Count == 0)
                                     throw expectedException;
@@ -220,7 +220,7 @@ namespace Retry.Tests.Unit.specs
 
                         before = () =>
                         {
-                            successDelegate = (i, r) =>
+                            successDelegate = (r, i) =>
                             {
                                 throw expectedException;
                             };

@@ -28,7 +28,7 @@ namespace Retry.Tests.Unit.specs
                 };
             };
 
-            act = () => subject = TryIt.Try(subjectAction, retries);
+            act = () => subject = TryIt.TryTask(subjectAction, retries);
 
             describe["Tryit(Func<Task>, retries)"] = () =>
             {
@@ -264,7 +264,7 @@ namespace Retry.Tests.Unit.specs
                     return Task.Factory.StartNew(() => { e = a; });
                 };
             };
-            act = () => subject = TryIt.Try(taskAction, arg, retries);
+            act = () => subject = TryIt.TryTask(taskAction, arg, retries);
 
             describe["TryIt.Try(Func<T, Task>, arg, retries)"] = () =>
             {
@@ -371,7 +371,7 @@ namespace Retry.Tests.Unit.specs
                     return Task.Factory.StartNew(() => { e1 = a1; e2 = a2; });
                 };
             };
-            act = () => subject = TryIt.Try(taskFunc, arg1, arg2, retries);
+            act = () => subject = TryIt.TryTask(taskFunc, arg1, arg2, retries);
 
             describe["TryIt.Try(Func<T, Task>, arg1, arg2, retries)"] = () =>
             {
@@ -485,7 +485,7 @@ namespace Retry.Tests.Unit.specs
                     return Task.Factory.StartNew(() => { e1 = a1; e2 = a2; e3 = a3; });
                 };
             };
-            act = () => subject = TryIt.Try(taskFunc, arg1, arg2, arg3, retries);
+            act = () => subject = TryIt.TryTask(taskFunc, arg1, arg2, arg3, retries);
 
             describe["TryIt.Try(Func<T1, T2, Task>, arg1, arg2, arg3, retries)"] = () =>
             {
@@ -608,7 +608,7 @@ namespace Retry.Tests.Unit.specs
                     return Task.Factory.StartNew(() => { e1 = a1; e2 = a2; e3 = a3; e4 = a4; });
                 };
             };
-            act = () => subject = TryIt.Try(taskFunc, arg1, arg2, arg3, arg4, retries);
+            act = () => subject = TryIt.TryTask(taskFunc, arg1, arg2, arg3, arg4, retries);
 
             describe["TryIt.Try(Func<T, Task>, arg1, arg2, arg3, arg4, retries)"] = () =>
             {

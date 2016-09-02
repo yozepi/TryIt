@@ -14,7 +14,7 @@ namespace Retry
 
         #region Try methods:
 
-        public static FuncRetryBuilder<TResult> Try<TResult>(Func<Task<TResult>> func, int retries)
+        public static FuncRetryBuilder<TResult> TryTask<TResult>(Func<Task<TResult>> func, int retries)
         {
             return new FuncRetryBuilder<TResult>()
             .AddRunner(new TaskWithResultRunner<TResult>())
@@ -23,7 +23,7 @@ namespace Retry
         }
 
 
-        public static FuncRetryBuilder<TResult> Try<T, TResult>(Func<T, Task<TResult>> func, T arg, int retries)
+        public static FuncRetryBuilder<TResult> TryTask<T, TResult>(Func<T, Task<TResult>> func, T arg, int retries)
         {
             return new FuncRetryBuilder<TResult>()
             .AddRunner(new TaskWithResultRunner<T, TResult>(arg))
@@ -31,7 +31,7 @@ namespace Retry
             .SetRetryCount(retries) as FuncRetryBuilder<TResult>;
         }
 
-        public static FuncRetryBuilder<TResult> Try<T1, T2, TResult>(Func<T1, T2, Task<TResult>> func, T1 arg1, T2 arg2, int retries)
+        public static FuncRetryBuilder<TResult> TryTask<T1, T2, TResult>(Func<T1, T2, Task<TResult>> func, T1 arg1, T2 arg2, int retries)
         {
             return new FuncRetryBuilder<TResult>()
             .AddRunner(new TaskWithResultRunner<T1, T2, TResult>(arg1, arg2))
@@ -39,7 +39,7 @@ namespace Retry
             .SetRetryCount(retries) as FuncRetryBuilder<TResult>;
         }
 
-        public static FuncRetryBuilder<TResult> Try<T1, T2, T3, TResult>(Func<T1, T2, T3, Task<TResult>> func, T1 arg1, T2 arg2, T3 arg3, int retries)
+        public static FuncRetryBuilder<TResult> TryTask<T1, T2, T3, TResult>(Func<T1, T2, T3, Task<TResult>> func, T1 arg1, T2 arg2, T3 arg3, int retries)
         {
             return new FuncRetryBuilder<TResult>()
             .AddRunner(new TaskWithResultRunner<T1, T2, T3, TResult>(arg1, arg2, arg3))
@@ -47,7 +47,7 @@ namespace Retry
             .SetRetryCount(retries) as FuncRetryBuilder<TResult>;
         }
 
-        public static FuncRetryBuilder<TResult> Try<T1, T2, T3, T4, TResult>(Func<T1, T2, T3, T4, Task<TResult>> func, T1 arg1, T2 arg2, T3 arg3, T4 arg4, int retries)
+        public static FuncRetryBuilder<TResult> TryTask<T1, T2, T3, T4, TResult>(Func<T1, T2, T3, T4, Task<TResult>> func, T1 arg1, T2 arg2, T3 arg3, T4 arg4, int retries)
         {
             return new FuncRetryBuilder<TResult>()
             .AddRunner(new TaskWithResultRunner<T1, T2, T3, T4, TResult>(arg1, arg2, arg3, arg4))

@@ -12,7 +12,6 @@ namespace Retry.Tests.Unit.specs
 {
     class Retry_TaskTResults : nspec
     {
-
         void with_no_arguments()
         {
             int retries = 3;
@@ -29,7 +28,7 @@ namespace Retry.Tests.Unit.specs
                     return Task<string>.Factory.StartNew(() => { taskExecuted = true; return expectedResult; });
                 };
             };
-            act = () => subject = TryIt.Try(subjectFunc, retries);
+            act = () => subject = TryIt.TryTask(subjectFunc, retries);
 
             describe["Tryit(Func<Task<>>, retries)"] = () =>
             {
@@ -174,70 +173,68 @@ namespace Retry.Tests.Unit.specs
                     it["should set status to SuccessAfterRetries"] = () =>
                         subject.Status.Should().Be(RetryStatus.SuccessAfterRetries);
                 };
-                //};
 
-                //    describe["Tryit(Func<Task>, retries).ThenTry()"] = () =>
-                //    {
-                //        ITryAndReturnValue<string> child = null;
-                //        before = () => child = null;
-                //        act = () => child = subject.ThenTry(retries);
+                describe["Tryit(Func<Task>, retries).ThenTry()"] = () =>
+                {
+                    FuncRetryBuilder<string> child = null;
+                    before = () => child = null;
+                    act = () => child = subject.ThenTry(retries);
 
-                //        it["should return an TaskTryItAndReturnResult instance"] = () =>
-                //            child.Should().BeOfType<TaskTryItAndReturnResult<string>>();
-
-
-                //        describe["Tryit(Func<Task>, retries).ThenTry().Go()"] = () =>
-                //        {
-                //            string result = null;
-                //            before = () => result = null;
-                //            act = () => result = child.Go();
-
-                //            it["should execute the task."] = () =>
-                //            {
-                //                taskExecuted.Should().BeTrue();
-                //                result.Should().Be(expectedResult);
-                //            };
-
-                //            context["when the task is not started by the action"] = () =>
-                //            {
-                //                before = () =>
-                //                {
-                //                    subjectAction = () =>
-                //                    {
-                //                        return new Task<string>(() => { taskExecuted = true; return expectedResult; });
-                //                    };
-                //                };
-
-                //                it["should start the task and run it"] = () =>
-                //                {
-                //                    taskExecuted.Should().BeTrue();
-                //                    result.Should().Be(expectedResult);
-                //                };
-                //            };
+                    it["should return an TaskTryItAndReturnResult instance"] = () =>
+                        child.Should().BeOfType<FuncRetryBuilder<string>>();
 
 
-                //            context["when Try() fails on every attempt"] = () =>
-                //            {
-                //                before = () =>
-                //                {
-                //                    subjectAction = () => Task<string>.Factory.StartNew(() =>
-                //                    {
-                //                        if (child.Attempts == 0)
-                //                        {
-                //                            throw new Exception("Oooohhh child, things are going to get easier!");
-                //                        }
-                //                        return expectedResult;
-                //                    });
-                //                };
+                    describe["Tryit(Func<Task>, retries).ThenTry().Go()"] = () =>
+                    {
+                        before = () => result = null;
+                        act = () => result = child.Go();
 
-                //                it["should execute ThenTry()"] = () =>
-                //                {
-                //                    child.Attempts.Should().Be(1);
-                //                    result.Should().Be(expectedResult);
-                //                };
-                //            };
-                //        };
+                        it["should execute the task."] = () =>
+                        {
+                            taskExecuted.Should().BeTrue();
+                            result.Should().Be(expectedResult);
+                        };
 
+                        context["when the task is not started by the action"] = () =>
+                        {
+                            before = () =>
+                            {
+                                subjectFunc = () =>
+                                {
+                                    return new Task<string>(() => { taskExecuted = true; return expectedResult; });
+                                };
+                            };
+
+                            it["should start the task and run it"] = () =>
+                            {
+                                taskExecuted.Should().BeTrue();
+                                result.Should().Be(expectedResult);
+                            };
+                        };
+
+                        context["when Try() fails on every attempt"] = () =>
+                        {
+                            before = () =>
+                            {
+                                subjectFunc = () => Task<string>.Factory.StartNew(() =>
+                                {
+                                    if (subject.LastRunner.Attempts == 0)
+                                    {
+                                        throw new Exception("Oooohhh child, things are going to get easier!");
+                                    }
+                                    return expectedResult;
+                                });
+                            };
+
+                            it["should execute ThenTry()"] = () =>
+                            {
+                                subject.LastRunner.Attempts.Should().Be(1);
+                                result.Should().Be(expectedResult);
+                            };
+                        };
+                    };
+
+                };
             };
 
             describe["Tryit(Func<Task<>>, retries).ThenTry(retries)"] = () =>
@@ -318,7 +315,7 @@ namespace Retry.Tests.Unit.specs
                     return Task<string>.Factory.StartNew(() => { return expectedResult; });
                 };
             };
-            act = () => subject = TryIt.Try(subjectAction, arg, retries);
+            act = () => subject = TryIt.TryTask(subjectAction, arg, retries);
 
             describe["TryIt.Try(func<arg, Task<>>, arg, retries)"] = () =>
             {
@@ -425,7 +422,7 @@ namespace Retry.Tests.Unit.specs
                     return Task<string>.Factory.StartNew(() => { return expectedResult; });
                 };
             };
-            act = () => subject = TryIt.Try(subjectAction, arg1, arg2, retries);
+            act = () => subject = TryIt.TryTask(subjectAction, arg1, arg2, retries);
 
             describe["TryIt.Try(func<arg1, arg2, Task<>>, arg1, arg2, retries)"] = () =>
             {
@@ -534,7 +531,7 @@ namespace Retry.Tests.Unit.specs
                     return Task<string>.Factory.StartNew(() => { return expectedResult; });
                 };
             };
-            act = () => subject = TryIt.Try(subjectAction, arg1, arg2, arg3, retries);
+            act = () => subject = TryIt.TryTask(subjectAction, arg1, arg2, arg3, retries);
 
             describe["TryIt.Try(func<arg1, arg2, arg3, Task<>>, arg1, arg2, arg3, retries)"] = () =>
             {
@@ -644,7 +641,7 @@ namespace Retry.Tests.Unit.specs
                 {
                     return Task<string>.Factory.StartNew(() => { return expectedResult; });
                 };
-                act = () => subject = TryIt.Try(subjectAction, arg1, arg2, arg3, arg4, retries);
+                act = () => subject = TryIt.TryTask(subjectAction, arg1, arg2, arg3, arg4, retries);
             };
 
             describe["TryIt.Try(func<arg1, arg2, arg3, arg4, Task<>>, arg1, arg2, arg3, arg4, retries)"] = () =>

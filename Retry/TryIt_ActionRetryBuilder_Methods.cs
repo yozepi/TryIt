@@ -268,7 +268,7 @@ namespace Retry
 
         #region Try Task methods:
 
-        public static ActionRetryBuilder Try(Func<Task> func, int retries)
+        public static ActionRetryBuilder TryTask(Func<Task> func, int retries)
         {
 
             return new ActionRetryBuilder()
@@ -277,7 +277,7 @@ namespace Retry
                 .SetRetryCount(retries) as ActionRetryBuilder;
         }
 
-        public static ActionRetryBuilder Try<T>(Func<T, Task> func, T arg, int retries)
+        public static ActionRetryBuilder TryTask<T>(Func<T, Task> func, T arg, int retries)
         {
 
             return new ActionRetryBuilder()
@@ -286,7 +286,7 @@ namespace Retry
                 .SetRetryCount(retries) as ActionRetryBuilder;
         }
 
-        public static ActionRetryBuilder Try<T1, T2>(Func<T1, T2, Task> func, T1 arg1, T2 arg2, int retries)
+        public static ActionRetryBuilder TryTask<T1, T2>(Func<T1, T2, Task> func, T1 arg1, T2 arg2, int retries)
         {
 
             return new ActionRetryBuilder()
@@ -295,7 +295,7 @@ namespace Retry
                 .SetRetryCount(retries) as ActionRetryBuilder;
         }
 
-        public static ActionRetryBuilder Try<T1, T2, T3>(Func<T1, T2, T3, Task> func, T1 arg1, T2 arg2, T3 arg3, int retries)
+        public static ActionRetryBuilder TryTask<T1, T2, T3>(Func<T1, T2, T3, Task> func, T1 arg1, T2 arg2, T3 arg3, int retries)
         {
 
             return new ActionRetryBuilder()
@@ -304,7 +304,7 @@ namespace Retry
                 .SetRetryCount(retries) as ActionRetryBuilder;
         }
 
-        public static ActionRetryBuilder Try<T1, T2, T3, T4>(Func<T1, T2, T3, T4, Task> func, T1 arg1, T2 arg2, T3 arg3, T4 arg4, int retries)
+        public static ActionRetryBuilder TryTask<T1, T2, T3, T4>(Func<T1, T2, T3, T4, Task> func, T1 arg1, T2 arg2, T3 arg3, T4 arg4, int retries)
         {
 
             return new ActionRetryBuilder()
@@ -488,7 +488,8 @@ namespace Retry
 
         #endregion //ThenTry extensions:
 
-        #region ThenTry Task extensions:
+
+        #region ThenTry Alternate Task extensions:
         public static ActionRetryBuilder ThenTry(this ActionRetryBuilder builder, Func<Task> altFunc, int retries)
         {
             return builder
@@ -529,6 +530,6 @@ namespace Retry
                 .SetRetryCount(retries) as ActionRetryBuilder;
         }
 
-        #endregion //ThenTry Task extensions:
+        #endregion //ThenTry Alternate Task extensions:
     }
 }

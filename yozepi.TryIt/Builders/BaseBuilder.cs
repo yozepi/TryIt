@@ -59,8 +59,8 @@ namespace Retry.Builders
         {
             try
             {
-                Task task = RunAsync();
-                task.Wait();
+                var awaiter = RunAsync().GetAwaiter();
+                awaiter.GetResult();
             }
             catch (AggregateException ex)
             {

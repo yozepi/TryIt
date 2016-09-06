@@ -97,8 +97,8 @@ namespace TryIt_Examples
             //Console.Write("When calling via Try: ");
             //PerformanceTest(TryIt.Try(testAction, 1).Go);
 
-            Console.WriteLine("Press any key to continue . . .");
-            Console.ReadKey();
+            //Console.WriteLine("Press any key to continue . . .");
+            //Console.ReadKey();
 
         }
 
@@ -566,20 +566,20 @@ namespace TryIt_Examples
 
             string result = null;
 
-            Func<string> alternateConnections = () =>
+            Func<Task<string>> alternateConnectionsAsync = () =>
             {
-                var retries = 3;
+                var retries = 1;
                 var localResult =
-                    TryIt.Try(GetDBResults, connA, retries)
+                    TryIt.TryTask(GetDBResultsAsync, connA, retries)
                     .ThenTry(connB, retries)
                     .ThenTry(connC, retries)
-                    .Go();
+                    .GoAsync();
                 return localResult;
             };
             try
             {
-                result = alternateConnections.Try(2)
-                    //.UsingDelay(Delay.Backoff(TimeSpan.FromMilliseconds(100)))
+                result = TryIt.TryTask(alternateConnectionsAsync, 10)
+                    .UsingDelay(Delay.Backoff(TimeSpan.FromMilliseconds(100)))
                     .Go();
             }
             catch (Exception ex)

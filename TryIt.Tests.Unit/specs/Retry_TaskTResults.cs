@@ -26,7 +26,7 @@ namespace TryIt.Tests.Unit.specs
                 subject = null;
                 subjectFunc = () =>
                 {
-                    return Task<string>.Factory.StartNew(() => { taskExecuted = true; return expectedResult; });
+                    return Task<string>.Run(() => { taskExecuted = true; return expectedResult; });
                 };
             };
             act = () => subject = Retry.TryIt.TryTask(subjectFunc, retries);
@@ -151,7 +151,7 @@ namespace TryIt.Tests.Unit.specs
                     {
                         subjectFunc = () =>
                         {
-                            return Task<string>.Factory.StartNew(() =>
+                            return Task<string>.Run(() =>
                             {
                                 if (subject.LastRunner.Attempts == 1)
                                     throw new Exception("Nope!");
@@ -217,7 +217,7 @@ namespace TryIt.Tests.Unit.specs
                         {
                             before = () =>
                             {
-                                subjectFunc = () => Task<string>.Factory.StartNew(() =>
+                                subjectFunc = () => Task<string>.Run(() =>
                                 {
                                     if (subject.LastRunner.Attempts == 0)
                                     {
@@ -282,7 +282,7 @@ namespace TryIt.Tests.Unit.specs
                     before = () =>
                     {
                         funcAttempts = 0;
-                        subjectFunc = () => Task<string>.Factory.StartNew(() =>
+                        subjectFunc = () => Task<string>.Run(() =>
                         {
                             funcAttempts++;
                             if (funcAttempts <= retries)
@@ -313,7 +313,7 @@ namespace TryIt.Tests.Unit.specs
                 subject = null;
                 subjectAction = (i) =>
                 {
-                    return Task<string>.Factory.StartNew(() => { return expectedResult; });
+                    return Task<string>.Run(() => { return expectedResult; });
                 };
             };
             act = () => subject = Retry.TryIt.TryTask(subjectAction, arg, retries);
@@ -387,7 +387,7 @@ namespace TryIt.Tests.Unit.specs
                     before = () =>
                     {
                         funcAttempts = 0;
-                        subjectAction = (i) => Task<string>.Factory.StartNew(() =>
+                        subjectAction = (i) => Task<string>.Run(() =>
                         {
                             funcAttempts++;
                             if (funcAttempts <= retries)
@@ -420,7 +420,7 @@ namespace TryIt.Tests.Unit.specs
                 subject = null;
                 subjectAction = (a1, a2) =>
                 {
-                    return Task<string>.Factory.StartNew(() => { return expectedResult; });
+                    return Task<string>.Run(() => { return expectedResult; });
                 };
             };
             act = () => subject = Retry.TryIt.TryTask(subjectAction, arg1, arg2, retries);
@@ -495,7 +495,7 @@ namespace TryIt.Tests.Unit.specs
                     before = () =>
                     {
                         funcAttempts = 0;
-                        subjectAction = (a1, a2) => Task<string>.Factory.StartNew(() =>
+                        subjectAction = (a1, a2) => Task<string>.Run(() =>
                         {
                             funcAttempts++;
                             if (funcAttempts <= retries)
@@ -529,7 +529,7 @@ namespace TryIt.Tests.Unit.specs
                 subject = null;
                 subjectAction = (a1, a2, a3) =>
                 {
-                    return Task<string>.Factory.StartNew(() => { return expectedResult; });
+                    return Task<string>.Run(() => { return expectedResult; });
                 };
             };
             act = () => subject = Retry.TryIt.TryTask(subjectAction, arg1, arg2, arg3, retries);
@@ -605,7 +605,7 @@ namespace TryIt.Tests.Unit.specs
                     before = () =>
                     {
                         funcAttempts = 0;
-                        subjectAction = (a1, a2, a3) => Task<string>.Factory.StartNew(() =>
+                        subjectAction = (a1, a2, a3) => Task<string>.Run(() =>
                         {
                             funcAttempts++;
                             if (funcAttempts <= retries)
@@ -640,7 +640,7 @@ namespace TryIt.Tests.Unit.specs
                 subject = null;
                 subjectAction = (a1, a2, a3, a4) =>
                 {
-                    return Task<string>.Factory.StartNew(() => { return expectedResult; });
+                    return Task<string>.Run(() => { return expectedResult; });
                 };
                 act = () => subject = Retry.TryIt.TryTask(subjectAction, arg1, arg2, arg3, arg4, retries);
             };
@@ -717,7 +717,7 @@ namespace TryIt.Tests.Unit.specs
                     before = () =>
                     {
                         funcAttempts = 0;
-                        subjectAction = (a1, a2, a3, a4) => Task<string>.Factory.StartNew(() =>
+                        subjectAction = (a1, a2, a3, a4) => Task<string>.Run(() =>
                         {
                             funcAttempts++;
                             if (funcAttempts <= retries)

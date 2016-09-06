@@ -20,10 +20,10 @@ namespace Retry.Runners
 
         protected virtual async Task<TResult> RunTaskAsync()
         {
-            return await Task<TResult>.Factory.StartNew(() =>
+            return await Task<TResult>.Run(() =>
            {
                return ExecuteFunc();
-           }, TaskCreationOptions.AttachedToParent);
+           });
         }
 
         protected virtual TResult ExecuteFunc()

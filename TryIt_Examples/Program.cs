@@ -23,79 +23,83 @@ namespace TryIt_Examples
         {
             string response = null;
 
-            response = Try_A_Method();
-            Console.WriteLine("Try a method - Response length: {0}", response.Length);
+            //response = Try_A_Method();
+            //Console.WriteLine("Try a method - Response length: {0}", response.Length);
 
-            response = await Try_A_Method_Async();
-            Console.WriteLine("Try a method ASYNC - Response length: {0}", response.Length);
+            //response = await Try_A_Method_Async();
+            //Console.WriteLine("Try a method ASYNC - Response length: {0}", response.Length);
 
-            response = Try_A_Task();
-            Console.WriteLine("Try a task - Response length: {0}", response.Length);
+            //response = Try_A_Task();
+            //Console.WriteLine("Try a task - Response length: {0}", response.Length);
 
-            response = await Try_A_Task_Async();
-            Console.WriteLine("Try a task ASYNC - Response length: {0}", response.Length);
+            //response = await Try_A_Task_Async();
+            //Console.WriteLine("Try a task ASYNC - Response length: {0}", response.Length);
 
-            response = Try_A_Method_A_B();
-            Console.WriteLine("Try and retry a method (A, B) - Response length: {0}", response.Length);
+            //response = Try_A_Method_A_B();
+            //Console.WriteLine("Try and retry a method (A, B) - Response length: {0}", response.Length);
 
-            response = Try_A_Method_A_With_ALT_Method();
-            Console.WriteLine("Try and retry a method with an alternate method.");
-            Console.WriteLine("Response: \"{0}\"", response);
+            //response = Try_A_Method_A_With_ALT_Method();
+            //Console.WriteLine("Try and retry a method with an alternate method.");
+            //Console.WriteLine("Response: \"{0}\"", response);
 
-            Console.WriteLine("Try a method and Fail fast if there's a policy violation");
-            Try_A_Method_And_Handle_Error();
+            //Console.WriteLine("Try a method and Fail fast if there's a policy violation");
+            //Try_A_Method_And_Handle_Error();
 
-            Console.WriteLine("Try and retry a method (A, B) Fail fast if there's a policy violation");
-            response = Try_A_Method_A_B_Handle_Error();
-            Console.WriteLine("Response length: {0}", response.Length);
+            //Console.WriteLine("Try and retry a method (A, B) Fail fast if there's a policy violation");
+            //response = Try_A_Method_A_B_Handle_Error();
+            //Console.WriteLine("Response length: {0}", response.Length);
 
-            response = await Try_A_Method_A_B_Async();
-            Console.WriteLine("Try and retry a method (A, B) ASYNC - Response length: {0}", response.Length);
+            //response = await Try_A_Method_A_B_Async();
+            //Console.WriteLine("Try and retry a method (A, B) ASYNC - Response length: {0}", response.Length);
 
-            response = Try_A_Task_A_B();
-            Console.WriteLine("Try and retry a task (A, B) - Response length: {0}", response.Length);
+            //response = Try_A_Task_A_B();
+            //Console.WriteLine("Try and retry a task (A, B) - Response length: {0}", response.Length);
 
-            response = await Try_A_Task_A_B_Async();
-            Console.WriteLine("Try and retry a task (A, B) ASYNC - Response length: {0}", response.Length);
+            //response = await Try_A_Task_A_B_Async();
+            //Console.WriteLine("Try and retry a task (A, B) ASYNC - Response length: {0}", response.Length);
 
 
+
+            //Console.WriteLine();
+            //Console.WriteLine("Try/retry a method quickly then try/retry with a backoff delay (A, B)");
+            //response = Try_Method_Quick_Then_BackOff();
+            //Console.WriteLine("Response: \"{0}\"", response);
+
+            //Console.WriteLine();
+            //Console.WriteLine("Try/retry a method quickly then try/retry with a backoff delay (A, B) ASYNC");
+            //RunTask(Try_Method_Quick_Then_BackOff_Async());
+
+
+            //Console.WriteLine();
+            //Console.WriteLine("Try/retry a task quickly then try/retry with a backoff delay (A, B)");
+            //response = Try_Task_Quick_Then_BackOff();
+            //Console.WriteLine("Response: \"{0}\"", response);
+
+            //Console.WriteLine();
+            //Console.WriteLine("Try/retry a task quickly then try/retry with a backoff delay (A, B) ASYNC");
+            //RunTask(Try_Task_Quick_Then_BackOff_Async());
 
             Console.WriteLine();
-            Console.WriteLine("Try/retry a method quickly then try/retry with a backoff delay (A, B)");
-            response = Try_Method_Quick_Then_BackOff();
-            Console.WriteLine("Response: \"{0}\"", response);
-
-            Console.WriteLine();
-            Console.WriteLine("Try/retry a method quickly then try/retry with a backoff delay (A, B) ASYNC");
-            RunTask(Try_Method_Quick_Then_BackOff_Async());
-
-
-            Console.WriteLine();
-            Console.WriteLine("Try/retry a task quickly then try/retry with a backoff delay (A, B)");
-            response = Try_Task_Quick_Then_BackOff();
-            Console.WriteLine("Response: \"{0}\"", response);
-
-            Console.WriteLine();
-            Console.WriteLine("Try/retry a task quickly then try/retry with a backoff delay (A, B) ASYNC");
-            RunTask(Try_Task_Quick_Then_BackOff_Async());
-
-            Console.WriteLine();
-            Console.WriteLine("Alternate between 2 connections. Repeat 10 times - backing off after each try.");
+            Console.WriteLine("Alternate between 3 connections. Repeat 10 times - backing off after each try.");
             response = Try_a_Method_AB_Alternating();
             Console.WriteLine("Response: \"{0}\"", response);
 
-            Console.WriteLine();
-            response = Capture_Exception();
-            Console.WriteLine("Capturing a RetryFailedException: {0}", response);
+            //Console.WriteLine();
+            //response = Capture_Exception();
+            //Console.WriteLine("Capturing a RetryFailedException: {0}", response);
 
 
-            Console.WriteLine();
-            Console.WriteLine("Preformance Comparison...");
-            Action testAction = () => { };
-            Console.Write("When calling the method directly: ");
-            PerformanceTest(testAction);
-            Console.Write("When calling via Try: ");
-            PerformanceTest(TryIt.Try(testAction, 1).Go);
+            //Console.WriteLine();
+            //Console.WriteLine("Preformance Comparison...");
+            //Action testAction = () => { };
+            //Console.Write("When calling the method directly: ");
+            //PerformanceTest(testAction);
+            //Console.Write("When calling via Try: ");
+            //PerformanceTest(TryIt.Try(testAction, 1).Go);
+
+            Console.WriteLine("Press any key to continue . . .");
+            Console.ReadKey();
+
         }
 
         private static void PerformanceTest(Action testAction)
@@ -558,19 +562,24 @@ namespace TryIt_Examples
         {
             string connA = "Connection string A";
             string connB = "Connection string B";
+            string connC = "Connection string C";
 
             string result = null;
 
             Func<string> alternateConnections = () =>
-                {
-                    var localResult = TryIt.Try(GetDBResults, connA, 1)
-                    .ThenTry(connB, 1).Go();
-                    return localResult;
-                };
+            {
+                var retries = 3;
+                var localResult =
+                    TryIt.Try(GetDBResults, connA, retries)
+                    .ThenTry(connB, retries)
+                    .ThenTry(connC, retries)
+                    .Go();
+                return localResult;
+            };
             try
             {
-                result = alternateConnections.Try(10)
-                    .UsingDelay(Delay.Backoff(TimeSpan.FromMilliseconds(100)))
+                result = alternateConnections.Try(2)
+                    //.UsingDelay(Delay.Backoff(TimeSpan.FromMilliseconds(100)))
                     .Go();
             }
             catch (Exception ex)
@@ -585,7 +594,7 @@ namespace TryIt_Examples
 
         private static string GetDBResults(string connectionString)
         {
-            const int n = 4;
+            const int n = 8;
             //One in n chance of succeeding (very flaky service :-) )
             Console.Write("Using connectionString: {0}", connectionString);
 
@@ -604,7 +613,7 @@ namespace TryIt_Examples
 
         private static async Task<string> GetDBResultsAsync(string connectionString)
         {
-            return await Task<string>.Factory.StartNew(() => GetDBResults(connectionString));
+            return await Task<string>.Run(() => GetDBResults(connectionString));
         }
     }
 }

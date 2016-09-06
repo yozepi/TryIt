@@ -25,7 +25,7 @@ namespace TryIt.Tests.Unit.specs
                 subject = null;
                 subjectAction = () =>
                 {
-                    return Task.Factory.StartNew(() => { taskExecuted = true; });
+                    return Task.Run(() => { taskExecuted = true; });
                 };
             };
 
@@ -196,7 +196,7 @@ namespace TryIt.Tests.Unit.specs
                     {
                         before = () =>
                         {
-                            subjectAction = () => Task.Factory.StartNew(() =>
+                            subjectAction = () => Task.Run(() =>
                             {
                                 if (subject.Runners.First.Value.Status != RetryStatus.Fail)
                                 {
@@ -218,7 +218,7 @@ namespace TryIt.Tests.Unit.specs
             {
                 ActionRetryBuilder child = null;
 
-                Func<Task> altFunc = () => Task.Factory.StartNew(() => { });
+                Func<Task> altFunc = () => Task.Run(() => { });
                 act = () =>
                 {
                     child = subject.ThenTry(altFunc, retries);
@@ -262,7 +262,7 @@ namespace TryIt.Tests.Unit.specs
                 subject = null;
                 taskAction = taskAction = (a) =>
                 {
-                    return Task.Factory.StartNew(() => { e = a; });
+                    return Task.Run(() => { e = a; });
                 };
             };
             act = () => subject = Retry.TryIt.TryTask(taskAction, arg, retries);
@@ -316,7 +316,7 @@ namespace TryIt.Tests.Unit.specs
             {
                 ActionRetryBuilder child = null;
 
-                Func<string, Task> altFunc = (a) => Task.Factory.StartNew(() => { });
+                Func<string, Task> altFunc = (a) => Task.Run(() => { });
                 act = () =>
                 {
                     child = subject.ThenTry(altFunc, arg, retries);
@@ -369,7 +369,7 @@ namespace TryIt.Tests.Unit.specs
                 subject = null;
                 taskFunc = taskFunc = (a1, a2) =>
                 {
-                    return Task.Factory.StartNew(() => { e1 = a1; e2 = a2; });
+                    return Task.Run(() => { e1 = a1; e2 = a2; });
                 };
             };
             act = () => subject = Retry.TryIt.TryTask(taskFunc, arg1, arg2, retries);
@@ -426,7 +426,7 @@ namespace TryIt.Tests.Unit.specs
             {
                 ActionRetryBuilder child = null;
 
-                Func<string, int, Task> altFunc = (a1, a2) => Task.Factory.StartNew(() => { });
+                Func<string, int, Task> altFunc = (a1, a2) => Task.Run(() => { });
                 act = () =>
                 {
                     child = subject.ThenTry(altFunc, arg1, arg2, retries);
@@ -483,7 +483,7 @@ namespace TryIt.Tests.Unit.specs
                 subject = null;
                 taskFunc = taskFunc = (a1, a2, a3) =>
                 {
-                    return Task.Factory.StartNew(() => { e1 = a1; e2 = a2; e3 = a3; });
+                    return Task.Run(() => { e1 = a1; e2 = a2; e3 = a3; });
                 };
             };
             act = () => subject = Retry.TryIt.TryTask(taskFunc, arg1, arg2, arg3, retries);
@@ -543,7 +543,7 @@ namespace TryIt.Tests.Unit.specs
             {
                 ActionRetryBuilder child = null;
 
-                Func<string, int, long, Task> altFunc = (a1, a2, a3) => Task.Factory.StartNew(() => { });
+                Func<string, int, long, Task> altFunc = (a1, a2, a3) => Task.Run(() => { });
                 act = () =>
                 {
                     child = subject.ThenTry(altFunc, arg1, arg2, arg3, retries);
@@ -606,7 +606,7 @@ namespace TryIt.Tests.Unit.specs
                 subject = null;
                 taskFunc = taskFunc = (a1, a2, a3, a4) =>
                 {
-                    return Task.Factory.StartNew(() => { e1 = a1; e2 = a2; e3 = a3; e4 = a4; });
+                    return Task.Run(() => { e1 = a1; e2 = a2; e3 = a3; e4 = a4; });
                 };
             };
             act = () => subject = Retry.TryIt.TryTask(taskFunc, arg1, arg2, arg3, arg4, retries);
@@ -669,7 +669,7 @@ namespace TryIt.Tests.Unit.specs
             {
                 ActionRetryBuilder child = null;
 
-                Func<string, int, long, bool, Task> altFunc = (a1, a2, a3, a4) => Task.Factory.StartNew(() => { });
+                Func<string, int, long, bool, Task> altFunc = (a1, a2, a3, a4) => Task.Run(() => { });
                 act = () =>
                 {
                     child = subject.ThenTry(altFunc, arg1, arg2, arg3, arg4, retries);

@@ -17,7 +17,7 @@ namespace Retry.Delays
 
         protected override async Task WaitAsync(int tryCount)
         {
-            await Task.Factory.StartNew(() => { });
+            await Task.Run(() => { });
         }
 #pragma warning restore 1591
     }

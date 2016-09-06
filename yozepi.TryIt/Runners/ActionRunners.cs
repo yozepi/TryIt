@@ -11,11 +11,11 @@ namespace Retry.Runners
  
         protected override async Task ExecuteActorAsync()
         {
-            await Task.Factory.StartNew(() =>
+            await Task.Run(() =>
             {
                 var action = GetAction();
                 action();
-            }, TaskCreationOptions.AttachedToParent);
+            });
         }
 
         protected override void HandleSuccessPolicy(int count)

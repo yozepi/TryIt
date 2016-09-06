@@ -25,13 +25,6 @@ namespace Retry.Builders
 
         #endregion //constructors
 
-
-        /// <summary>
-        /// An integer containing the maximum number of times the Action/Func will be attempted.
-        /// </summary>
-        /// <remarks>This value is local to this instance of the TryIt chain.</remarks>
-        public int RetryCount { get { return LastRunner.RetryCount; } }
-
         /// <summary>
         /// An integer containing the actual number of times the Action/Func has been attempted.
         /// <remarks>This value is local to this instance of the TryIt chain.</remarks>
@@ -57,16 +50,8 @@ namespace Retry.Builders
 
         protected void Run()
         {
-            try
-            {
-                var awaiter = RunAsync().GetAwaiter();
-                awaiter.GetResult();
-            }
-            catch (AggregateException ex)
-            {
-                Status = RetryStatus.Fail;
-                throw ex.InnerException;
-            }
+            var awaiter = RunAsync().GetAwaiter();
+            awaiter.GetResult();
         }
 
         protected async Task RunAsync()

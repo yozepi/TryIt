@@ -14,7 +14,7 @@ namespace TryIt.Tests.Unit.specs
     {
         void Action_extensions()
         {
-            ActionRetryBuilder subject = null;
+            BaseBuilder subject = null;
             int retries = 5;
 
             before = () => subject = null;
@@ -30,7 +30,7 @@ namespace TryIt.Tests.Unit.specs
                     subject.Should().BeOfType<ActionRetryBuilder>();
             };
 
-            describe["Action.Try<T>(T, retries)"] = () =>
+            describe["Action<T>.Try(T, retries)"] = () =>
             {
                 before = () =>
                 {
@@ -41,7 +41,7 @@ namespace TryIt.Tests.Unit.specs
                      subject.Should().BeOfType<ActionRetryBuilder>();
             };
 
-            describe["Action.Try<T1, T2>(T1, T2, retries)"] = () =>
+            describe["Action<T1, T2>.Try(T1, T2, retries)"] = () =>
             {
                 before = () =>
                 {
@@ -52,7 +52,7 @@ namespace TryIt.Tests.Unit.specs
                     subject.Should().BeOfType<ActionRetryBuilder>();
             };
 
-            describe["Action.Try<T1, T2, T3>(T1, T2, T3, retries)"] = () =>
+            describe["Action<T1, T2, T3>.Try(T1, T2, T3, retries)"] = () =>
             {
                 before = () =>
                 {
@@ -63,7 +63,7 @@ namespace TryIt.Tests.Unit.specs
                    subject.Should().BeOfType<ActionRetryBuilder>();
             };
 
-            describe["Action.Try<T1, T2, T3, T4>(T1, T2, T3, T4, retries)"] = () =>
+            describe["Action<T1, T2, T3, T4>.Try(T1, T2, T3, T4, retries)"] = () =>
             {
                 before = () =>
                 {
@@ -73,7 +73,6 @@ namespace TryIt.Tests.Unit.specs
                 it["Should return a ITryAndReturnValue<TResult> instance"] = () =>
                     subject.Should().NotBeNull();
             };
-
         }
     }
 }

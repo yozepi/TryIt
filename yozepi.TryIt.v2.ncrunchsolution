@@ -8,7 +8,8 @@
   <FrameworkUtilisationTypeForMSpec>UseStaticAnalysis</FrameworkUtilisationTypeForMSpec>
   <FrameworkUtilisationTypeForMSTest>UseStaticAnalysis</FrameworkUtilisationTypeForMSTest>
   <FrameworkUtilisationTypeForXUnit2>UseDynamicAnalysis</FrameworkUtilisationTypeForXUnit2>
-  <NCrunchCacheStoragePath />
+  <NCrunchCacheStoragePath></NCrunchCacheStoragePath>
   <MetricsExclusionList>
+TryIt.Tests.Unit\TryIt.Tests.Unit.csproj
 </MetricsExclusionList>
 </SolutionConfiguration>

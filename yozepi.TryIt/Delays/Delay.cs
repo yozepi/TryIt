@@ -43,13 +43,13 @@ namespace Retry.Delays
         }
 
         /// <summary>
-        /// Returns an instance of the <see cref="TimedDelay"/> class.
+        /// Returns an instance of the <see cref="BasicDelay"/> class.
         /// </summary>
         /// <param name="pauseTime">A <see cref="TimeSpan"/> representing the delay time.</param>
         /// <returns></returns>
-        public static Delay Timed(TimeSpan pauseTime)
+        public static Delay Basic(TimeSpan pauseTime)
         {
-            return new TimedDelay(pauseTime);
+            return new BasicDelay(pauseTime);
         }
 
         /// <summary>

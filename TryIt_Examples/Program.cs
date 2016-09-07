@@ -167,7 +167,7 @@ namespace TryIt_Examples
             var url = "http://www.google.com";
             string result = TryIt.Try(DownloadString, url, 3)
                 .ThenTry(5)
-                .UsingDelay(Delay.Timed(TimeSpan.FromMilliseconds(200)))
+                .UsingDelay(Delay.Basic(TimeSpan.FromMilliseconds(200)))
                 .Go();
             return result;
         }

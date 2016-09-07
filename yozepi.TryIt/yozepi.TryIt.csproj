@@ -61,7 +61,7 @@
     <Compile Include="RetryFailedException.cs" />
     <Compile Include="Delays\Delay.cs" />
     <Compile Include="Delays\NoDelay.cs" />
-    <Compile Include="Delays\TimedDelay.cs" />
+    <Compile Include="Delays\BasicDelay.cs" />
     <Compile Include="TryIt_ActionRetryBuilder_Methods.cs" />
     <Compile Include="Builders\ActionRetryBuilder.cs" />
     <Compile Include="TryIt_FuncRetryBuilder_Methods.cs" />

@@ -38,12 +38,12 @@ namespace TryIt.Tests.Unit.specs
                     executionTime.TotalMilliseconds.As<int>().Should().Be(0);
             };
 
-            describe["TimedDelay class"] = () =>
+            describe["BasicDelay class"] = () =>
             {
                 var milliseconds = 100;
                 TimeSpan delay = TimeSpan.FromMilliseconds(milliseconds);
 
-                before = () => subject = new TimedDelay(delay);
+                before = () => subject = new BasicDelay(delay);
                 it["should delay for the provided TimeSpan"] = () =>
                      {
                          executionTime.Should().BeGreaterOrEqualTo(TimeSpan.FromMilliseconds(milliseconds));
@@ -57,7 +57,7 @@ namespace TryIt.Tests.Unit.specs
                         Exception thrown = null;
                         try
                         {
-                            subject = new TimedDelay(TimeSpan.MinValue);
+                            subject = new BasicDelay(TimeSpan.MinValue);
                         }
                         catch (Exception ex)
                         {
@@ -118,13 +118,13 @@ namespace TryIt.Tests.Unit.specs
                 IDelay delay = null;
                 TimeSpan delayTime = TimeSpan.FromMilliseconds(100);
 
-                before = () => delay = Delay.Timed(delayTime);
+                before = () => delay = Delay.Basic(delayTime);
 
                 it["should return an instance of TimedDelay IDelay instance"] = () =>
-                    delay.Should().BeOfType<TimedDelay>();
+                    delay.Should().BeOfType<BasicDelay>();
 
                 it["should set the delay time correctly"] = () =>
-                    delay.As<TimedDelay>().PauseTime.Should().Be(delayTime);
+                    delay.As<BasicDelay>().PauseTime.Should().Be(delayTime);
             };
 
             describe["Backoff() method"] = () =>
@@ -148,8 +148,8 @@ namespace TryIt.Tests.Unit.specs
 
                 it["when set, DefaultDelay should return the value set"] = () =>
                 {
-                    Delay.DefaultDelay = new TimedDelay(TimeSpan.FromDays(1));
-                    Delay.DefaultDelay.Should().BeOfType<TimedDelay>();
+                    Delay.DefaultDelay = new BasicDelay(TimeSpan.FromDays(1));
+                    Delay.DefaultDelay.Should().BeOfType<BasicDelay>();
                 };
 
                 it["when set to null, DefaultDelay should return a NoDelay instance"] = () =>

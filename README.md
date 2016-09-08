@@ -12,7 +12,7 @@ That’s where **TryIt** comes in. TryIt is a .Net library that allows you to `T
 
 ### How can I contribute?
 
-Please refer to the [these guidelines](contributing.md) if you wish to ask questions, submit bugs, or contribute to new features.
+Please refer to the [these guidelines](CONTRIBUTING.md) if you wish to ask questions, submit bugs, or contribute to new features.
 
 # So Let’s TryIt!
 TryIt will accept any .Net **Action** or **Func**. Which means it accepts almost any method you write as input* (methods that return **Tasks** are a special sort of beast so we’ll explain in detail about how to use those [**later**](#tasks)).

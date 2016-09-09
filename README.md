@@ -245,3 +245,5 @@ Thanks to [NewtonSoft.Json](https://github.com/JamesNK/Newtonsoft.Json). Your aw
 Thanks to [NSpec](http://nspec.org/) for making a great tool for creating spec style tests.
 
 Thanks to [Pieter Gheysens](https://intovsts.net/about/) for his [blog post](https://intovsts.net/2015/08/24/tfs-build-2015-and-versioning/) that inspired me to create automatic assembly versioning during automated builds. 
+
+Thanks to [Ben Day](https://www.benday.com/author/admin/) for his [script](https://www.benday.com/2016/01/15/learn-to-customize-tfs2015-build-with-environment-variables/) for exporting Team Services environment variables.

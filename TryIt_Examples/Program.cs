@@ -412,7 +412,7 @@ namespace TryIt_Examples
         static void Try_Method_Quick_Then_BackOff()
         {
             Console.WriteLine();
-            Console.WriteLine("Try/retry a method quickly then try/retry with a backoff delay (A, B)");
+            Console.WriteLine("Try/retry a method quickly then try/retry with a fibonacci delay (A, B)");
 
             string connA = "Connection string A";
             string connB = "Connection string B";
@@ -428,7 +428,7 @@ namespace TryIt_Examples
 
                     //...then try connA 6 times with using a back-off delay that starts at 100ms...
                     .ThenTry(connA, 6)
-                      .UsingDelay(Delay.Backoff(TimeSpan.FromMilliseconds(100)))
+                      .UsingDelay(Delay.Fibonacci(TimeSpan.FromMilliseconds(100)))
 
                     //...finaly try connB 6 times with using the same backoff delay.
                     .ThenTry(connB, 6)

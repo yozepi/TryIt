@@ -62,6 +62,16 @@ namespace Retry.Delays
             return new BackoffDelay(startTime);
         }
 
+        /// <summary>
+        /// Returns an instance of the <see cref="FibonacciDelay" /> class.
+        /// </summary>
+        /// <param name="startTime">A <see cref="TimeSpan"/> representing the first delay of the backoff.</param>
+        /// <returns></returns>
+        public static Delay Fibonacci(TimeSpan startTime)
+        {
+            return new FibonacciDelay(startTime);
+        }
+
         #endregion //static methods:
 
 

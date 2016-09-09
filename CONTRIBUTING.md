@@ -25,11 +25,11 @@ When submitting an issue please include the following information:
 
 The more information you include the more likely it will be to get fixed!
 
-<a name="#features"></a>
+<a name="features"></a>
 ## Feature Requests
 You can submit a new feature request for TryIt on the [GitHub Repository](https://github.com/yozepi/TryIt/issues). When submitting a feature request, consider the following:
 + Can TryIt already do it? TryIt's `WithErrorPolicy` and `WithSuccessPolicy` methods offer a lot of flexability.
-+ Will it break what already works? Consistency and stability between versions is very important. Any requests that will cause breaking changes should be accompnied with a compelling reason as to why.
++ Will it break what already works? Consistency and stability between versions is very important. Any requests that will cause breaking changes should be accompnied with a compelling reason as to why the breaking change should be made.
 
 <a name="pull"></a>
 ## Submitting a Pull Request

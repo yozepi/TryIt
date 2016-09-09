@@ -51,5 +51,5 @@
         Set-Content $file.FullName -Force
     }
   
-    Write-Host "##vso[task.setvariable variable=package;]$assemblyFileVersion"
+    Write-Host "##vso[task.setvariable variable=PackageBuildVersion;]$assemblyFileVersion"
     return $assemblyFileVersion

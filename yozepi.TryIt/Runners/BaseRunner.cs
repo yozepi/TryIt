@@ -66,7 +66,7 @@ namespace Retry.Runners
                         }
                         break;
                     }
-                    catch (TaskCanceledException)
+                    catch (OperationCanceledException)
                     {
                         throw;
                     }
@@ -105,7 +105,7 @@ namespace Retry.Runners
                 }
 
             }
-            catch (TaskCanceledException)
+            catch (OperationCanceledException)
             {
                 Status = RetryStatus.Canceled;
                 throw;

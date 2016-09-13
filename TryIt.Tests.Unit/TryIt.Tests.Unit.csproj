@@ -77,7 +77,8 @@
   </Choose>
   <ItemGroup>
     <Compile Include="nSpecTestHarness.cs" />
-    <Compile Include="specs\ActionRunners.cs" />
+    <Compile Include="specs\BaseBuilder_Methods.cs" />
+    <Compile Include="specs\BaseRunner_Methods.cs" />
     <Compile Include="specs\Action_Extension_Methods.cs" />
     <Compile Include="specs\Func_Extension_Methods.cs" />
     <Compile Include="specs\IDelay_Implementors.cs" />

@@ -63,24 +63,6 @@ namespace TryIt.Tests.Unit.specs
                     executionTime.Should().BeLessOrEqualTo(TimeSpan.Zero.Add((TimeSpan.FromMilliseconds(tolerance))));
                 };
             };
-
-            describe["when the task is cancelled during the delay"] = () =>
-            {
-                before = () =>
-                {
-                    cancelDelay = 100;
-                };
-                it["should throw TaskCanceledException"] = () =>
-                {
-                    thrown.Should().BeOfType<TaskCanceledException>();
-                };
-                it["should not delay"] = () =>
-                {
-                    executionTime.Should().BeGreaterOrEqualTo(TimeSpan.FromMilliseconds(cancelDelay));
-                    executionTime.Should().BeLessOrEqualTo(TimeSpan.Zero.Add((TimeSpan.FromMilliseconds(cancelDelay + tolerance))));
-                };
-
-            };
         }
 
         void Delay_SubClasses()
@@ -146,11 +128,11 @@ namespace TryIt.Tests.Unit.specs
                 var expected = milliseconds * Math.Pow(2, (tryCount - 1));
 
                 before = () => subject = new BackoffDelay(delay);
-                it["should backoff the delay, doubling the delay time with each try"] =() =>
-                   {
-                    executionTime.Should().BeGreaterOrEqualTo(TimeSpan.FromMilliseconds(expected));
-                    executionTime.Should().BeLessOrEqualTo(TimeSpan.FromMilliseconds(expected + tolerance));
-                };
+                it["should backoff the delay, doubling the delay time with each try"] = () =>
+                    {
+                        executionTime.Should().BeGreaterOrEqualTo(TimeSpan.FromMilliseconds(expected));
+                        executionTime.Should().BeLessOrEqualTo(TimeSpan.FromMilliseconds(expected + tolerance));
+                    };
 
                 context["when the provided timespan is invalid"] = () =>
                 {

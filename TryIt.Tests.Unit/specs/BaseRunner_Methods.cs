@@ -10,14 +10,15 @@ using FluentAssertions;
 using Retry;
 using Moq;
 using Retry.Delays;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace TryIt.Tests.Unit.specs
 {
-    class ActionRunners : nspec
+    class BaseRunner_Methods : nspec
     {
-        void runner_common_specs()
+        void RunAsync_Method()
         {
-            context["task cancellation"] = () =>
+            context["when RunAsync() is canceled."] = () =>
             {
                 BaseRunner subject = null;
                 Action subjectAction = null;
@@ -56,23 +57,7 @@ namespace TryIt.Tests.Unit.specs
                     tokenSource.Dispose();
                 };
 
-                describe["when the task is canceled before start up"] = () =>
-                {
-                    before = () =>
-                    {
-                        tokenSource.Cancel();
-                    };
-
-                    it["should raise TaskCanceledException"] = () =>
-                        thrown.Should().BeOfType<TaskCanceledException>();
-
-                    it["should set status to canceled"] = () =>
-                           subject.Status.Should().Be(RetryStatus.Canceled);
-
-
-                };
-
-                describe["when TaskCanceledException is raised"] = () =>
+                describe["when OperationCanceledException is raised"] = () =>
                 {
    
                     context["because Task was already canceled"] = () =>
@@ -91,14 +76,14 @@ namespace TryIt.Tests.Unit.specs
                         it["should never try to delay"] = () =>
                             delayMock.Verify(m => m.WaitAsync(It.IsAny<int>(), token), Times.Never);
 
-                        it["should raise TaskCanceledException"] = () =>
-                            thrown.Should().BeOfType<TaskCanceledException>();
+                        it["should raise OperationCanceledException"] = () =>
+                            Assert.IsInstanceOfType(thrown, typeof(OperationCanceledException));
 
-                        it["should set status to canceled"] = () =>
-                               subject.Status.Should().Be(RetryStatus.Canceled);
+                        it["should set status to Canceled"] = () =>
+                            subject.Status.Should().Be(RetryStatus.Canceled);
                     };
 
-                    context["when raised while executing the action"] = () =>
+                    context["while executing the action"] = () =>
                     {
                         before = () =>
                         {
@@ -108,14 +93,14 @@ namespace TryIt.Tests.Unit.specs
                         it["should never try to delay"] = () =>
                             delayMock.Verify(m => m.WaitAsync(It.IsAny<int>(), token), Times.Never);
 
-                        it["should raise TaskCanceledException"] = () =>
-                            thrown.Should().BeOfType<TaskCanceledException>();
+                        it["should raise OperationCanceledException"] = () =>
+                            Assert.IsInstanceOfType(thrown, typeof(OperationCanceledException));
 
                         it["should set status to canceled"] = () =>
                                subject.Status.Should().Be(RetryStatus.Canceled);
                     };
 
-                    context["when raised during the delay"] = () =>
+                    context["during the delay"] = () =>
                     {
                         before = () =>
                         {
@@ -125,8 +110,8 @@ namespace TryIt.Tests.Unit.specs
                         it["should try to delay"] = () =>
                             delayMock.Verify(m => m.WaitAsync(It.IsAny<int>(), token), Times.Once);
 
-                        it["should raise TaskCanceledException"] = () =>
-                            thrown.Should().BeOfType<TaskCanceledException>();
+                        it["should raise OperationCanceledException"] = () =>
+                           Assert.IsInstanceOfType(thrown, typeof(OperationCanceledException));
 
                         it["should set status to canceled"] = () =>
                                subject.Status.Should().Be(RetryStatus.Canceled);

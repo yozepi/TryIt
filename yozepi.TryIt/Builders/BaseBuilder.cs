@@ -49,13 +49,19 @@ namespace Retry.Builders
 
         internal BaseRunner Winner { get; set; }
 
-        protected void Run()
+        protected internal void Run()
         {
             var awaiter = RunAsync(CancellationToken.None).GetAwaiter();
             awaiter.GetResult();
         }
 
-        protected async Task RunAsync(CancellationToken cancellationToken)
+        protected internal void Run(CancellationToken cancellationToken)
+        {
+            var awaiter = RunAsync(cancellationToken).GetAwaiter();
+            awaiter.GetResult();
+        }
+
+        protected internal async Task RunAsync(CancellationToken cancellationToken)
         {
             Status = RetryStatus.Running;
             var runningStatus = RetryStatus.Running;
@@ -68,9 +74,13 @@ namespace Retry.Builders
             var runnerLink = Runners.First;
             try
             {
-
                 while (runnerLink != null)
                 {
+                    if (cancellationToken.IsCancellationRequested)
+                    {
+                        throw new TaskCanceledException();
+                    }
+
                     var runner = runnerLink.Value;
                     await runner.RunAsync(cancellationToken);
                     Attempts += runner.Attempts;
@@ -95,6 +105,12 @@ namespace Retry.Builders
                     }
                     runnerLink = runnerLink.Next;
                 }
+            }
+
+            catch (OperationCanceledException)
+            {
+                Status = RetryStatus.Canceled;
+                throw;
             }
             catch (Exception)
             {

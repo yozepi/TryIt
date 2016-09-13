@@ -12,6 +12,18 @@ namespace TryIt.Tests.Unit.Tests
     public class Tests : nSpecTestHarness
     {
         [TestMethod]
+        public void BaseBuilder_Tests()
+        {
+            this.LoadSpecs(() =>
+            {
+                Type[] types = { typeof(BaseBuilder_Methods) };
+                return types;
+            });
+            this.RunSpecs();
+        }
+
+
+        [TestMethod]
         public void Action_Tests()
         {
             this.LoadSpecs(() =>
@@ -84,11 +96,11 @@ namespace TryIt.Tests.Unit.Tests
 
 
         [TestMethod]
-        public void ActionRunner_Tests()
+        public void Runner_Tests()
         {
             this.LoadSpecs(() =>
             {
-                Type[] types = { typeof(ActionRunners) };
+                Type[] types = { typeof(BaseRunner_Methods) };
                 return types;
             });
             this.RunSpecs();

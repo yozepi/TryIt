@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Retry.Builders
@@ -27,9 +28,18 @@ namespace Retry.Builders
         /// Runs your action as an awaitable task.
         /// </summary>
         /// <returns></returns>
-        public async Task GoAsync()
+        public Task GoAsync()
         {
-            await RunAsync();
+            return GoAsync(CancellationToken.None);
+        }
+
+        /// <summary>
+        /// Runs your action as an awaitable task.
+        /// </summary>
+        /// <returns></returns>
+        public async Task GoAsync(CancellationToken cancellationToken)
+        {
+            await RunAsync(cancellationToken);
         }
 
         #endregion //instance properties and methods:

@@ -7,15 +7,85 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Retry;
 using Retry.Delays;
+using System.Threading;
 
 namespace TryIt.Tests.Unit.specs
 {
-    class IDelay_Implementors : nspec
+    class Delay_Implementors : nspec
     {
-        void IDelay_Implementor_Classes()
+        int tolerance = 25;
+
+        void Delay_Cancellation()
+        {
+            IDelay subject = null;
+            CancellationTokenSource tokenSource = null;
+            CancellationToken token = CancellationToken.None;
+            TimeSpan executionTime = default(TimeSpan);
+            Exception thrown = null;
+
+            int cancelDelay = default(int);
+            before = () =>
+            {
+                subject = Delay.Basic(TimeSpan.FromSeconds(3));
+                tokenSource = new CancellationTokenSource(cancelDelay);
+                token = tokenSource.Token;
+                executionTime = TimeSpan.Zero;
+                thrown = null;
+            };
+            actAsync = async () =>
+            {
+                var start = DateTime.Now;
+                try
+                {
+                    await subject.WaitAsync(1, token);
+                }
+                catch (Exception ex)
+                {
+                    thrown = ex;
+                }
+                executionTime = DateTime.Now.Subtract(start);
+
+            };
+            afterAll = () =>
+            {
+                tokenSource.Dispose();
+            };
+
+            describe["when the task is cancelled before the delay starts"] = () =>
+            {
+                it["should throw TaskCanceledException"] = () =>
+                {
+                    thrown.Should().BeOfType<TaskCanceledException>();
+                };
+                it["should not delay"] = () =>
+                {
+                    executionTime.Should().BeGreaterOrEqualTo(TimeSpan.Zero);
+                    executionTime.Should().BeLessOrEqualTo(TimeSpan.Zero.Add((TimeSpan.FromMilliseconds(tolerance))));
+                };
+            };
+
+            describe["when the task is cancelled during the delay"] = () =>
+            {
+                before = () =>
+                {
+                    cancelDelay = 100;
+                };
+                it["should throw TaskCanceledException"] = () =>
+                {
+                    thrown.Should().BeOfType<TaskCanceledException>();
+                };
+                it["should not delay"] = () =>
+                {
+                    executionTime.Should().BeGreaterOrEqualTo(TimeSpan.FromMilliseconds(cancelDelay));
+                    executionTime.Should().BeLessOrEqualTo(TimeSpan.Zero.Add((TimeSpan.FromMilliseconds(cancelDelay + tolerance))));
+                };
+
+            };
+        }
+
+        void Delay_SubClasses()
         {
             int tryCount = 3;
-            int tolerance = 25;
             IDelay subject = null;
             TimeSpan executionTime = default(TimeSpan);
 
@@ -27,7 +97,7 @@ namespace TryIt.Tests.Unit.specs
             actAsync = async () =>
             {
                 var start = DateTime.Now;
-                await subject.WaitAsync(tryCount);
+                await subject.WaitAsync(tryCount, CancellationToken.None);
                 executionTime = DateTime.Now.Subtract(start);
             };
 

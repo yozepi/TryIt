@@ -10,6 +10,7 @@ using Retry.Builders;
 using Retry.Runners;
 using Retry;
 using Retry.Delays;
+using System.Threading;
 
 namespace TryIt.Tests.Unit.specs
 {
@@ -304,7 +305,7 @@ namespace TryIt.Tests.Unit.specs
                     }
                 };
                 it["should call the provided delay every time Try() fails (less 1)"] = () =>
-                    newPause.Verify(m => m.WaitAsync(It.IsAny<int>()), Times.Exactly(retries - 1));
+                    newPause.Verify(m => m.WaitAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()), Times.Exactly(retries - 1));
 
             };
 

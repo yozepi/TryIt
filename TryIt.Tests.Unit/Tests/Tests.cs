@@ -76,7 +76,19 @@ namespace TryIt.Tests.Unit.Tests
         {
             this.LoadSpecs(() =>
             {
-                Type[] types = { typeof(IDelay_Implementors) };
+                Type[] types = { typeof(Delay_Implementors) };
+                return types;
+            });
+            this.RunSpecs();
+        }
+
+
+        [TestMethod]
+        public void ActionRunner_Tests()
+        {
+            this.LoadSpecs(() =>
+            {
+                Type[] types = { typeof(ActionRunners) };
                 return types;
             });
             this.RunSpecs();

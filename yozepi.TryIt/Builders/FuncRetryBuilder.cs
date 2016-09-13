@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Retry.Runners;
+using System.Threading;
 
 namespace Retry.Builders
 {
@@ -16,9 +17,14 @@ namespace Retry.Builders
             return (Winner as FuncRunner<TResult>).Result;
         }
 
-        public async Task<TResult> GoAsync()
+        public Task<TResult> GoAsync()
         {
-            await RunAsync();
+            return GoAsync(CancellationToken.None);
+        }
+
+        public async Task<TResult> GoAsync(CancellationToken cancellationToken)
+        {
+            await RunAsync(cancellationToken);
             return (Winner as FuncRunner<TResult>).Result;
         }
     }

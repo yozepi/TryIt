@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Retry.Delays;
 using Retry.Runners;
+using System.Threading;
 
 namespace Retry.Builders
 {
@@ -50,11 +51,11 @@ namespace Retry.Builders
 
         protected void Run()
         {
-            var awaiter = RunAsync().GetAwaiter();
+            var awaiter = RunAsync(CancellationToken.None).GetAwaiter();
             awaiter.GetResult();
         }
 
-        protected async Task RunAsync()
+        protected async Task RunAsync(CancellationToken cancellationToken)
         {
             Status = RetryStatus.Running;
             var runningStatus = RetryStatus.Running;
@@ -71,7 +72,7 @@ namespace Retry.Builders
                 while (runnerLink != null)
                 {
                     var runner = runnerLink.Value;
-                    await runner.RunAsync();
+                    await runner.RunAsync(cancellationToken);
                     Attempts += runner.Attempts;
                     ExceptionList.AddRange(runner.ExceptionList);
 

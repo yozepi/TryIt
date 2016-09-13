@@ -51,7 +51,7 @@
     <Compile Include="Extensions\ActionExtensions.cs" />
     <Compile Include="Extensions\FuncExtensions.cs" />
     <Compile Include="ErrorPolicyException.cs" />
-    <Compile Include="Runners\ActionRunners.cs" />
+    <Compile Include="Delays\ActionRunners.cs" />
     <Compile Include="Runners\FuncRunners.cs" />
     <Compile Include="Runners\BaseRunner.cs" />
     <Compile Include="Runners\TaskRunners.cs" />

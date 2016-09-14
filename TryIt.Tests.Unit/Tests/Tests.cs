@@ -11,88 +11,88 @@ namespace TryIt.Tests.Unit.Tests
     [TestClass]
     public class Tests : nSpecTestHarness
     {
-        [TestMethod]
-        public void BaseBuilder_Tests()
-        {
-            this.LoadSpecs(() =>
-            {
-                Type[] types = { typeof(BaseBuilder_Methods) };
-                return types;
-            });
-            this.RunSpecs();
-        }
+        //[TestMethod]
+        //public void BaseBuilder_Tests()
+        //{
+        //    this.LoadSpecs(() =>
+        //    {
+        //        Type[] types = { typeof(BaseBuilder_Methods) };
+        //        return types;
+        //    });
+        //    this.RunSpecs();
+        //}
 
 
-        [TestMethod]
-        public void Action_Tests()
-        {
-            this.LoadSpecs(() =>
-            {
-                Type[] types = { typeof(Retry_Actions), typeof(Retry_actions_ASYNC) };
-                return types;
-            });
-            this.RunSpecs();
-        }
+        //[TestMethod]
+        //public void Action_Tests()
+        //{
+        //    this.LoadSpecs(() =>
+        //    {
+        //        Type[] types = { typeof(Retry_Actions), typeof(Retry_actions_ASYNC) };
+        //        return types;
+        //    });
+        //    this.RunSpecs();
+        //}
 
 
-        [TestMethod]
-        public void Action_Extension_Tests()
-        {
-            this.LoadSpecs(() =>
-            {
-                Type[] types = { typeof(Action_Extension_Methods) };
-                return types;
-            });
-            this.RunSpecs();
-        }
+        //[TestMethod]
+        //public void Action_Extension_Tests()
+        //{
+        //    this.LoadSpecs(() =>
+        //    {
+        //        Type[] types = { typeof(Action_Extension_Methods) };
+        //        return types;
+        //    });
+        //    this.RunSpecs();
+        //}
 
 
-        [TestMethod]
-        public void Func_Tests()
-        {
-            this.LoadSpecs(() =>
-            {
-                Type[] types = { typeof(Retry_Funcs), typeof(Retry_Funcs_ASYNC), typeof(Retry_WithAlternate_Funcs) };
-                return types;
-            });
-            this.RunSpecs();
-        }
+        //[TestMethod]
+        //public void Func_Tests()
+        //{
+        //    this.LoadSpecs(() =>
+        //    {
+        //        Type[] types = { typeof(Retry_Funcs), typeof(Retry_Funcs_ASYNC), typeof(Retry_WithAlternate_Funcs) };
+        //        return types;
+        //    });
+        //    this.RunSpecs();
+        //}
 
 
-        [TestMethod]
-        public void Func_Task_Tests()
-        {
-            this.LoadSpecs(() =>
-            {
-                Type[] types = { typeof(Retry_Tasks), typeof(Retry_TaskTResults) };
-                return types;
-            });
-            this.RunSpecs();
-        }
+        //[TestMethod]
+        //public void Func_Task_Tests()
+        //{
+        //    this.LoadSpecs(() =>
+        //    {
+        //        Type[] types = { typeof(Retry_Tasks), typeof(Retry_TaskTResults) };
+        //        return types;
+        //    });
+        //    this.RunSpecs();
+        //}
 
 
-        [TestMethod]
-        public void Func_Extension_Tests()
-        {
-            this.LoadSpecs(() =>
-            {
-                Type[] types = { typeof(Func_Extension_Methods) };
-                return types;
-            });
-            this.RunSpecs();
-        }
+        //[TestMethod]
+        //public void Func_Extension_Tests()
+        //{
+        //    this.LoadSpecs(() =>
+        //    {
+        //        Type[] types = { typeof(Func_Extension_Methods) };
+        //        return types;
+        //    });
+        //    this.RunSpecs();
+        //}
 
 
-        [TestMethod]
-        public void IDelay_Implementor_Tests()
-        {
-            this.LoadSpecs(() =>
-            {
-                Type[] types = { typeof(Delay_Implementors) };
-                return types;
-            });
-            this.RunSpecs();
-        }
+        //[TestMethod]
+        //public void IDelay_Implementor_Tests()
+        //{
+        //    this.LoadSpecs(() =>
+        //    {
+        //        Type[] types = { typeof(Delay_Implementors) };
+        //        return types;
+        //    });
+        //    this.RunSpecs();
+        //}
 
 
         [TestMethod]

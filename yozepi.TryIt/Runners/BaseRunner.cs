@@ -111,6 +111,12 @@ namespace Retry.Runners
                 throw;
             }
 
+            catch (Exception ex)
+            {
+                ExceptionList.Add(ex);
+                Status = RetryStatus.Fail;
+                throw;
+            }
             return;
         }
 

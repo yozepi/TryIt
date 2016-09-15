@@ -49,12 +49,6 @@ namespace Retry.Builders
 
         internal BaseRunner Winner { get; set; }
 
-        protected internal void Run()
-        {
-            var awaiter = RunAsync(CancellationToken.None).GetAwaiter();
-            awaiter.GetResult();
-        }
-
         protected internal void Run(CancellationToken cancellationToken)
         {
             var awaiter = RunAsync(cancellationToken).GetAwaiter();

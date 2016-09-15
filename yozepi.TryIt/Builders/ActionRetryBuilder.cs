@@ -20,9 +20,17 @@ namespace Retry.Builders
         /// </summary>
         public void Go()
         {
-            Run();
+            Go(CancellationToken.None);
         }
 
+        /// <summary>
+        /// Runs your action and retries if the action fails.
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        public void Go(CancellationToken cancellationToken)
+        {
+            Run(cancellationToken);
+        }
 
         /// <summary>
         /// Runs your action as an awaitable task.

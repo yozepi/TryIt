@@ -13,7 +13,12 @@ namespace Retry.Builders
 
         public TResult Go()
         {
-            Run();
+            return Go(CancellationToken.None);
+        }
+
+        public TResult Go(CancellationToken cancellationToken)
+        {
+            Run(cancellationToken);
             return (Winner as FuncRunner<TResult>).Result;
         }
 

@@ -22,7 +22,7 @@ namespace Retry.Runners
            Result =  await task;
         }
 
-        protected virtual Task<TResult> GetTask()
+        protected internal virtual Task<TResult> GetTask()
         {
             var actor = Actor as Func<Task<TResult>>;
             return actor();
@@ -41,7 +41,7 @@ namespace Retry.Runners
             _arg = arg;
         }
 
-        protected override Task<TResult> GetTask()
+        protected internal override Task<TResult> GetTask()
         {
             var actor = Actor as Func<T, Task<TResult>>;
             return actor(_arg);
@@ -60,7 +60,7 @@ namespace Retry.Runners
             _arg2 = arg2;
         }
 
-        protected override Task<TResult> GetTask()
+        protected internal override Task<TResult> GetTask()
         {
             var actor = Actor as Func<T1, T2, Task<TResult>>;
             return actor(_arg1, _arg2);
@@ -81,7 +81,7 @@ namespace Retry.Runners
             _arg3 = arg3;
         }
 
-        protected override Task<TResult> GetTask()
+        protected internal override Task<TResult> GetTask()
         {
             var actor = Actor as Func<T1, T2, T3, Task<TResult>>;
             return actor(_arg1, _arg2, _arg3);
@@ -104,7 +104,7 @@ namespace Retry.Runners
             _arg4 = arg4;
         }
 
-        protected override Task<TResult> GetTask()
+        protected internal override Task<TResult> GetTask()
         {
             var actor = Actor as Func<T1, T2, T3, T4, Task<TResult>>;
             return actor(_arg1, _arg2, _arg3, _arg4);

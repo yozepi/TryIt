@@ -77,10 +77,12 @@
   </Choose>
   <ItemGroup>
     <Compile Include="nSpecTestHarness.cs" />
+    <Compile Include="specs\ActionRetryBuilder_specs.cs" />
     <Compile Include="specs\ActionRunner_specs.cs" />
     <Compile Include="specs\BaseBuilder_specs.cs" />
     <Compile Include="specs\BaseRunner_specs.cs" />
     <Compile Include="specs\Action_Extension_Methods.cs" />
+    <Compile Include="specs\FuncRetryBuilder_specs.cs" />
     <Compile Include="specs\FuncRunner_specs.cs" />
     <Compile Include="specs\Func_Extension_Methods.cs" />
     <Compile Include="specs\IDelay_Implementors.cs" />
@@ -93,6 +95,7 @@
     <Compile Include="specs\Retry_TaskTResults.cs" />
     <Compile Include="specs\Retry_WithAlternate_Funcs.cs" />
     <Compile Include="specs\TaskRunner_specs.cs" />
+    <Compile Include="specs\TaskWithResultRunner_specs.cs" />
     <Compile Include="Tests\Tests.cs" />
   </ItemGroup>
   <ItemGroup>

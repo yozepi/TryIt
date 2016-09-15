@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Retry.Runners
@@ -9,16 +10,16 @@ namespace Retry.Runners
     internal class ActionRunner : BaseRunner
     {
  
-        protected override async Task ExecuteActorAsync()
+        protected internal override async Task ExecuteActorAsync(CancellationToken cancelationToken)
         {
             await Task.Run(() =>
             {
                 var action = GetAction();
                 action();
-            });
+            }, cancelationToken);
         }
 
-        protected override void HandleSuccessPolicy(int count)
+        protected internal override void HandleSuccessPolicy(int count)
         {
             if (SuccessPolicy != null)
             {
@@ -26,7 +27,7 @@ namespace Retry.Runners
             }
         }
 
-        protected virtual Action GetAction()
+        protected internal virtual Action GetAction()
         {
             return Actor as Action;
         }
@@ -43,7 +44,7 @@ namespace Retry.Runners
             _arg = arg;
         }
 
-        protected override Action GetAction()
+        protected internal override Action GetAction()
         {
             var action = Actor as Action<T>;
             return () => action(_arg);
@@ -62,7 +63,7 @@ namespace Retry.Runners
             _arg2 = arg2;
         }
 
-        protected override Action GetAction()
+        protected internal override Action GetAction()
         {
             var action = Actor as Action<T1, T2>;
             return () => action(_arg1, _arg2);
@@ -83,7 +84,7 @@ namespace Retry.Runners
             _arg3 = arg3;
         }
 
-        protected override Action GetAction()
+        protected internal override Action GetAction()
         {
             var action = Actor as Action<T1, T2, T3>;
             return () => action(_arg1, _arg2, _arg3);
@@ -106,7 +107,7 @@ namespace Retry.Runners
             _arg4 = arg4;
         }
 
-        protected override Action GetAction()
+        protected internal override Action GetAction()
         {
             var action = Actor as Action<T1, T2, T3, T4>;
             return () => action(_arg1, _arg2, _arg3, _arg4);

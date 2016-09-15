@@ -11,16 +11,16 @@ namespace TryIt.Tests.Unit.Tests
     [TestClass]
     public class Tests : nSpecTestHarness
     {
-        //[TestMethod]
-        //public void BaseBuilder_Tests()
-        //{
-        //    this.LoadSpecs(() =>
-        //    {
-        //        Type[] types = { typeof(BaseBuilder_Methods) };
-        //        return types;
-        //    });
-        //    this.RunSpecs();
-        //}
+        [TestMethod]
+        public void BaseBuilder_Tests()
+        {
+            this.LoadSpecs(() =>
+            {
+                Type[] types = { typeof(BaseBuilder_specs) };
+                return types;
+            });
+            this.RunSpecs();
+        }
 
 
         //[TestMethod]
@@ -96,11 +96,47 @@ namespace TryIt.Tests.Unit.Tests
 
 
         [TestMethod]
-        public void Runner_Tests()
+        public void BaseRunner_Tests()
         {
             this.LoadSpecs(() =>
             {
-                Type[] types = { typeof(BaseRunner_Methods) };
+                Type[] types = { typeof(BaseRunner_specs) };
+                return types;
+            });
+            this.RunSpecs();
+        }
+
+
+        [TestMethod]
+        public void ActionRunner_Tests()
+        {
+            this.LoadSpecs(() =>
+            {
+                Type[] types = { typeof(ActionRunner_specs) };
+                return types;
+            });
+            this.RunSpecs();
+        }
+
+
+        [TestMethod]
+        public void FuncRunner_Tests()
+        {
+            this.LoadSpecs(() =>
+            {
+                Type[] types = { typeof(FuncRunner_specs) };
+                return types;
+            });
+            this.RunSpecs();
+        }
+
+
+        [TestMethod]
+        public void TaskRunner_Tests()
+        {
+            this.LoadSpecs(() =>
+            {
+                Type[] types = { typeof(TaskRunner_specs) };
                 return types;
             });
             this.RunSpecs();

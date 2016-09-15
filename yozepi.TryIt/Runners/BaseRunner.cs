@@ -54,7 +54,7 @@ namespace Retry.Runners
                     try
                     {
                         Attempts++;
-                        await ExecuteActorAsync();
+                        await ExecuteActorAsync(cancellationToken);
                         HandleSuccessPolicy(Attempts);
                         if (count == 0)
                         {
@@ -124,13 +124,13 @@ namespace Retry.Runners
         /// Implementors extend this method to execute the Func/Action.
         /// </summary>
         /// <returns></returns>
-        protected abstract Task ExecuteActorAsync();
+        protected internal abstract Task ExecuteActorAsync(CancellationToken cancelationToken);
 
         /// <summary>
         /// Implementors execute this action to handle success policy calls.
         /// </summary>
         /// <param name="count"></param>
-        protected abstract void HandleSuccessPolicy(int count);
+        protected internal abstract void HandleSuccessPolicy(int count);
 
         private bool HandleErrorPolicy(Exception ex, int retryCount)
         {

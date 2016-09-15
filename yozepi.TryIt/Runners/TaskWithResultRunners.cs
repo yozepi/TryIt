@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Retry.Runners
@@ -10,7 +11,7 @@ namespace Retry.Runners
     {
         public TaskWithResultRunner() : base() { }
 
-        protected override async Task ExecuteActorAsync()
+        protected internal override async Task ExecuteActorAsync(CancellationToken cancelationToken)
         {
             var task = GetTask();
             if (task.Status == TaskStatus.Created)

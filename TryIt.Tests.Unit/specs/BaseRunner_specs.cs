@@ -14,7 +14,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace TryIt.Tests.Unit.specs
 {
-    class BaseRunner_Methods : nspec
+    class BaseRunner_specs : nspec
     {
         void CopySettings_Method()
         {

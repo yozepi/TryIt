@@ -12,7 +12,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace TryIt.Tests.Unit.specs
 {
-    class BaseBuilder_Methods : nspec
+    class BaseBuilder_specs : nspec
     {
         void Run_Method()
         {

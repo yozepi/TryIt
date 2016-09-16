@@ -26,28 +26,7 @@
   <BuildProcessArchitecture>x86</BuildProcessArchitecture>
   <IgnoredTests>
     <NamedTestSelector>
-      <TestName>TryIt.Tests.Unit.Tests.Tests.TaskWithResultRunner_Tests</TestName>
-    </NamedTestSelector>
-    <NamedTestSelector>
-      <TestName>TryIt.Tests.Unit.Tests.Tests.TaskRunner_Tests</TestName>
-    </NamedTestSelector>
-    <NamedTestSelector>
-      <TestName>TryIt.Tests.Unit.Tests.Tests.Action_Extension_Tests</TestName>
-    </NamedTestSelector>
-    <NamedTestSelector>
-      <TestName>TryIt.Tests.Unit.Tests.Tests.Action_Tests</TestName>
-    </NamedTestSelector>
-    <NamedTestSelector>
-      <TestName>TryIt.Tests.Unit.Tests.Tests.Func_Extension_Tests</TestName>
-    </NamedTestSelector>
-    <NamedTestSelector>
-      <TestName>TryIt.Tests.Unit.Tests.Tests.Func_Task_Tests</TestName>
-    </NamedTestSelector>
-    <NamedTestSelector>
       <TestName>TryIt.Tests.Unit.Tests.Tests.Func_Tests</TestName>
-    </NamedTestSelector>
-    <NamedTestSelector>
-      <TestName>TryIt.Tests.Unit.Tests.Tests.IDelay_Implementor_Tests</TestName>
     </NamedTestSelector>
   </IgnoredTests>
 </ProjectConfiguration>

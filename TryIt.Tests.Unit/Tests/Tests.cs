@@ -35,11 +35,11 @@ namespace TryIt.Tests.Unit.Tests
 
 
         [TestMethod]
-        public void Action_Tests()
+        public void TryIt_Action_Tests()
         {
             this.LoadSpecs(() =>
             {
-                Type[] types = { typeof(Retry_Actions), typeof(Retry_actions_ASYNC) };
+                Type[] types = { typeof(TryIt_Action_specs) };
                 return types;
             });
             this.RunSpecs();
@@ -59,11 +59,11 @@ namespace TryIt.Tests.Unit.Tests
 
 
         [TestMethod]
-        public void Func_Tests()
+        public void TryIt_Func_Tests()
         {
             this.LoadSpecs(() =>
             {
-                Type[] types = { typeof(Retry_Funcs), typeof(Retry_Funcs_ASYNC), typeof(Retry_WithAlternate_Funcs) };
+                Type[] types = { typeof(TryIt_Func_specs) };
                 return types;
             });
             this.RunSpecs();
@@ -75,7 +75,18 @@ namespace TryIt.Tests.Unit.Tests
         {
             this.LoadSpecs(() =>
             {
-                Type[] types = { typeof(Retry_Tasks), typeof(Retry_TaskTResults) };
+                Type[] types = { typeof(TryIt_Actions_on_Tasks), typeof(TryIt_Funcs_on_TaskTResults) };
+                return types;
+            });
+            this.RunSpecs();
+        }
+
+        [TestMethod]
+        public void TryIt_UsingDelay_WithError_WithSuccess_Tests()
+        {
+            this.LoadSpecs(() =>
+            {
+                Type[] types = { typeof(TryIt_UsingDelay_WithError_WithSuccess_specs) };
                 return types;
             });
             this.RunSpecs();
@@ -160,6 +171,17 @@ namespace TryIt.Tests.Unit.Tests
             this.LoadSpecs(() =>
             {
                 Type[] types = { typeof(TaskWithResultRunner_specs) };
+                return types;
+            });
+            this.RunSpecs();
+        }
+
+        [TestMethod]
+        public void RunnerFactory_Tests()
+        {
+            this.LoadSpecs(() =>
+            {
+                Type[] types = { typeof(RunnerFactory_specs) };
                 return types;
             });
             this.RunSpecs();

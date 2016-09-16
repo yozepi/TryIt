@@ -113,6 +113,10 @@ namespace TryIt.Tests.Unit.specs
                 subject = new ActionRunner<string>(e1);
                 subject.Actor = actor;
             };
+
+            it["should implement IRunnerArgSource"] = () =>
+                subject.As<IRunnerArgSource>().RunnerArgs.Length.Should().Be(1);
+
             it["constructor should set the internal argument"] = () =>
                 subject._arg.Should().Be(e1);
 
@@ -136,6 +140,10 @@ namespace TryIt.Tests.Unit.specs
                 subject = new ActionRunner<string, int>(e1, e2);
                 subject.Actor = actor;
             };
+
+            it["should implement IRunnerArgSource"] = () =>
+                subject.As<IRunnerArgSource>().RunnerArgs.Length.Should().Be(2);
+
             it["constructor should set the internal arguments"] = () =>
             {
                 subject._arg1.Should().Be(e1);
@@ -163,6 +171,10 @@ namespace TryIt.Tests.Unit.specs
                 subject = new ActionRunner<string, int, long>(e1, e2, e3);
                 subject.Actor = actor;
             };
+
+            it["should implement IRunnerArgSource"] = () =>
+                subject.As<IRunnerArgSource>().RunnerArgs.Length.Should().Be(3);
+
             it["constructor should set the internal arguments"] = () =>
             {
                 subject._arg1.Should().Be(e1);
@@ -192,6 +204,10 @@ namespace TryIt.Tests.Unit.specs
                 subject = new ActionRunner<string, int, long, double>(e1, e2, e3, e4);
                 subject.Actor = actor;
             };
+
+            it["should implement IRunnerArgSource"] = () =>
+                subject.As<IRunnerArgSource>().RunnerArgs.Length.Should().Be(4);
+
             it["constructor should set the internal arguments"] = () =>
             {
                 subject._arg1.Should().Be(e1);

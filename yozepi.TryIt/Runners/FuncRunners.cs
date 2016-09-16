@@ -40,7 +40,7 @@ namespace Retry.Runners
     }
 
 
-    internal class FuncRunner<T, TResult> : FuncRunner<TResult>
+    internal class FuncRunner<T, TResult> : FuncRunner<TResult>, IRunnerArgSource
     {
         internal T _arg;
 
@@ -48,6 +48,11 @@ namespace Retry.Runners
             : base()
         {
             _arg = arg;
+        }
+
+        object[] IRunnerArgSource.RunnerArgs
+        {
+            get { return new object[] { _arg }; }
         }
 
         protected internal override TResult ExecuteFunc()
@@ -58,7 +63,7 @@ namespace Retry.Runners
     }
 
 
-    internal class FuncRunner<T1, T2, TResult> : FuncRunner<TResult>
+    internal class FuncRunner<T1, T2, TResult> : FuncRunner<TResult>, IRunnerArgSource
     {
         internal T1 _arg1;
         internal T2 _arg2;
@@ -70,6 +75,11 @@ namespace Retry.Runners
             _arg2 = arg2;
         }
 
+        object[] IRunnerArgSource.RunnerArgs
+        {
+            get { return new object[] { _arg1, _arg2 }; }
+        }
+
         protected internal override TResult ExecuteFunc()
         {
             var actor = Actor as Func<T1, T2, TResult>;
@@ -78,7 +88,7 @@ namespace Retry.Runners
     }
 
 
-    internal class FuncRunner<T1, T2, T3, TResult> : FuncRunner<TResult>
+    internal class FuncRunner<T1, T2, T3, TResult> : FuncRunner<TResult>, IRunnerArgSource
     {
         internal T1 _arg1;
         internal T2 _arg2;
@@ -92,6 +102,11 @@ namespace Retry.Runners
             _arg3 = arg3;
         }
 
+        object[] IRunnerArgSource.RunnerArgs
+        {
+            get { return new object[] { _arg1, _arg2, _arg3 }; }
+        }
+
         protected internal override TResult ExecuteFunc()
         {
             var actor = Actor as Func<T1, T2, T3, TResult>;
@@ -100,7 +115,7 @@ namespace Retry.Runners
     }
 
 
-    internal class FuncRunner<T1, T2, T3, T4, TResult> : FuncRunner<TResult>
+    internal class FuncRunner<T1, T2, T3, T4, TResult> : FuncRunner<TResult>, IRunnerArgSource
     {
         internal T1 _arg1;
         internal T2 _arg2;
@@ -114,6 +129,11 @@ namespace Retry.Runners
             _arg2 = arg2;
             _arg3 = arg3;
             _arg4 = arg4;
+        }
+
+        object[] IRunnerArgSource.RunnerArgs
+        {
+            get { return new object[] { _arg1, _arg2, _arg3, _arg4 }; }
         }
 
         protected internal override TResult ExecuteFunc()

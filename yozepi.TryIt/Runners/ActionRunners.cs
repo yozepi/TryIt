@@ -34,7 +34,7 @@ namespace Retry.Runners
 
     }
 
-    internal class ActionRunner<T> : ActionRunner
+    internal class ActionRunner<T> : ActionRunner, IRunnerArgSource
     {
         internal T _arg;
 
@@ -44,6 +44,11 @@ namespace Retry.Runners
             _arg = arg;
         }
 
+        object[] IRunnerArgSource.RunnerArgs
+        {
+            get { return new object[] { _arg }; }
+        }
+
         protected internal override Action GetAction()
         {
             var action = Actor as Action<T>;
@@ -51,7 +56,7 @@ namespace Retry.Runners
         }
     }
 
-    internal class ActionRunner<T1, T2> : ActionRunner
+    internal class ActionRunner<T1, T2> : ActionRunner, IRunnerArgSource
     {
         internal T1 _arg1;
         internal T2 _arg2;
@@ -63,6 +68,11 @@ namespace Retry.Runners
             _arg2 = arg2;
         }
 
+        object[] IRunnerArgSource.RunnerArgs
+        {
+            get { return new object[] { _arg1, _arg2 }; }
+        }
+
         protected internal override Action GetAction()
         {
             var action = Actor as Action<T1, T2>;
@@ -70,7 +80,7 @@ namespace Retry.Runners
         }
     }
 
-    internal class ActionRunner<T1, T2, T3> : ActionRunner
+    internal class ActionRunner<T1, T2, T3> : ActionRunner, IRunnerArgSource
     {
         internal T1 _arg1;
         internal T2 _arg2;
@@ -84,6 +94,11 @@ namespace Retry.Runners
             _arg3 = arg3;
         }
 
+        object[] IRunnerArgSource.RunnerArgs
+        {
+            get { return new object[] { _arg1, _arg2, _arg3 }; }
+        }
+
         protected internal override Action GetAction()
         {
             var action = Actor as Action<T1, T2, T3>;
@@ -91,7 +106,7 @@ namespace Retry.Runners
         }
     }
 
-    internal class ActionRunner<T1, T2, T3, T4> : ActionRunner
+    internal class ActionRunner<T1, T2, T3, T4> : ActionRunner, IRunnerArgSource
     {
         internal T1 _arg1;
         internal T2 _arg2;
@@ -105,6 +120,11 @@ namespace Retry.Runners
             _arg2 = arg2;
             _arg3 = arg3;
             _arg4 = arg4;
+        }
+
+        object[] IRunnerArgSource.RunnerArgs
+        {
+            get { return new object[] { _arg1, _arg2, _arg3, _arg4 }; }
         }
 
         protected internal override Action GetAction()

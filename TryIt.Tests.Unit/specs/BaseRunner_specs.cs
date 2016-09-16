@@ -187,7 +187,6 @@ namespace TryIt.Tests.Unit.specs
                 };
             };
 
-
             context["when the actor never succeeds"] = () =>
             {
                 BaseRunner subject = null;

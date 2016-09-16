@@ -36,7 +36,7 @@ namespace Retry.Runners
     }
 
 
-    internal class TaskRunner<T> : TaskRunner
+    internal class TaskRunner<T> : TaskRunner, IRunnerArgSource
     {
         internal T _arg;
 
@@ -44,6 +44,11 @@ namespace Retry.Runners
             : base()
         {
             _arg = arg;
+        }
+
+        object[] IRunnerArgSource.RunnerArgs
+        {
+            get { return new object[] { _arg }; }
         }
 
         protected internal override Task GetTask()
@@ -54,7 +59,7 @@ namespace Retry.Runners
     }
 
 
-    internal class TaskRunner<T1, T2> : TaskRunner
+    internal class TaskRunner<T1, T2> : TaskRunner, IRunnerArgSource
     {
         internal T1 _arg1;
         internal T2 _arg2;
@@ -66,6 +71,11 @@ namespace Retry.Runners
             _arg2 = arg2;
         }
 
+        object[] IRunnerArgSource.RunnerArgs
+        {
+            get { return new object[] { _arg1, _arg2 }; }
+        }
+
         protected internal override Task GetTask()
         {
             var actor = Actor as Func<T1, T2, Task>;
@@ -74,7 +84,7 @@ namespace Retry.Runners
     }
 
 
-    internal class TaskRunner<T1, T2, T3> : TaskRunner
+    internal class TaskRunner<T1, T2, T3> : TaskRunner, IRunnerArgSource
     {
         internal T1 _arg1;
         internal T2 _arg2;
@@ -88,6 +98,11 @@ namespace Retry.Runners
             _arg3 = arg3;
         }
 
+        object[] IRunnerArgSource.RunnerArgs
+        {
+            get { return new object[] { _arg1, _arg2, _arg3 }; }
+        }
+
         protected override internal Task GetTask()
         {
             var actor = Actor as Func<T1, T2, T3, Task>;
@@ -96,7 +111,7 @@ namespace Retry.Runners
     }
 
 
-    internal class TaskRunner<T1, T2, T3, T4> : TaskRunner
+    internal class TaskRunner<T1, T2, T3, T4> : TaskRunner, IRunnerArgSource
     {
         internal T1 _arg1;
         internal T2 _arg2;
@@ -110,6 +125,11 @@ namespace Retry.Runners
             _arg2 = arg2;
             _arg3 = arg3;
             _arg4 = arg4;
+        }
+
+        object[] IRunnerArgSource.RunnerArgs
+        {
+            get { return new object[] { _arg1, _arg2, _arg3, _arg4 }; }
         }
 
         protected override internal Task GetTask()

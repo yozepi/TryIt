@@ -54,6 +54,8 @@
     <Compile Include="Runners\ActionRunners.cs" />
     <Compile Include="Runners\FuncRunners.cs" />
     <Compile Include="Runners\BaseRunner.cs" />
+    <Compile Include="Runners\IRunnerArgSource.cs" />
+    <Compile Include="Runners\RunnerFactory.cs" />
     <Compile Include="Runners\TaskRunners.cs" />
     <Compile Include="Runners\TaskWithResultRunners.cs" />
     <Compile Include="Delays\IDelay.cs" />
@@ -66,6 +68,7 @@
     <Compile Include="Builders\ActionRetryBuilder.cs" />
     <Compile Include="TryIt_FuncRetryBuilder_Methods.cs" />
     <Compile Include="TryIt_TaskTResult_Methods.cs" />
+    <Compile Include="TryIt_UsingDelay_WithError_WithSuccess_Methods.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="TryIt.nuspec" />

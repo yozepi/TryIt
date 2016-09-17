@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Retry.Runners
@@ -12,34 +13,34 @@ namespace Retry.Runners
         internal TResult Result { get; set; }
 
 
-        protected override async Task ExecuteActorAsync()
+        protected internal override async Task ExecuteActorAsync(CancellationToken cancelationToken)
         {
             Result = default(TResult);
-            Result = await RunTaskAsync();
+            Result = await RunTaskAsync(cancelationToken);
         }
 
-        protected virtual async Task<TResult> RunTaskAsync()
+        protected internal virtual async Task<TResult> RunTaskAsync(CancellationToken cancelationToken)
         {
             return await Task<TResult>.Run(() =>
-           {
-               return ExecuteFunc();
-           });
+            {
+                return ExecuteFunc();
+            }, cancelationToken);
         }
 
-        protected virtual TResult ExecuteFunc()
+        protected internal virtual TResult ExecuteFunc()
         {
             var func = Actor as Func<TResult>;
             return func();
         }
 
-        protected override void HandleSuccessPolicy(int count)
+        protected override internal void HandleSuccessPolicy(int count)
         {
             (SuccessPolicy as SuccessPolicyDelegate<TResult>)?.Invoke(Result, count);
         }
     }
 
 
-    internal class FuncRunner<T, TResult> : FuncRunner<TResult>
+    internal class FuncRunner<T, TResult> : FuncRunner<TResult>, IRunnerArgSource
     {
         internal T _arg;
 
@@ -49,7 +50,12 @@ namespace Retry.Runners
             _arg = arg;
         }
 
-        protected override TResult ExecuteFunc()
+        object[] IRunnerArgSource.RunnerArgs
+        {
+            get { return new object[] { _arg }; }
+        }
+
+        protected internal override TResult ExecuteFunc()
         {
             var actor = Actor as Func<T, TResult>;
             return actor(_arg);
@@ -57,7 +63,7 @@ namespace Retry.Runners
     }
 
 
-    internal class FuncRunner<T1, T2, TResult> : FuncRunner<TResult>
+    internal class FuncRunner<T1, T2, TResult> : FuncRunner<TResult>, IRunnerArgSource
     {
         internal T1 _arg1;
         internal T2 _arg2;
@@ -69,7 +75,12 @@ namespace Retry.Runners
             _arg2 = arg2;
         }
 
-        protected override TResult ExecuteFunc()
+        object[] IRunnerArgSource.RunnerArgs
+        {
+            get { return new object[] { _arg1, _arg2 }; }
+        }
+
+        protected internal override TResult ExecuteFunc()
         {
             var actor = Actor as Func<T1, T2, TResult>;
             return actor(_arg1, _arg2);
@@ -77,7 +88,7 @@ namespace Retry.Runners
     }
 
 
-    internal class FuncRunner<T1, T2, T3, TResult> : FuncRunner<TResult>
+    internal class FuncRunner<T1, T2, T3, TResult> : FuncRunner<TResult>, IRunnerArgSource
     {
         internal T1 _arg1;
         internal T2 _arg2;
@@ -91,7 +102,12 @@ namespace Retry.Runners
             _arg3 = arg3;
         }
 
-        protected override TResult ExecuteFunc()
+        object[] IRunnerArgSource.RunnerArgs
+        {
+            get { return new object[] { _arg1, _arg2, _arg3 }; }
+        }
+
+        protected internal override TResult ExecuteFunc()
         {
             var actor = Actor as Func<T1, T2, T3, TResult>;
             return actor(_arg1, _arg2, _arg3);
@@ -99,7 +115,7 @@ namespace Retry.Runners
     }
 
 
-    internal class FuncRunner<T1, T2, T3, T4, TResult> : FuncRunner<TResult>
+    internal class FuncRunner<T1, T2, T3, T4, TResult> : FuncRunner<TResult>, IRunnerArgSource
     {
         internal T1 _arg1;
         internal T2 _arg2;
@@ -115,7 +131,12 @@ namespace Retry.Runners
             _arg4 = arg4;
         }
 
-        protected override TResult ExecuteFunc()
+        object[] IRunnerArgSource.RunnerArgs
+        {
+            get { return new object[] { _arg1, _arg2, _arg3, _arg4 }; }
+        }
+
+        protected internal override TResult ExecuteFunc()
         {
             var actor = Actor as Func<T1, T2, T3, T4, TResult>;
             return actor(_arg1, _arg2, _arg3, _arg4);

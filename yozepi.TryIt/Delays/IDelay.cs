@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Retry.Delays
@@ -19,6 +20,6 @@ namespace Retry.Delays
         /// <remarks>
         /// Don't waste your time trying to implement this interface. Instead, extend the abstract <see cref="Delay"/> class.
         /// </remarks>
-        Task WaitAsync(int attemptCount);
+        Task WaitAsync(int attemptCount, CancellationToken cancelationToken);
     }
 }

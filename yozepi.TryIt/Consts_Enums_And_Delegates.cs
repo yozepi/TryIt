@@ -59,6 +59,12 @@ namespace Retry
         /// <summary>
         /// All attempts to Try() (or ThenTry()) failed.
         /// </summary>
-        Fail
+        Fail,
+
+        /// <summary>
+        /// The Task running GoAsync() was cancelled.
+        /// </summary>
+        Canceled
+
     }
 }

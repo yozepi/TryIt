@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Retry.Delays;
 using Retry.Runners;
+using System.Threading;
 
 namespace Retry.Builders
 {
@@ -48,13 +49,13 @@ namespace Retry.Builders
 
         internal BaseRunner Winner { get; set; }
 
-        protected void Run()
+        protected internal void Run(CancellationToken cancellationToken)
         {
-            var awaiter = RunAsync().GetAwaiter();
+            var awaiter = RunAsync(cancellationToken).GetAwaiter();
             awaiter.GetResult();
         }
 
-        protected async Task RunAsync()
+        protected internal async Task RunAsync(CancellationToken cancellationToken)
         {
             Status = RetryStatus.Running;
             var runningStatus = RetryStatus.Running;
@@ -67,11 +68,15 @@ namespace Retry.Builders
             var runnerLink = Runners.First;
             try
             {
-
                 while (runnerLink != null)
                 {
+                    if (cancellationToken.IsCancellationRequested)
+                    {
+                        throw new TaskCanceledException();
+                    }
+
                     var runner = runnerLink.Value;
-                    await runner.RunAsync();
+                    await runner.RunAsync(cancellationToken);
                     Attempts += runner.Attempts;
                     ExceptionList.AddRange(runner.ExceptionList);
 
@@ -94,6 +99,12 @@ namespace Retry.Builders
                     }
                     runnerLink = runnerLink.Next;
                 }
+            }
+
+            catch (OperationCanceledException)
+            {
+                Status = RetryStatus.Canceled;
+                throw;
             }
             catch (Exception)
             {

@@ -88,13 +88,15 @@ namespace Retry.Delays
         /// </summary>
         /// <param name="waitTime"></param>
         /// <returns></returns>
-        protected virtual async Task WaitAsync(TimeSpan waitTime)
+        protected async Task WaitAsync(TimeSpan waitTime)
         {
-            await Task.Delay(waitTime);
+              await Task.Delay(waitTime, _cancelationToken);
         }
 
-        Task IDelay.WaitAsync(int tryCount)
+        private CancellationToken _cancelationToken;
+        Task IDelay.WaitAsync(int tryCount, CancellationToken cancelationToken)
         {
+            _cancelationToken = cancelationToken;
             return this.WaitAsync(tryCount);
         }
     }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Retry.Delays;
+using System.Threading;
 
 namespace Retry.Runners
 {
@@ -34,63 +35,88 @@ namespace Retry.Runners
 
         public Delegate SuccessPolicy { get; set; }
 
-        public async Task RunAsync()
+        public async Task RunAsync(CancellationToken cancellationToken)
         {
             Attempts = 0;
             ExceptionList.Clear();
             Status = RetryStatus.Running;
 
-            for (int count = 0; count < RetryCount; count++)
+            try
             {
-
-                try
+                for (int count = 0; count < RetryCount; count++)
                 {
-                    Attempts++;
-                    await ExecuteActorAsync();
-                    HandleSuccessPolicy(Attempts);
-                    if (count == 0)
-                    {
-                        Status = RetryStatus.Success;
-                    }
-                    else
-                    {
-                        Status = RetryStatus.SuccessAfterRetries;
-                    }
-                    break;
-                }
-                catch (Exception ex)
-                {
-                    if (HandleErrorPolicy(ex, count))
-                    {
-                        ExceptionList.Add(ex);
 
-                        //Only wait if count hasn't ended.
-                        if (count + 1 < RetryCount)
+                    if (cancellationToken.IsCancellationRequested)
+                    {
+                        throw new TaskCanceledException();
+                    }
+
+                    try
+                    {
+                        Attempts++;
+                        await ExecuteActorAsync(cancellationToken);
+                        HandleSuccessPolicy(Attempts);
+                        if (count == 0)
                         {
-                            IDelay delay;
-                            if (Delay != null)
-                                delay = Delay;
-                            else
-                                delay = Delays.Delay.DefaultDelay;
-
-                            await delay.WaitAsync(count);
+                            Status = RetryStatus.Success;
                         }
-                    }
-                    else
-                    {
-                        ExceptionList.Add(new ErrorPolicyException(ex));
-                        Status = RetryStatus.Fail;
+                        else
+                        {
+                            Status = RetryStatus.SuccessAfterRetries;
+                        }
                         break;
                     }
+                    catch (OperationCanceledException)
+                    {
+                        throw;
+                    }
+
+                    catch (Exception ex)
+                    {
+                        if (HandleErrorPolicy(ex, count))
+                        {
+                            ExceptionList.Add(ex);
+
+                            //Only wait if count hasn't ended.
+                            if (count + 1 < RetryCount)
+                            {
+                                IDelay delay;
+                                if (Delay != null)
+                                    delay = Delay;
+                                else
+                                    delay = Delays.Delay.DefaultDelay;
+
+                                await delay.WaitAsync(count, cancellationToken);
+                            }
+                        }
+                        else
+                        {
+                            ExceptionList.Add(new ErrorPolicyException(ex));
+                            Status = RetryStatus.Fail;
+                            break;
+                        }
+                    }
                 }
-            }
 
-            if (Status == RetryStatus.Running)
+                if (Status == RetryStatus.Running)
+                {
+                    //still running after all attempts - FAIL!
+                    Status = RetryStatus.Fail;
+                }
+
+            }
+            catch (OperationCanceledException)
             {
-                //still running after all attempts - FAIL!
-                Status = RetryStatus.Fail;
+                Status = RetryStatus.Canceled;
+                throw;
             }
 
+            catch (Exception ex)
+            {
+                ExceptionList.Add(ex);
+                Status = RetryStatus.Fail;
+                throw;
+            }
             return;
         }
 
@@ -98,13 +124,13 @@ namespace Retry.Runners
         /// Implementors extend this method to execute the Func/Action.
         /// </summary>
         /// <returns></returns>
-        protected abstract Task ExecuteActorAsync();
+        protected internal abstract Task ExecuteActorAsync(CancellationToken cancelationToken);
 
         /// <summary>
         /// Implementors execute this action to handle success policy calls.
         /// </summary>
         /// <param name="count"></param>
-        protected abstract void HandleSuccessPolicy(int count);
+        protected internal abstract void HandleSuccessPolicy(int count);
 
         private bool HandleErrorPolicy(Exception ex, int retryCount)
         {

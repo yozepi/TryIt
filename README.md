@@ -241,6 +241,86 @@ Task<string> response = TryIt.TryTask(DownloadStringAsync, url, 3)
 ```
 This code returns a `Task<string>` that runs your TryIt chain and returns results.
 
+## Some Advanced Stuff
+
+### Standing up TryIt programatically
+Sometimes it would be desirable to dynamically create your TryIt instance programatically. For example, say you want to try a series of connection strings in a round-robin fashion. But the connection strings come from a config file or some other place. Look at this code:
+```c#
+Task<string> GetDBResultsAsyncRoundRobin(string[] connStrings)
+{
+    FuncRetryBuilder<string> tryIt = null;
+    foreach (var conn in connStrings)
+    {
+        if (tryIt == null)
+        {
+            tryIt = TryIt.TryTask(GetDBResultsAsync, conn, 1);
+        }
+        else
+        {
+            tryIt.ThenTry(conn, 1);
+        }
+    }
+    return tryIt.GoAsync();
+}
+```
+Running this method will run through each connection string provided and call ```GetDBResultsAsync```, returning the results of the first succesful call and throwing ```RetryFailedException``` if it runs though all the connection strings.
+
+It does this by iterating through the connection strings and build a TryIt builder. In this case, a ```FuncRetryBuilder<string>```. TryIt works with two types of builders
++ **```ActionRetryBuilder```** for working with void methods
++ **```FuncRetryBuilder<TResult>```** for working with methods that return values
+
+TryIt decides which runner to return based on the method you provide. I didn't show it here but can insert delays, error policies, and success policies this way also.
+
+
+## Try within a Try
+You can do some pretty interesting stuff with TryIt. Using the ```GetDBResultsAsyncRoundRobin``` example above, let's do this:  
++ Go Round-Robin though our connection strings and call ```GetDBResultsAsync```
++ Keep trying this 4 times, with a back-off delay starting at 120ms between each round-robin attempt.
+
+Here's the code:
+```c#
+result = TryIt.TryTask(GetDBResultsAsyncRoundRobin, connStrings, 4)
+    .UsingDelay(Delay.Backoff(TimeSpan.FromMilliseconds(120)))
+    .Go();
+```
+
+### Use System.Threading.CancellationToken
+
+Both **`Go`** and **`GoAsync`** have overload methods that accept a **`CancellationToken`**. You can use this token to interrupt the Try-ThenTry sequence. Lets see an example
+
+Let's say you have a situation where you want to try the ```DownloadString``` method (see above) five times with a delay of 200ms between each try.
+```c#
+string result = TryIt.Try(DownloadString, url, 5)
+    .UsingDelay(Delay.Basic(TimeSpan.FromMilliseconds(200)))
+    .Go();
+```
+Ok, easy. We've seen this before. **But -** What if the call to ```DownloadString``` takes as long as 30 seconds sometimes before failing when under heavy load?
+
+This will cause a worst case delay of  2.5 **minutes** that your code is blocking while while it waits! Not good at all! **```CancellationToken```** to the rescue! Here is the same code - with a slight modification to use a cancellation token to break out of Try-ThenTry after 45 seconds:
+```c#
+string result;
+using (var tokenSource = new CancellationTokenSource(4500))
+{
+    result = TryIt.Try(DownloadString, url, 5)
+        .UsingDelay(Delay.Basic(TimeSpan.FromMilliseconds(200)))
+        .Go(tokenSource.Token);
+}
+```
+This code will cause ```CancellationTokenSource``` to cancel the token after 45 seconds. TryIt will now break and throw an ```OperationCanceledException``` if TryIt takes longer than 45 seconds to run.
+
+That is, TryIt will break. If ```DownloadString``` is in the middle of a call then the token cancels then TryIt will be blocked until ```DownloadString``` completes.
+
+But many methods in the .Net famework allow you to pass in an optional ```CancellationToken``` (usually methods that return tasks). Let's pretend our ```DownloadStringAsync``` method from above is one of these. By passing the same ```CancellationToken``` to both ```DownloadStringAsync``` and the TryIt's ```Go``` method, You would guarantee they both will break out when the token cancels (assuming ```DownloadStringAsync``` correctly respects the token).
+```c#
+string result;
+using (var tokenSource = new CancellationTokenSource(4500))
+{
+    var token = tokenSource.Token;
+    result = TryIt.TryTask(DownloadStringAsync, url, token, 5)
+        .UsingDelay(Delay.Basic(TimeSpan.FromMilliseconds(200)))
+        .Go(token);
+}
+```
 ## License
 
 **TryIt** is licensed under [Apache License, Version 2.0](https://opensource.org/licenses/Apache-2.0).

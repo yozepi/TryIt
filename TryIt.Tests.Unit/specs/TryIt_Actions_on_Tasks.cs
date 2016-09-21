@@ -11,7 +11,8 @@ using Retry;
 
 namespace TryIt.Tests.Unit.specs
 {
-    class Retry_Tasks : nspec
+
+    class TryIt_Actions_on_Tasks : nspec
     {
         void with_no_arguments()
         {
@@ -345,7 +346,7 @@ namespace TryIt.Tests.Unit.specs
 
                 it["ThenTry() should accept all the alternate arguments"] = () =>
                 {
-                    var runner = child.LastRunner.As<TaskRunner<string>>();
+                    var runner = child.LastRunner.As<ActionRunner<string>>();
                     runner._arg.Should().Be(arg);
                 };
             };

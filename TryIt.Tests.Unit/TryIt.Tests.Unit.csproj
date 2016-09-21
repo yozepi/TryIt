@@ -77,17 +77,24 @@
   </Choose>
   <ItemGroup>
     <Compile Include="nSpecTestHarness.cs" />
+    <Compile Include="specs\ActionRetryBuilder_specs.cs" />
+    <Compile Include="specs\ActionRunner_specs.cs" />
+    <Compile Include="specs\BaseBuilder_specs.cs" />
+    <Compile Include="specs\BaseRunner_specs.cs" />
     <Compile Include="specs\Action_Extension_Methods.cs" />
+    <Compile Include="specs\FuncRetryBuilder_specs.cs" />
+    <Compile Include="specs\FuncRunner_specs.cs" />
     <Compile Include="specs\Func_Extension_Methods.cs" />
     <Compile Include="specs\IDelay_Implementors.cs" />
-    <Compile Include="specs\Retry_actions_ASYNC.cs" />
-    <Compile Include="specs\Retry_Funcs_ASYNC.cs" />
-    <Compile Include="specs\Retry_Funcs.cs" />
-    <Compile Include="specs\Retry_Actions.cs" />
+    <Compile Include="specs\TryIt_Func_specs.cs" />
+    <Compile Include="specs\TryIt_Action_specs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="specs\Retry_Actions_with_Tasks.cs" />
-    <Compile Include="specs\Retry_TaskTResults.cs" />
-    <Compile Include="specs\Retry_WithAlternate_Funcs.cs" />
+    <Compile Include="specs\TryIt_Actions_on_Tasks.cs" />
+    <Compile Include="specs\TryIt_Funcs_on_TaskTResults.cs" />
+    <Compile Include="specs\RunnerFactory_specs.cs" />
+    <Compile Include="specs\TaskRunner_specs.cs" />
+    <Compile Include="specs\TaskWithResultRunner_specs.cs" />
+    <Compile Include="specs\TryIt_UsingDelay_WithError_WithSuccess_specs.cs" />
     <Compile Include="Tests\Tests.cs" />
   </ItemGroup>
   <ItemGroup>

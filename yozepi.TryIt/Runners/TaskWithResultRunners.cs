@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Retry.Runners
@@ -10,7 +11,7 @@ namespace Retry.Runners
     {
         public TaskWithResultRunner() : base() { }
 
-        protected override async Task ExecuteActorAsync()
+        protected internal override async Task ExecuteActorAsync(CancellationToken cancelationToken)
         {
             var task = GetTask();
             if (task.Status == TaskStatus.Created)
@@ -21,7 +22,7 @@ namespace Retry.Runners
            Result =  await task;
         }
 
-        protected virtual Task<TResult> GetTask()
+        protected internal virtual Task<TResult> GetTask()
         {
             var actor = Actor as Func<Task<TResult>>;
             return actor();
@@ -29,7 +30,7 @@ namespace Retry.Runners
         }
     }
 
-    internal class TaskWithResultRunner<T, TResult>: TaskWithResultRunner<TResult>
+    internal class TaskWithResultRunner<T, TResult>: TaskWithResultRunner<TResult>, IRunnerArgSource
     {
         internal T _arg;
 
@@ -40,14 +41,19 @@ namespace Retry.Runners
             _arg = arg;
         }
 
-        protected override Task<TResult> GetTask()
+        object[] IRunnerArgSource.RunnerArgs
+        {
+            get { return new object[] { _arg }; }
+        }
+
+        protected internal override Task<TResult> GetTask()
         {
             var actor = Actor as Func<T, Task<TResult>>;
             return actor(_arg);
         }
     }
 
-    internal class TaskWithResultRunner<T1, T2, TResult> : TaskWithResultRunner<TResult>
+    internal class TaskWithResultRunner<T1, T2, TResult> : TaskWithResultRunner<TResult>, IRunnerArgSource
     {
         internal T1 _arg1;
         internal T2 _arg2;
@@ -59,14 +65,19 @@ namespace Retry.Runners
             _arg2 = arg2;
         }
 
-        protected override Task<TResult> GetTask()
+        object[] IRunnerArgSource.RunnerArgs
+        {
+            get { return new object[] { _arg1, _arg2 }; }
+        }
+
+        protected internal override Task<TResult> GetTask()
         {
             var actor = Actor as Func<T1, T2, Task<TResult>>;
             return actor(_arg1, _arg2);
         }
     }
 
-    internal class TaskWithResultRunner<T1, T2, T3, TResult> : TaskWithResultRunner<TResult>
+    internal class TaskWithResultRunner<T1, T2, T3, TResult> : TaskWithResultRunner<TResult>, IRunnerArgSource
     {
         internal T1 _arg1;
         internal T2 _arg2;
@@ -80,14 +91,19 @@ namespace Retry.Runners
             _arg3 = arg3;
         }
 
-        protected override Task<TResult> GetTask()
+        object[] IRunnerArgSource.RunnerArgs
+        {
+            get { return new object[] { _arg1, _arg2, _arg3 }; }
+        }
+
+        protected internal override Task<TResult> GetTask()
         {
             var actor = Actor as Func<T1, T2, T3, Task<TResult>>;
             return actor(_arg1, _arg2, _arg3);
         }
     }
 
-    internal class TaskWithResultRunner<T1, T2, T3, T4, TResult> : TaskWithResultRunner<TResult>
+    internal class TaskWithResultRunner<T1, T2, T3, T4, TResult> : TaskWithResultRunner<TResult>, IRunnerArgSource
     {
         internal T1 _arg1;
         internal T2 _arg2;
@@ -103,7 +119,12 @@ namespace Retry.Runners
             _arg4 = arg4;
         }
 
-        protected override Task<TResult> GetTask()
+        object[] IRunnerArgSource.RunnerArgs
+        {
+            get { return new object[] { _arg1, _arg2, _arg3, _arg4 }; }
+        }
+
+        protected internal override Task<TResult> GetTask()
         {
             var actor = Actor as Func<T1, T2, T3, T4, Task<TResult>>;
             return actor(_arg1, _arg2, _arg3, _arg4);

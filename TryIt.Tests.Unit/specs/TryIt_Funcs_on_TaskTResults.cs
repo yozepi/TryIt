@@ -11,7 +11,7 @@ using Retry;
 
 namespace TryIt.Tests.Unit.specs
 {
-    class Retry_TaskTResults : nspec
+    class TryIt_Funcs_on_TaskTResults : nspec
     {
         void with_no_arguments()
         {

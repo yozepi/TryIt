@@ -27,6 +27,8 @@ namespace TryIt_Examples
 
             await Try_A_Method_Async();
 
+            Try_A_Method_with_Cancellation();
+
             Try_A_Task();
 
             await Try_A_Task_Async();
@@ -53,7 +55,9 @@ namespace TryIt_Examples
 
             RunTask(Try_Task_Quick_Then_BackOff_Async());
 
-            Try_a_Method_AB_Alternating();
+            Try_a_Method_ABC_Alternating();
+
+            Try_a_Method_ABC_Alternating_WithCancellationToken();
 
             Build_Runners_Via_Code();
 
@@ -126,6 +130,7 @@ namespace TryIt_Examples
             }
         }
 
+
         static Func<string, string> DownloadStringCommand()
         {
             return (url) => DownloadString(url);
@@ -160,6 +165,30 @@ namespace TryIt_Examples
             Console.WriteLine(" - Response length: {0}", result.Length);
         }
 
+        static void Try_A_Method_with_Cancellation()
+        {
+            Console.WriteLine();
+            Console.Write("Try a method. Cancel if it takes too long to try.");
+            var url = "http://www.google.com";
+
+            try
+            {
+                string result;
+                using (var tokenSource = new CancellationTokenSource(4500))
+                {
+                    result = TryIt.Try(DownloadString, url, 5)
+                        .UsingDelay(Delay.Basic(TimeSpan.FromMilliseconds(200)))
+                        .Go(tokenSource.Token);
+                }
+                Console.WriteLine(" - Response length: {0}", result.Length);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("{0}", ex.Message);
+            }
+ 
+        }
+
         static string Try_A_Method_Quick_Then_Backoff()
         {
             //Try request.DownloadString(url) 3 quickly
@@ -182,7 +211,7 @@ namespace TryIt_Examples
                .UsingDelay(Delay.Backoff(TimeSpan.FromMilliseconds(200)))
                .GoAsync();
 
-            Console.WriteLine(" -Response length: {0}", response.Length);
+            Console.WriteLine(" - Response length: {0}", response.Length);
         }
 
 
@@ -195,7 +224,7 @@ namespace TryIt_Examples
             try
             {
                 TryIt.Try(MyFailingMethod, 5).Go();
-                response =  "I shouldn't get here.";
+                response = "I shouldn't get here.";
             }
             catch (RetryFailedException ex)
             {
@@ -578,7 +607,7 @@ namespace TryIt_Examples
         }
 
 
-        static void Try_a_Method_AB_Alternating()
+        static void Try_a_Method_ABC_Alternating()
         {
             Console.WriteLine();
             Console.WriteLine("Alternate between 3 connections. Repeat 10 times - backing off after each try.");
@@ -586,22 +615,13 @@ namespace TryIt_Examples
             string connA = "Connection string A";
             string connB = "Connection string B";
             string connC = "Connection string C";
+            string[] connStrings = { connA, connB, connC };
 
             string result = null;
 
-            Func<Task<string>> alternateConnectionsAsync = () =>
-            {
-                var retries = 1;
-                var localResult =
-                    TryIt.TryTask(GetDBResultsAsync, connA, retries)
-                    .ThenTry(connB, retries)
-                    .ThenTry(connC, retries)
-                    .GoAsync();
-                return localResult;
-            };
             try
             {
-                result = alternateConnectionsAsync.Try(10)
+                result = TryIt.TryTask(GetDBResultsAsyncRoundRobin, connStrings, 10)
                     .UsingDelay(Delay.Backoff(TimeSpan.FromMilliseconds(100)))
                     .Go();
             }
@@ -613,6 +633,72 @@ namespace TryIt_Examples
             Console.WriteLine("Response: \"{0}\"", result);
         }
 
+
+        static void Try_a_Method_ABC_Alternating_WithCancellationToken()
+        {
+            Console.WriteLine();
+            Console.WriteLine("Alternate between 3 connections. Repeat 10 times - backing off after each try.");
+            Console.WriteLine("Cancel the whole thing if processing takes more than 1/2 second.");
+
+            string connA = "Connection string A";
+            string connB = "Connection string B";
+            string connC = "Connection string C";
+            string[] connStrings = { connA, connB, connC };
+
+            string result = null;
+
+            try
+            {
+                using (var tokenSource = new CancellationTokenSource(500))
+                {
+                    var token = tokenSource.Token;
+                    result = TryIt.TryTask(GetDBResultsAsyncRoundRobinCancelable, token, connStrings, 10)
+                    .UsingDelay(Delay.Backoff(TimeSpan.FromMilliseconds(100)))
+                    .Go(token);
+                }
+            }
+            catch (Exception ex)
+            {
+                result = string.Format("Exception: {0}", ex.Message);
+            }
+
+            Console.WriteLine("Response: \"{0}\"", result);
+        }
+
+
+        static Task<string> GetDBResultsAsyncRoundRobin(string[] connStrings)
+        {
+            FuncRetryBuilder<string> tryIt = null;
+            foreach (var conn in connStrings)
+            {
+                if (tryIt == null)
+                {
+                    tryIt = TryIt.TryTask(GetDBResultsAsync, conn, 1);
+                }
+                else
+                {
+                    tryIt.ThenTry(conn, 1);
+                }
+            }
+            return tryIt.GoAsync();
+        }
+
+        static Task<string> GetDBResultsAsyncRoundRobinCancelable(CancellationToken token, string[] connStrings)
+        {
+            FuncRetryBuilder<string> tryIt = null;
+            foreach (var conn in connStrings)
+            {
+                if (tryIt == null)
+                {
+                    tryIt = TryIt.TryTask(GetDBResultsAsync, conn, 1);
+                }
+                else
+                {
+                    tryIt.ThenTry(conn, 1);
+                }
+            }
+            return tryIt.GoAsync(token);
+        }
 
         static void Build_Runners_Via_Code()
         {
@@ -640,7 +726,7 @@ namespace TryIt_Examples
                 }
                 else
                 {
-                    tryIt.ThenTry(GetDBResults, conn, retries);
+                    tryIt.ThenTry(conn, retries);
                 }
             }
 
@@ -676,10 +762,14 @@ namespace TryIt_Examples
             return string.Format("I did it with {0}!", connectionString);
         }
 
-
         private static async Task<string> GetDBResultsAsync(string connectionString)
         {
-            return await Task<string>.Run(() => GetDBResults(connectionString));
+            return await Task<string>.Run(() => 
+            {
+                var d = rnd.Next(200);
+                Thread.Sleep(d);
+                return GetDBResults(connectionString);
+            });
         }
     }
 }

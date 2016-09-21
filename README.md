@@ -48,7 +48,16 @@ string result = TryIt.Try(DownloadString, url, 5)
 ```
 Now your method will pause between each try. Notice how the `UsingDelay` method is chained into the call. This is typical syntax for **TryIt**. You can chain all of it's methods together in this fashion.
 
-In this case a back-off delay is used. Using this delay, TryIt will double the wait time for each try, 200 milliseconds the first time, 400 the next, then 800, and so on. The current version of **TryIt** comes out of the box with **`BackoffDelay`** and the **`BasicDelay`** - which simply pauses for a set timespan between tries. If what comes out of the box doesn't fit your needs you can inherit from the abstract **`Delay`** class to create your own.
+**TryIt** comes with the following delays out of the box:
+
+|Delay Type|Description|
+|----|----|
+| **`NoDelay`** | No pause occurs between tries. |
+| **`BasicDelay`** | Delays for he provided `TimeSpan` between each try. |
+| **`BackOffDelay`** | Doubles the initial `TimeSpan` between each try (i.e. 100ms, 200ms, 400ms, 800ms, etc.) |
+| **`FibonacciDelay`** | Increases the initial `TimeSpan` using the Fibonacci scale (i.e. 100ms, 100ms, 200ms, 300ms, 500ms, etc.) |
+
+If none of these delays fit your needs you can inherit from the abstract **`Delay`** class to create your own.
 
 # TryIt Again
 So what if you want to try with one delay 3 times and then another delay for 5 times? Or what if you need to try server A, and if that fails try server B? That’s where the `ThenTry` method comes in. Look at the code below:
@@ -106,7 +115,7 @@ There are going to be times when you don’t want to keep retrying a method. For
 |When ErrorPolicyDelegate does this|TryIt does this|
 |----------------------------------|--------------|
 |Return true                       |TryIt processes the exception as normal (as if there we’re no error policy).|
-|Return false                      |TryIt stops trying the current runner, wraps the exception into a ErrorPolicyException and adds it to the exception list, then moves to the nextrunner. If there are no more runners then a RetryFailedException is thrown.|
+|Return false                      |TryIt stops trying the current runner, wraps the exception into a ErrorPolicyException and adds it to the exception list, then moves to the next runner. If there are no more runners then a RetryFailedException is thrown.|
 |Throw an exception                |TryIt raises the exception. All remaining runners are ignored and will not be tried.|
 
 Let’s see an example. We’ll use the DownloadString method from our previous examples. Let’s say we don’t control the url passed to us. If the url can’t be resolved, then we certainly don’t want to waste our time retrying it.  Here’s how you can set up TryIt to handle this:

@@ -152,6 +152,38 @@ namespace TryIt.Tests.Unit.specs
                     };
                 };
             };
+
+            describe["FibonacciDelay class"] = () =>
+            {
+                var milliseconds = 100;
+                TimeSpan delay = TimeSpan.FromMilliseconds(milliseconds);
+                var expected = milliseconds * 2;
+
+                before = () => subject = new FibonacciDelay(delay);
+                it["should backoff the delay using the Fibonacci algorithm"] = () =>
+                {
+                    executionTime.Should().BeGreaterOrEqualTo(TimeSpan.FromMilliseconds(expected));
+                    executionTime.Should().BeLessOrEqualTo(TimeSpan.FromMilliseconds(expected + tolerance));
+                };
+
+                context["when the provided timespan is invalid"] = () =>
+                {
+                    it["should throw an ArgumentOutOfRange exception"] = () =>
+                    {
+                        Exception thrown = null;
+                        try
+                        {
+                            subject = new FibonacciDelay(TimeSpan.MinValue);
+                        }
+                        catch (Exception ex)
+                        {
+                            thrown = ex;
+                        }
+
+                        thrown.Should().BeOfType<ArgumentOutOfRangeException>();
+                    };
+                };
+            };
         }
 
         void Static_Delay_Methods()
@@ -189,8 +221,22 @@ namespace TryIt.Tests.Unit.specs
                 it["should return an instance of BackoffDelay IDelay instance"] = () =>
                     delay.Should().BeOfType<BackoffDelay>();
 
-                it["should set the delay time correctly"] = () =>
+                it["should set the initial delay time correctly"] = () =>
                     delay.As<BackoffDelay>().InitialDelay.Should().Be(delayTime);
+            };
+
+            describe["Fibonacci() method"] = () =>
+            {
+                IDelay delay = null;
+                TimeSpan delayTime = TimeSpan.FromMilliseconds(100);
+
+                before = () => delay = Delay.Fibonacci(delayTime);
+
+                it["should return an instance of FibonacciDelay IDelay instance"] = () =>
+                    delay.Should().BeOfType<FibonacciDelay>();
+
+                it["should set the initial delay time correctly"] = () =>
+                    delay.As<FibonacciDelay>().InitialDelay.Should().Be(delayTime);
             };
 
             describe["DefaultDelay property"] = () =>

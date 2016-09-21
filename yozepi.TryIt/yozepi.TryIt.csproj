@@ -48,6 +48,7 @@
     <Compile Include="Builders\BaseBuilder.cs" />
     <Compile Include="Builders\FuncRetryBuilder.cs" />
     <Compile Include="Consts_Enums_And_Delegates.cs" />
+    <Compile Include="Delays\FibonacciDelay.cs" />
     <Compile Include="Extensions\ActionExtensions.cs" />
     <Compile Include="Extensions\FuncExtensions.cs" />
     <Compile Include="ErrorPolicyException.cs" />

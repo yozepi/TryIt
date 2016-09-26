@@ -20,6 +20,7 @@
       1.1.0 - Added the ability to cancel trying with a CancellationToken. Improved Task processing.
     </releaseNotes>
     <copyright>Copyright 2016</copyright>
+    <tags>Retry Async Design Pattern Exception Handling</tags>
   </metadata>
   <files />
 </package>

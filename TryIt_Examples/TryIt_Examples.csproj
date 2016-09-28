@@ -54,9 +54,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\yozepi.TryIt\yozepi.TryIt.csproj">
-      <Project>{c236fc06-ecac-45cf-8294-01c143e57660}</Project>
-      <Name>yozepi.TryIt</Name>
+    <ProjectReference Include="..\yozepi.TryIt.PCL\yozepi.TryIt.PCL.csproj">
+      <Project>{dc7307ec-9cbd-43f9-9933-b2193a37a8ed}</Project>
+      <Name>yozepi.TryIt.PCL</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -23,7 +23,7 @@ Let’s say you have an existing method that downloads the contents of a website
 ```c#
 string result = DownloadString(url);
 ```
-But this method calls a service that often fails intermittently.  Here’s how TryIt can instantly make you’re your code more robust: 
+But this method calls a service that often fails intermittently.  Here’s how TryIt can instantly make your code more robust: 
 
 First, include this using statement at the top of your code:
 ```c#

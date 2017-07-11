@@ -42,50 +42,6 @@ namespace TryIt.Tests.Unit.specs
                     subject.Should().BeOfType<ActionRetryBuilder>();
             };
 
-            describe["Func<T, Task>.Try(T, retries)"] = () =>
-            {
-                before = () =>
-                {
-                    Func<int, Task> func = (i) => new Task(() => { });
-                    subject = func.Try(1, retries);
-                };
-                it["Should return a ActionRetryBuilder instance"] = () =>
-                    subject.Should().BeOfType<ActionRetryBuilder>();
-            };
-
-            describe["Func<T1, T2, Task>.Try(T1, T2, retries)"] = () =>
-            {
-                before = () =>
-                {
-                    Func<int, int, Task> func = (i1, i2) => new Task(() => { });
-                    subject = func.Try(1, 2, retries);
-                };
-                it["Should return a ActionRetryBuilder instance"] = () =>
-                    subject.Should().BeOfType<ActionRetryBuilder>();
-            };
-
-            describe["Func<T1, T2, T3, Task>.Try(T1, T2, T3, retries)"] = () =>
-            {
-                before = () =>
-                {
-                    Func<int, int, int, Task> func = (i1, i2, i3) => new Task(() => { });
-                    subject = func.Try(1, 2, 3, retries);
-                };
-                it["Should return a ActionRetryBuilder instance"] = () =>
-                    subject.Should().BeOfType<ActionRetryBuilder>();
-            };
-
-            describe["Func<T1, T2, T3, T4, Task>.Try(T1, T2, T3, T4, retries)"] = () =>
-            {
-                before = () =>
-                {
-                    Func<int, int, int, int, Task> func = (i1, i2, i3, i4) => new Task(() => { });
-                    subject = func.Try(1, 2, 3, 4, retries);
-                };
-                it["Should return a ActionRetryBuilder instance"] = () =>
-                    subject.Should().BeOfType<ActionRetryBuilder>();
-            };
-
             describe["Func<Task<TResult>>.Try(retries)"] = () =>
             {
                 before = () =>

@@ -22,30 +22,6 @@ namespace Retry
         }
 
 
-        public static ActionRetryBuilder Try<T>(this Func<T, Task> func, T arg, int retries)
-        {
-            return TryIt.TryTask(func, arg, retries);
-        }
-
-
-        public static ActionRetryBuilder Try<T1, T2>(this Func<T1, T2, Task> func, T1 arg1, T2 arg2, int retries)
-        {
-            return TryIt.TryTask(func, arg1, arg2, retries);
-        }
-
-
-        public static ActionRetryBuilder Try<T1, T2, T3>(this Func<T1, T2, T3, Task> func, T1 arg1, T2 arg2, T3 arg3, int retries)
-        {
-            return TryIt.TryTask(func, arg1, arg2, arg3, retries);
-        }
-
-
-        public static ActionRetryBuilder Try<T1, T2, T3, T4>(this Func<T1, T2, T3, T4, Task> func, T1 arg1, T2 arg2, T3 arg3, T4 arg4, int retries)
-        {
-            return TryIt.TryTask(func, arg1, arg2, arg3, arg4, retries);
-        }
-
-
         public static FuncRetryBuilder<TResult> Try<TResult>(this Func<Task<TResult>> func, int retries)
         {
             return TryIt.TryTask(func, retries);

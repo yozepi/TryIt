@@ -50,42 +50,6 @@ namespace Retry
                 .SetRetryCount(retries) as ActionRetryBuilder;
         }
 
-        public static ActionRetryBuilder TryTask<T>(Func<T, Task> func, T arg, int retries)
-        {
-
-            return new ActionRetryBuilder()
-                .AddRunner(new TaskRunner<T>(arg))
-                .SetActor(func)
-                .SetRetryCount(retries) as ActionRetryBuilder;
-        }
-
-        public static ActionRetryBuilder TryTask<T1, T2>(Func<T1, T2, Task> func, T1 arg1, T2 arg2, int retries)
-        {
-
-            return new ActionRetryBuilder()
-                .AddRunner(new TaskRunner<T1, T2>(arg1, arg2))
-                .SetActor(func)
-                .SetRetryCount(retries) as ActionRetryBuilder;
-        }
-
-        public static ActionRetryBuilder TryTask<T1, T2, T3>(Func<T1, T2, T3, Task> func, T1 arg1, T2 arg2, T3 arg3, int retries)
-        {
-
-            return new ActionRetryBuilder()
-                .AddRunner(new TaskRunner<T1, T2, T3>(arg1, arg2, arg3))
-                .SetActor(func)
-                .SetRetryCount(retries) as ActionRetryBuilder;
-        }
-
-        public static ActionRetryBuilder TryTask<T1, T2, T3, T4>(Func<T1, T2, T3, T4, Task> func, T1 arg1, T2 arg2, T3 arg3, T4 arg4, int retries)
-        {
-
-            return new ActionRetryBuilder()
-                .AddRunner(new TaskRunner<T1, T2, T3, T4>(arg1, arg2, arg3, arg4))
-                .SetActor(func)
-                .SetRetryCount(retries) as ActionRetryBuilder;
-        }
-
 
         #endregion //Try Task methods:
 
@@ -123,38 +87,6 @@ namespace Retry
         {
             return builder
                 .AddRunner(new TaskRunner())
-                .SetActor(altFunc)
-                .SetRetryCount(retries) as ActionRetryBuilder;
-        }
-
-        public static ActionRetryBuilder ThenTry<T>(this ActionRetryBuilder builder, Func<T, Task> altFunc, T arg, int retries)
-        {
-            return builder
-                .AddRunner(new TaskRunner<T>(arg))
-                .SetActor(altFunc)
-                .SetRetryCount(retries) as ActionRetryBuilder;
-        }
-
-        public static ActionRetryBuilder ThenTry<T1, T2>(this ActionRetryBuilder builder, Func<T1, T2, Task> altFunc, T1 arg1, T2 arg2, int retries)
-        {
-            return builder
-                .AddRunner(new TaskRunner<T1, T2>(arg1, arg2))
-                .SetActor(altFunc)
-                .SetRetryCount(retries) as ActionRetryBuilder;
-        }
-
-        public static ActionRetryBuilder ThenTry<T1, T2, T3>(this ActionRetryBuilder builder, Func<T1, T2, T3, Task> altFunc, T1 arg1, T2 arg2, T3 arg3, int retries)
-        {
-            return builder
-                .AddRunner(new TaskRunner<T1, T2, T3>(arg1, arg2, arg3))
-                .SetActor(altFunc)
-                .SetRetryCount(retries) as ActionRetryBuilder;
-        }
-
-        public static ActionRetryBuilder ThenTry<T1, T2, T3, T4>(this ActionRetryBuilder builder, Func<T1, T2, T3, T4, Task> altFunc, T1 arg1, T2 arg2, T3 arg3, T4 arg4, int retries)
-        {
-            return builder
-                .AddRunner(new TaskRunner<T1, T2, T3, T4>(arg1, arg2, arg3, arg4))
                 .SetActor(altFunc)
                 .SetRetryCount(retries) as ActionRetryBuilder;
         }

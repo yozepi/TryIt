@@ -14,7 +14,7 @@ namespace TryIt.Tests.Unit.specs
 {
     class TaskRunner_specs : nspec
     {
-        void TaskRunner_base_class()
+        void TaskRunner_class()
         {
             TaskRunner subject = null;
 
@@ -120,127 +120,5 @@ namespace TryIt.Tests.Unit.specs
                     policyHandled.Should().BeTrue();
             };
         }
-
-        void TaskRunner_T_class()
-        {
-
-            TaskRunner<string> subject = null;
-            Task expectedTask = Task.Run(() => { });
-            Func<string, Task> expectedActor = (a1) => expectedTask;
-            string e1 = "Hello";
-
-            act = () =>
-            {
-                subject = new TaskRunner<string>(e1);
-                subject.Actor = expectedActor;
-            };
-
-            it["should implement IRunnerArgSource"] = () =>
-                subject.As<IRunnerArgSource>().RunnerArgs.Length.Should().Be(1);
-
-            it["constructor should set the internal argument"] = () =>
-                subject._arg.Should().Be(e1);
-
-            it["GetTask() should return the task created by the Actor"] = () =>
-                subject.GetTask().Should().BeSameAs(expectedTask);
-
-        }
-
-        void TaskRunner_T1_T2_class()
-        {
-
-            TaskRunner<string, int> subject = null;
-            Task expectedTask = Task.Run(() => { });
-            Func<string, int, Task> expectedActor = (a1, a2) => expectedTask;
-            string e1 = "Hello";
-            int e2 = 42;
-
-            act = () =>
-            {
-                subject = new TaskRunner<string, int>(e1, e2);
-                subject.Actor = expectedActor;
-            };
-
-            it["should implement IRunnerArgSource"] = () =>
-                subject.As<IRunnerArgSource>().RunnerArgs.Length.Should().Be(2);
-
-            it["constructor should set the internal arguments"] = () =>
-
-            {
-                subject._arg1.Should().Be(e1);
-                subject._arg2.Should().Be(e2);
-            };
-
-            it["GetTask() should return the task created by the Actor"] = () =>
-                subject.GetTask().Should().BeSameAs(expectedTask);
-
-        }
-
-        void TaskRunner_T1_T2_T3_class()
-        {
-
-            TaskRunner<string, int, double> subject = null;
-            Task expectedTask = Task.Run(() => { });
-            Func<string, int, double, Task> expectedActor = (a1, a2, a3) => expectedTask;
-            string e1 = "Hello";
-            int e2 = 42;
-            double e3 = double.NaN;
-
-            act = () =>
-            {
-                subject = new TaskRunner<string, int, double>(e1, e2, e3);
-                subject.Actor = expectedActor;
-            };
-
-            it["should implement IRunnerArgSource"] = () =>
-                subject.As<IRunnerArgSource>().RunnerArgs.Length.Should().Be(3);
-
-            it["constructor should set the internal arguments"] = () =>
-
-            {
-                subject._arg1.Should().Be(e1);
-                subject._arg2.Should().Be(e2);
-                subject._arg3.Should().Be(e3);
-            };
-
-            it["GetTask() should return the task created by the Actor"] = () =>
-                subject.GetTask().Should().BeSameAs(expectedTask);
-
-        }
-
-        void TaskRunner_T1_T2_T3_T4_class()
-        {
-
-            TaskRunner<string, int, double, long> subject = null;
-            Task expectedTask = Task.Run(() => { });
-            Func<string, int, double, long, Task> expectedActor = (a1, a2, a3, a4) => expectedTask;
-            string e1 = "Hello";
-            int e2 = 42;
-            double e3 = double.NaN;
-            long e4 = long.MaxValue;
-
-            act = () =>
-            {
-                subject = new TaskRunner<string, int, double, long>(e1, e2, e3, e4);
-                subject.Actor = expectedActor;
-            };
-
-            it["should implement IRunnerArgSource"] = () =>
-                subject.As<IRunnerArgSource>().RunnerArgs.Length.Should().Be(4);
-
-            it["constructor should set the internal arguments"] = () =>
-
-            {
-                subject._arg1.Should().Be(e1);
-                subject._arg2.Should().Be(e2);
-                subject._arg3.Should().Be(e3);
-                subject._arg4.Should().Be(e4);
-            };
-
-            it["GetTask() should return the task created by the Actor"] = () =>
-                subject.GetTask().Should().BeSameAs(expectedTask);
-
-        }
-
     }
 }

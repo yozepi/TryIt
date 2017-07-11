@@ -36,94 +36,6 @@ namespace Retry
         }
 
 
-        /// <summary>
-        /// Try the provided <see cref="Action{T}"/> the specified number of times
-        /// </summary>
-        /// <typeparam name="T">The <see cref="Type"/> of the argument passed to the action.</typeparam>
-        /// <param name="action">The <see cref="Action{T}"/> instance to try.</param>
-        /// <param name="arg">The argument passed into the action.</param>
-        /// <param name="retries">The number of times the action will be tried before giving up and throwing a <see cref="RetryFailedException"/>.</param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException">Thrown when The action parameter is null.</exception>
-        /// <exception cref="ArgumentOutOfRangeException">Thrown when retries is less than 1.</exception>
-        public static ActionRetryBuilder Try<T>(Action<T> action, T arg, int retries)
-        {
-            return new ActionRetryBuilder()
-               .AddRunner(new ActionRunner<T>(arg))
-               .SetActor(action)
-               .SetRetryCount(retries) as ActionRetryBuilder;
-        }
-
-
-        /// <summary>
-        /// Try the provided <see cref="Action{T1, T2}"/> the specified number of times
-        /// </summary>
-        /// <typeparam name="T1">The <see cref="Type"/> of the first argument passed to the action.</typeparam>
-        /// <typeparam name="T2">The <see cref="Type"/> of the second argument passed to the action.</typeparam>
-        /// <param name="action">The <see cref="Action{T, T2}"/> instance to try.</param>
-        /// <param name="arg1">The first argument passed into the action.</param>
-        /// <param name="arg2">The second argument passed into the action.</param>
-        /// <param name="retries">The number of times the action will be tried before giving up and throwing a <see cref="RetryFailedException"/>.</param>
-        /// <returns>Returns an ITry instance that you use to chain Then-try calls or to add error and success policies.</returns>
-        /// <exception cref="ArgumentNullException">Thrown when The action parameter is null.</exception>
-        /// <exception cref="ArgumentOutOfRangeException">Thrown when retries is less than 1.</exception>
-        public static ActionRetryBuilder Try<T1, T2>(Action<T1, T2> action, T1 arg1, T2 arg2, int retries)
-        {
-            return new ActionRetryBuilder()
-                .AddRunner(new ActionRunner<T1, T2>(arg1, arg2))
-                .SetActor(action)
-                .SetRetryCount(retries) as ActionRetryBuilder;
-        }
-
-
-        ///// <summary>
-        ///// Try the provided <see cref="Action{T1, T2, T3}"/> the specified number of times
-        ///// </summary>
-        ///// <typeparam name="T1">The <see cref="Type"/> of the first argument passed to the action.</typeparam>
-        ///// <typeparam name="T2">The <see cref="Type"/> of the second argument passed to the action.</typeparam>
-        ///// <typeparam name="T3">The <see cref="Type"/> of the third argument passed to the action.</typeparam>
-        ///// <param name="action">The <see cref="Action{T, T2, T3}"/> instance to try.</param>
-        ///// <param name="arg1">The first argument passed into the action.</param>
-        ///// <param name="arg2">The second argument passed into the action.</param>
-        ///// <param name="arg3">The third argument passed into the action.</param>
-        ///// <param name="retries">The number of times the action will be tried before giving up and throwing a <see cref="RetryFailedException"/>.</param>
-        ///// <returns>Returns an ITry instance that you use to chain Then-try calls or to add error and success policies.</returns>
-        ///// <exception cref="ArgumentNullException">Thrown when The action parameter is null.</exception>
-        ///// <exception cref="ArgumentOutOfRangeException">Thrown when retries is less than 1.</exception>
-        public static ActionRetryBuilder Try<T1, T2, T3>(Action<T1, T2, T3> action, T1 arg1, T2 arg2, T3 arg3, int retries)
-        {
-            return new ActionRetryBuilder()
-                 .AddRunner(new ActionRunner<T1, T2, T3>(arg1, arg2, arg3))
-                 .SetActor(action)
-                 .SetRetryCount(retries) as ActionRetryBuilder;
-        }
-
-
-        /// <summary>
-        /// Try the provided <see cref="Action{T1, T2, T3, T4}"/> the specified number of times
-        /// </summary>
-        /// <typeparam name="T1">The <see cref="Type"/> of the first argument passed to the action.</typeparam>
-        /// <typeparam name="T2">The <see cref="Type"/> of the second argument passed to the action.</typeparam>
-        /// <typeparam name="T3">The <see cref="Type"/> of the third argument passed to the action.</typeparam>
-        /// <typeparam name="T4">The <see cref="Type"/> of the fourth argument passed to the action.</typeparam>
-        /// <param name="action">The <see cref="Action{T, T2, T3, T4}"/> instance to try.</param>
-        /// <param name="arg1">The first argument passed into the action.</param>
-        /// <param name="arg2">The second argument passed into the action.</param>
-        /// <param name="arg3">The third argument passed into the action.</param>
-        /// <param name="arg4">The fourth argument passed into the action.</param>
-        /// <param name="retries">The number of times the action will be tried before giving up and throwing a <see cref="RetryFailedException"/>.</param>
-        /// <returns>Returns an ITry instance that you use to chain Then-try calls or to add error and success policies.</returns>
-        /// <exception cref="ArgumentNullException">Thrown when The action parameter is null.</exception>
-        /// <exception cref="ArgumentOutOfRangeException">Thrown when retries is less than 1.</exception>
-        public static ActionRetryBuilder Try<T1, T2, T3, T4>(Action<T1, T2, T3, T4> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4, int retries)
-        {
-            return new ActionRetryBuilder()
-                   .AddRunner(new ActionRunner<T1, T2, T3, T4>(arg1, arg2, arg3, arg4))
-                   .SetActor(action)
-                   .SetRetryCount(retries) as ActionRetryBuilder;
-        }
-
-
         #endregion //Try methods:
 
 
@@ -188,38 +100,6 @@ namespace Retry
             return builder;
         }
 
-        public static ActionRetryBuilder ThenTry<T>(this ActionRetryBuilder builder, T arg, int retries)
-        {
-            BaseRunner runner = RunnerFactory.GetRunner(builder.LastRunner, arg);
-            return builder.AddRunner(runner)
-                .SetRetryCount(retries) as ActionRetryBuilder;
-        }
-
-        public static ActionRetryBuilder ThenTry<T1, T2>(this ActionRetryBuilder builder, T1 arg1, T2 arg2, int retries)
-        {
-            BaseRunner runner = RunnerFactory.GetRunner(builder.LastRunner, arg1, arg2);
-            return builder.AddRunner(runner)
-                .SetRetryCount(retries) as ActionRetryBuilder;
-        }
-
-        public static ActionRetryBuilder ThenTry<T1, T2, T3>(this ActionRetryBuilder builder, T1 arg1, T2 arg2, T3 arg3, int retries)
-        {
-            BaseRunner runner = RunnerFactory.GetRunner(builder.LastRunner, arg1, arg2, arg3);
-
-            return builder.AddRunner(runner)
-                .SetRetryCount(retries) as ActionRetryBuilder;
-        }
-
-        public static ActionRetryBuilder ThenTry<T1, T2, T3, T4>(this ActionRetryBuilder builder, T1 arg1, T2 arg2, T3 arg3, T4 arg4, int retries)
-        {
-            BaseRunner runner = builder.LastRunner.Actor.GetType() == typeof(Action<T1, T2, T3, T4>)
-             ? new ActionRunner<T1, T2, T3, T4>(arg1, arg2, arg3, arg4)
-             : new TaskRunner<T1, T2, T3, T4>(arg1, arg2, arg3, arg4) as BaseRunner;
-
-            return builder
-                .AddRunner(runner)
-                .SetRetryCount(retries) as ActionRetryBuilder;
-        }
 
         #endregion //ThenTry extensions:
 
@@ -232,38 +112,6 @@ namespace Retry
                 .AddRunner(new ActionRunner())
                 .SetActor(altAction)
                 .SetRetryCount(retries) as ActionRetryBuilder;
-        }
-
-        public static ActionRetryBuilder ThenTry<T>(this ActionRetryBuilder builder, Action<T> altAction, T arg, int retries)
-        {
-            return builder
-                .AddRunner(new ActionRunner<T>(arg))
-                .SetActor(altAction)
-                .SetRetryCount(retries) as ActionRetryBuilder;
-        }
-
-        public static ActionRetryBuilder ThenTry<T1, T2>(this ActionRetryBuilder builder, Action<T1, T2> altAction, T1 arg1, T2 arg2, int retries)
-        {
-            return builder
-                .AddRunner(new ActionRunner<T1, T2>(arg1, arg2))
-                .SetActor(altAction)
-                .SetRetryCount(retries) as ActionRetryBuilder;
-        }
-
-        public static ActionRetryBuilder ThenTry<T1, T2, T3>(this ActionRetryBuilder builder, Action<T1, T2, T3> altAction, T1 arg1, T2 arg2, T3 arg3, int retries)
-        {
-            return builder
-               .AddRunner(new ActionRunner<T1, T2, T3>(arg1, arg2, arg3))
-               .SetActor(altAction)
-               .SetRetryCount(retries) as ActionRetryBuilder;
-        }
-
-        public static ActionRetryBuilder ThenTry<T1, T2, T3, T4>(this ActionRetryBuilder builder, Action<T1, T2, T3, T4> altAction, T1 arg1, T2 arg2, T3 arg3, T4 arg4, int retries)
-        {
-            return builder
-               .AddRunner(new ActionRunner<T1, T2, T3, T4>(arg1, arg2, arg3, arg4))
-               .SetActor(altAction)
-               .SetRetryCount(retries) as ActionRetryBuilder;
         }
 
         #endregion //ThenTry Alternate Action extensions:

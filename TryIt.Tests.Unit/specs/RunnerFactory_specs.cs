@@ -18,37 +18,6 @@ namespace TryIt.Tests.Unit.specs
                     RunnerFactory.GetRunner(new ActionRunner())
                     .Should().BeOfType<ActionRunner>();
 
-            context["runner is ActionRunner<T>"] = () =>
-            {
-                it["should return an ActionRunner<T> Instance"] = () =>
-                    RunnerFactory.GetRunner(new ActionRunner<int>(42))
-                    .Should().BeOfType<ActionRunner<int>>();
-
-                context["when argument is provided"] = () =>
-                    it["should set the runner's internal argument"] = () =>
-                    {
-                        var runner = RunnerFactory.GetRunner(new ActionRunner<int>(42), 43)
-                            .As<ActionRunner<int>>();
-                        runner._arg.Should().Be(43);
-                    };
-  
-            };
-
-            context["runner is ActionRunner<T1, T2>"] = () =>
-            {
-                it["should return an ActionRunner<T1, T2> Instance"] = () =>
-                    RunnerFactory.GetRunner(new ActionRunner<int, long>(42, long.MaxValue))
-                    .Should().BeOfType<ActionRunner<int, long>>();
-
-                context["when arguments are provided"] = () =>
-                    it["should set the runner's internal arguments"] = () =>
-                    {
-                        var runner = RunnerFactory.GetRunner(new ActionRunner<int, long>(42, long.MaxValue), 43, long.MinValue)
-                            .As<ActionRunner<int, long>>();
-                        runner._arg1.Should().Be(43);
-                        runner._arg2.Should().Be(long.MinValue);
-                    };
-            };
 
             context["runner is FuncRunner<TResult>"] = () =>
                  it["should return an FuncRunner<TResult> Instance"] = () =>

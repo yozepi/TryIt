@@ -152,7 +152,7 @@ namespace TryIt.Tests.Unit.specs
             context["when Run() is canceled."] = () =>
             {
                 BaseBuilder subject = null;
-                Action<bool> subjectAction = null;
+                Action subjectAction = null;
                 CancellationTokenSource tokenSource = null;
                 CancellationToken token = CancellationToken.None;
                 Exception thrown = null;
@@ -162,7 +162,7 @@ namespace TryIt.Tests.Unit.specs
                     before = () =>
                     {
                         subject = null;
-                        subjectAction = (prop) => { };
+                        subjectAction = () => { };
                         tokenSource = new CancellationTokenSource();
                         token = tokenSource.Token;
                         thrown = null;
@@ -171,7 +171,7 @@ namespace TryIt.Tests.Unit.specs
 
                     act = () =>
                     {
-                        subject = Retry.TryIt.Try(subjectAction, false, 1).ThenTry(true, 1);
+                        subject = Retry.TryIt.Try(subjectAction, 1).ThenTry(1);
 
                         try
                         {
@@ -205,7 +205,7 @@ namespace TryIt.Tests.Unit.specs
                     {
                         before = () =>
                         {
-                            subjectAction = (param) => { throw new TaskCanceledException(); };
+                            subjectAction = () => { throw new TaskCanceledException(); };
                         };
 
                         it["should raise OperationCanceledException"] = () =>
@@ -227,7 +227,7 @@ namespace TryIt.Tests.Unit.specs
             context["when RunAsync() is canceled."] = () =>
             {
                 BaseBuilder subject = null;
-                Action<bool> subjectAction = null;
+                Action subjectAction = null;
                 CancellationTokenSource tokenSource = null;
                 CancellationToken token = CancellationToken.None;
                 Exception thrown = null;
@@ -237,7 +237,7 @@ namespace TryIt.Tests.Unit.specs
                     before = () =>
                     {
                         subject = null;
-                        subjectAction = (prop) => { };
+                        subjectAction = () => { };
                         tokenSource = new CancellationTokenSource();
                         token = tokenSource.Token;
                         thrown = null;
@@ -245,7 +245,7 @@ namespace TryIt.Tests.Unit.specs
 
                     actAsync = async () =>
                     {
-                        subject = Retry.TryIt.Try(subjectAction, false, 1).ThenTry(true, 1);
+                        subject = Retry.TryIt.Try(subjectAction, 1).ThenTry(1);
 
                         try
                         {
@@ -279,7 +279,7 @@ namespace TryIt.Tests.Unit.specs
                     {
                         before = () =>
                         {
-                            subjectAction = (param) => { throw new TaskCanceledException(); };
+                            subjectAction = () => { throw new TaskCanceledException(); };
                         };
 
                         it["should raise OperationCanceledException"] = () =>

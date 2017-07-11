@@ -29,50 +29,6 @@ namespace TryIt.Tests.Unit.specs
                 it["Should return an ActionRetryBuilder instance"] = () =>
                     subject.Should().BeOfType<ActionRetryBuilder>();
             };
-
-            describe["Action<T>.Try(T, retries)"] = () =>
-            {
-                before = () =>
-                {
-                    Action<int> action = (a1) => { };
-                    subject = action.Try(1, retries);
-                };
-                it["Should return an ActionRetryBuilder instance"] = () =>
-                     subject.Should().BeOfType<ActionRetryBuilder>();
-            };
-
-            describe["Action<T1, T2>.Try(T1, T2, retries)"] = () =>
-            {
-                before = () =>
-                {
-                    Action<int, int> action = (a1, a2) => { };
-                    subject = action.Try(1, 2, retries);
-                };
-                it["Should return an ActionRetryBuilder instance"] = () =>
-                    subject.Should().BeOfType<ActionRetryBuilder>();
-            };
-
-            describe["Action<T1, T2, T3>.Try(T1, T2, T3, retries)"] = () =>
-            {
-                before = () =>
-                {
-                    Action<int, int, int> action = (a1, a2, a3) => { };
-                    subject = action.Try(1, 2, 3, retries);
-                };
-                it["Should return an ActionRetryBuilder instance"] = () =>
-                   subject.Should().BeOfType<ActionRetryBuilder>();
-            };
-
-            describe["Action<T1, T2, T3, T4>.Try(T1, T2, T3, T4, retries)"] = () =>
-            {
-                before = () =>
-                {
-                    Action<int, int, int, int> action = (a1, a2, a3, a4) => { };
-                    subject = action.Try(1, 2, 3, 4, retries);
-                };
-                it["Should return a ITryAndReturnValue<TResult> instance"] = () =>
-                    subject.Should().NotBeNull();
-            };
         }
     }
 }

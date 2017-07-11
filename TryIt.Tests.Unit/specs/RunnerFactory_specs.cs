@@ -24,37 +24,6 @@ namespace TryIt.Tests.Unit.specs
                      RunnerFactory.GetRunner(new FuncRunner<string>())
                      .Should().BeOfType<FuncRunner<string>>();
 
-            context["runner is FuncRunner<T, TResult>"] = () =>
-            {
-                it["should return an FuncRunner<T, TResult> Instance"] = () =>
-                     RunnerFactory.GetRunner(new FuncRunner<int, string>(42))
-                     .Should().BeOfType<FuncRunner<int, string>>();
-
-                context["when argument is provided"] = () =>
-                    it["should set the runner's internal arguments"] = () =>
-                    {
-                        var runner = RunnerFactory.GetRunner(new FuncRunner<int, string>(42), 43)
-                            .As<FuncRunner<int, string>>();
-                        runner._arg.Should().Be(43);
-                    };
-            };
-
-            context["runner is FuncRunner<T1, T2, TResult>"] = () =>
-            {
-                it["should return an FuncRunner<T1, T2, TResult> Instance"] = () =>
-                     RunnerFactory.GetRunner(new FuncRunner<int, long, string>(42, long.MaxValue))
-                     .Should().BeOfType<FuncRunner<int, long, string>>();
-
-                context["when arguments are provided"] = () =>
-                    it["should set the runner's internal arguments"] = () =>
-                    {
-                        var runner = RunnerFactory.GetRunner(new FuncRunner<int, long, string>(42, long.MaxValue), 43, long.MinValue)
-                            .As<FuncRunner<int, long, string>>();
-                        runner._arg1.Should().Be(43);
-                        runner._arg2.Should().Be(long.MinValue);
-                    };
-            };
-
             context["runner is TaskRunner"] = () =>
                  it["should return a TaskRunner Instance"] = () =>
                      RunnerFactory.GetRunner(new TaskRunner())

@@ -30,50 +30,7 @@ namespace TryIt.Tests.Unit.specs
                     subject.Should().BeOfType<FuncRetryBuilder<bool>>();
             };
 
-            describe["Func<T, Tresult>.Try(retries)"] = () =>
-            {
-                before = () =>
-                {
-                    Func<string, bool> func = (s) => { return true; };
-                    subject = func.Try("hello", retries);
-                };
-                it["Should return a FuncRetryBuilder<TResult> instance"] = () =>
-                    subject.Should().BeOfType<FuncRetryBuilder<bool>>();
-            };
-
-            describe["Func<T1, T2, Tresult>.Try(retries)"] = () =>
-            {
-                before = () =>
-                {
-                    Func<int, int, bool> func = (i1, i2) => { return true; };
-                    subject = func.Try(1, 2, retries);
-                };
-                it["Should return a FuncRetryBuilder<TResult> instance"] = () =>
-                    subject.Should().BeOfType<FuncRetryBuilder<bool>>();
-            };
-
-            describe["Func<T1, T2, T3, Tresult>.Try(retries)"] = () =>
-            {
-                before = () =>
-                {
-                    Func<int, int, int, bool> func = (i1, i2, i3) => { return true; };
-                    subject = func.Try(1, 2, 3, retries);
-                };
-                it["Should return a FuncRetryBuilder<TResult> instance"] = () =>
-                    subject.Should().BeOfType<FuncRetryBuilder<bool>>();
-            };
-
-            describe["Func<T1, T2, T3, T4, Tresult>.Try(retries)"] = () =>
-            {
-                before = () =>
-                {
-                    Func<int, int, int, int, bool> func = (i1, i2, i3, i4) => { return true; };
-                    subject = func.Try(1, 2, 3, 4, retries);
-                };
-                it["Should return a FuncRetryBuilder<TResult> instance"] = () =>
-                    subject.Should().BeOfType<FuncRetryBuilder<bool>>();
-            };
-
+ 
             describe["Func<Task>.Try(retries)"] = () =>
             {
                 before = () =>

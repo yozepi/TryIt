@@ -13,15 +13,17 @@
     <description>
       TryIt offers a simple, fluent way to try/retry actions, methods and tasks. You can pause between retries using one of the built-in delay policies or create your own.
       You can also add error and success policies to fine tune your control of the process.
+      **Warning** Versions 2.0.0 and above have several breaking changes with previous versions. See the documentation for details.
     </description>
     <summary>An easy to use library for trying and retrying services until they succeed.</summary>
     <releaseNotes>
+      2.0.0 - Rewrite of most of the code to improve performance and to simplify use.
       1.2.1 - Rebuilt package as a PCL. Package now targets .Net Framework 4.5, .Net core, Windows 8, Windows Phone 8.1, Windows Phone Silverlight 8, Xamarin.Android, Xamarin.iOS, Xamarin.iOS (classic).
       1.2.0 - Added a Fibonacci delay.
       1.1.0 - Added the ability to cancel trying with a CancellationToken. Improved Task processing.
     </releaseNotes>
     <copyright>Copyright 2016</copyright>
-    <tags>Retry Async Design Pattern Exception Handling</tags>
+    <tags>Try Retry Async Exception Handling backoff delay</tags>
   </metadata>
   <files />
 </package>

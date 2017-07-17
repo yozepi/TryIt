@@ -150,7 +150,6 @@ namespace TryIt.Tests.Unit
 
         }
 
-        [Tag("focus")]
         void Try_Funcs()
         {
             describe["Try(Func<T>)"] = () =>

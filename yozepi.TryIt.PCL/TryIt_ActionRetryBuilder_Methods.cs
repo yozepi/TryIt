@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Retry;
-using Retry.Builders;
-using Retry.Delays;
-using Retry.Runners;
+using yozepi.Retry.Builders;
+using yozepi.Retry.Delays;
+using yozepi.Retry.Runners;
 
-namespace Retry
+namespace yozepi.Retry
 {
     /// <summary>
     /// Here's where the magic begins! Use TryIt's various static methods and extensions
@@ -39,58 +34,93 @@ namespace Retry
         #endregion //Try methods:
 
 
-        #region Try Task methods:
-
-        public static ActionRetryBuilder TryTask(Func<Task> func, int retries)
-        {
-
-            return new ActionRetryBuilder()
-                .AddRunner(new TaskRunner())
-                .SetActor(func)
-                .SetRetryCount(retries) as ActionRetryBuilder;
-        }
-
-
-        #endregion //Try Task methods:
-
-
         #region ThenTry extensions:
 
         public static ActionRetryBuilder ThenTry(this ActionRetryBuilder builder, int retries)
         {
-            BaseRunner runner = RunnerFactory.GetRunner(builder.LastRunner);
+            BaseRunner runner = new ActionRunner();
             builder.AddRunner(runner);
             builder.SetRetryCount(retries);
             return builder;
+        }
+
+        public static ActionRetryBuilder ThenTry(this ActionRetryBuilder builder, Action action, int retries)
+        {
+            return builder
+                .AddRunner(new ActionRunner())
+                .SetActor(action)
+                .SetRetryCount(retries) as ActionRetryBuilder;
         }
 
 
         #endregion //ThenTry extensions:
 
 
-        #region ThenTry Alternate Action extensions:
+        #region UsingDelay, WithErrorPolicy, WithSuccessPolicy
 
-        public static ActionRetryBuilder ThenTry(this ActionRetryBuilder builder, Action altAction, int retries)
+        /// <summary>
+        /// Provide an optional delay policy for pausing between tries.
+        /// </summary>
+        /// <param name="builder">The <see cref="ActionRetryBuilder"/> this method extends.</param>
+        /// <param name="delay">The delay policy (<see cref="IDelay"/> instance) to use.</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException">Thrown when The delay parameter is null.</exception>
+        public static ActionRetryBuilder UsingDelay(this ActionRetryBuilder builder, IDelay delay)
         {
-            return builder
-                .AddRunner(new ActionRunner())
-                .SetActor(altAction)
-                .SetRetryCount(retries) as ActionRetryBuilder;
+            builder.SetDelay(delay);
+            return builder;
+
         }
 
-        #endregion //ThenTry Alternate Action extensions:
 
-
-        #region ThenTry Alternate Task extensions:
-
-        public static ActionRetryBuilder ThenTry(this ActionRetryBuilder builder, Func<Task> altFunc, int retries)
+        /// <summary>
+        /// An optional policy (an <see cref="ErrorPolicyDelegate"/>) you can pass to override typical retry on error behavior.
+        /// </summary>
+        /// <param name="builder">The <see cref="ActionRetryBuilder"/> this method extends.</param>
+        /// <param name="errorPolicy">The <see cref="ErrorPolicyDelegate"/> to execute when an exception occurs in you action.</param>
+        /// <returns></returns>
+        /// <remarks>
+        /// Normally TryIt will capture an error when trying and try again. You can provide an <see cref="ErrorPolicyDelegate"/> to override this behavior.
+        /// <para>
+        ///     Returning false from this delegate will cause the Try-ThenTry chain to stop and the exception to be thrown.
+        /// </para>
+        /// <para>
+        ///     Raising a new exception will also cause the Try-ThenTry chain to stop and the exception to be thrown.
+        /// </para>
+        /// <para>
+        ///     Returning true will cause normal behavior - recording the exception and retrying.
+        /// </para>
+        /// </remarks>
+        public static ActionRetryBuilder WithErrorPolicy(this ActionRetryBuilder builder, ErrorPolicyDelegate errorPolicy)
         {
-            return builder
-                .AddRunner(new TaskRunner())
-                .SetActor(altFunc)
-                .SetRetryCount(retries) as ActionRetryBuilder;
+            builder.SetErrorPolicy(errorPolicy);
+            return builder;
         }
 
-        #endregion //ThenTry Alternate Task extensions:
+
+        /// <summary>
+        /// An optional policy (an <see cref="SuccessPolicyDelegate"/>) you can use to reject an otherwise successful try.
+        /// </summary>
+        /// <param name="builder">The <see cref="ActionRetryBuilder"/> this method extends.</param>
+        /// <param name="successPolicy">The <see cref="SuccessPolicyDelegate"/> delegate to execute when a try succeeds (does not throw any exceptions).</param>
+        /// <returns></returns>
+        /// <remarks>Normally TryIt will consider any action that does not throw an exception to be a success. You can override this behavior to test if your action really meets a success criteria.
+        /// <para>
+        /// Throw an exception to override typical behavior. The success will be ignored, your exception will be added to <see cref="ActionRetryBuilder.ExceptionList"/> and your action will be retried.
+        /// </para>
+        /// <para>
+        /// Capture your exception in an <see cref="WithErrorPolicy(ActionRetryBuilder, ErrorPolicyDelegate)"/> policy to stop retrying and rethrow your exception.
+        /// </para>
+        /// </remarks>
+        public static ActionRetryBuilder WithSuccessPolicy(this ActionRetryBuilder builder, SuccessPolicyDelegate successPolicy)
+        {
+            builder.SetSuccessPolicy(successPolicy);
+            return builder;
+        }
+
+
+        #endregion //UsingDelay, WithErrorPolicy, WithSuccessPolicy
+
+
     }
 }

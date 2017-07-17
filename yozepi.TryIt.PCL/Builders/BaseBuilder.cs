@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Retry.Delays;
-using Retry.Runners;
+using yozepi.Retry.Delays;
+using yozepi.Retry.Runners;
 using System.Threading;
 
-namespace Retry.Builders
+namespace yozepi.Retry.Builders
 {
     public abstract class BaseBuilder
     {
@@ -30,7 +30,7 @@ namespace Retry.Builders
         /// An integer containing the actual number of times the Action/Func has been attempted.
         /// <remarks>This value is local to this instance of the TryIt chain.</remarks>
         /// </summary>
-        public int Attempts { get; private set; }
+        public int Attempts { get; protected set; }
 
         /// <summary>
         /// The list of exceptions that have occurred while trying the Action/Func
@@ -48,77 +48,7 @@ namespace Retry.Builders
         internal BaseRunner LastRunner { get; set; }
 
         internal BaseRunner Winner { get; set; }
-
-        protected internal void Run(CancellationToken cancellationToken)
-        {
-            var awaiter = RunAsync(cancellationToken).GetAwaiter();
-            awaiter.GetResult();
-        }
-
-        protected internal async Task RunAsync(CancellationToken cancellationToken)
-        {
-            Status = RetryStatus.Running;
-            var runningStatus = RetryStatus.Running;
-
-            Attempts = 0;
-            Winner = null;
-            ExceptionList.Clear();
-
-
-            var runnerLink = Runners.First;
-            try
-            {
-                while (runnerLink != null)
-                {
-                    if (cancellationToken.IsCancellationRequested)
-                    {
-                        throw new TaskCanceledException();
-                    }
-
-                    var runner = runnerLink.Value;
-                    await runner.RunAsync(cancellationToken);
-                    Attempts += runner.Attempts;
-                    ExceptionList.AddRange(runner.ExceptionList);
-
-                    if (runner.Status == RetryStatus.Success)
-                    {
-                        runningStatus = runningStatus == RetryStatus.Fail ?
-                            RetryStatus.SuccessAfterRetries : RetryStatus.Success;
-                    }
-                    else
-                    {
-                        runningStatus = runner.Status;
-                    }
-
-
-                    if (runningStatus == RetryStatus.Success
-                        || runningStatus == RetryStatus.SuccessAfterRetries)
-                    {
-                        Winner = runner;
-                        break;
-                    }
-                    runnerLink = runnerLink.Next;
-                }
-            }
-
-            catch (OperationCanceledException)
-            {
-                Status = RetryStatus.Canceled;
-                throw;
-            }
-            catch (Exception)
-            {
-                Status = RetryStatus.Fail;
-                throw;
-            }
-
-            Status = runningStatus;
-            if (Status == RetryStatus.Fail)
-            {
-                throw new RetryFailedException(new List<Exception>(ExceptionList));
-            }
-        }
-
+    
 
         internal BaseBuilder AddRunner(BaseRunner runner)
         {

@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FluentAssertions;
 
-namespace Retry.Runners
+namespace TryIt.Tests.Unit.Delays
 {
-    internal interface IRunnerArgSource
+    class NoDelay_specs: nSpecTestHarness
     {
-        object[] RunnerArgs { get; }
     }
 }

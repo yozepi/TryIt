@@ -1,22 +1,30 @@
-﻿using NSpec;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using FluentAssertions;
-using Retry;
-using Retry.Delays;
 using System.Threading;
+using System.Threading.Tasks;
+using yozepi.Retry.Delays;
+using FluentAssertions;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace TryIt.Tests.Unit.specs
+namespace TryIt.Tests.Unit.Delays
 {
-    class Delay_Implementors : nspec
+    [TestClass]
+    public class IDelay_Implementor_Specs : nSpecTestHarness
     {
         int tolerance = 25;
 
+        [TestMethod]
+        public void DelayClassTests()
+        {
+            this.LoadSpecs(() => new Type[] { this.GetType() });
+            this.RunSpecs();
+        }
+
         void Delay_Cancellation()
         {
+
             IDelay subject = null;
             CancellationTokenSource tokenSource = null;
             CancellationToken token = CancellationToken.None;
@@ -97,10 +105,10 @@ namespace TryIt.Tests.Unit.specs
 
                 before = () => subject = new BasicDelay(delay);
                 it["should delay for the provided TimeSpan"] = () =>
-                     {
-                         executionTime.Should().BeGreaterOrEqualTo(TimeSpan.FromMilliseconds(milliseconds));
-                         executionTime.Should().BeLessOrEqualTo(TimeSpan.FromMilliseconds(milliseconds + tolerance));
-                     };
+                {
+                    executionTime.Should().BeGreaterOrEqualTo(TimeSpan.FromMilliseconds(milliseconds));
+                    executionTime.Should().BeLessOrEqualTo(TimeSpan.FromMilliseconds(milliseconds + tolerance));
+                };
 
                 context["when the provided timespan is invalid"] = () =>
                 {
@@ -129,10 +137,10 @@ namespace TryIt.Tests.Unit.specs
 
                 before = () => subject = new BackoffDelay(delay);
                 it["should backoff the delay, doubling the delay time with each try"] = () =>
-                    {
-                        executionTime.Should().BeGreaterOrEqualTo(TimeSpan.FromMilliseconds(expected));
-                        executionTime.Should().BeLessOrEqualTo(TimeSpan.FromMilliseconds(expected + tolerance));
-                    };
+                {
+                    executionTime.Should().BeGreaterOrEqualTo(TimeSpan.FromMilliseconds(expected));
+                    executionTime.Should().BeLessOrEqualTo(TimeSpan.FromMilliseconds(expected + tolerance));
+                };
 
                 context["when the provided timespan is invalid"] = () =>
                 {
@@ -189,13 +197,13 @@ namespace TryIt.Tests.Unit.specs
         void Static_Delay_Methods()
         {
             describe["NoDelay() method"] = () =>
-             {
-                 it["should return an instance of NoDelay IDelay instance"] = () =>
-                 {
-                     var delay = Delay.NoDelay();
-                     delay.Should().BeOfType<NoDelay>();
-                 };
-             };
+            {
+                it["should return an instance of NoDelay IDelay instance"] = () =>
+                {
+                    var delay = Delay.NoDelay();
+                    delay.Should().BeOfType<NoDelay>();
+                };
+            };
 
             describe["Timed() method"] = () =>
             {
@@ -259,5 +267,6 @@ namespace TryIt.Tests.Unit.specs
 
 
         }
+
     }
 }

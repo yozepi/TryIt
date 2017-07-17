@@ -51,8 +51,12 @@
       <HintPath>..\packages\Moq.4.5.13\lib\net45\Moq.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="NSpec, Version=1.0.5.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\nspec.1.0.5\lib\NSpec.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NSpec, Version=3.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\NSpec.3.1.0\lib\net451\NSpec.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="nunit.framework, Version=3.4.1.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
@@ -76,26 +80,28 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="Delays\IDelay_Implementor_Specs.cs" />
+    <Compile Include="Delays\NoDelay_specs.cs" />
     <Compile Include="nSpecTestHarness.cs" />
-    <Compile Include="specs\ActionRetryBuilder_specs.cs" />
-    <Compile Include="specs\ActionRunner_specs.cs" />
-    <Compile Include="specs\BaseBuilder_specs.cs" />
-    <Compile Include="specs\BaseRunner_specs.cs" />
-    <Compile Include="specs\Action_Extension_Methods.cs" />
-    <Compile Include="specs\FuncRetryBuilder_specs.cs" />
-    <Compile Include="specs\FuncRunner_specs.cs" />
-    <Compile Include="specs\Func_Extension_Methods.cs" />
-    <Compile Include="specs\IDelay_Implementors.cs" />
-    <Compile Include="specs\TryIt_Func_specs.cs" />
-    <Compile Include="specs\TryIt_Action_specs.cs" />
+    <Compile Include="specs\Runners\BaseAsyncRunner_specs.cs" />
+    <Compile Include="specs\Runners\BaseSyncRunner_specs.cs" />
+    <Compile Include="specs\Builders\Task_T_RetryBuilder_T_specs .cs" />
+    <Compile Include="specs\Builders\TaskRetryBuilder_specs.cs" />
+    <Compile Include="specs\Builders\ActionRetryBuilder_specs.cs" />
+    <Compile Include="specs\Runners\ActionRunner_specs.cs" />
+    <Compile Include="specs\Builders\BaseBuilder_specs.cs" />
+    <Compile Include="specs\Runners\BaseRunner_specs.cs" />
+    <Compile Include="specs\Extensions\Action_Extension_Methods.cs" />
+    <Compile Include="specs\Builders\BaseAsyncBuilder_specs.cs" />
+    <Compile Include="specs\Builders\BaseSyncBuilder_specs.cs" />
+    <Compile Include="specs\Builders\FuncRetryBuilder_specs.cs" />
+    <Compile Include="specs\Runners\FuncRunner_specs.cs" />
+    <Compile Include="specs\Extensions\Task_Extension_Methods.cs" />
+    <Compile Include="specs\Extensions\Func_Extension_Methods.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="specs\TryIt_Actions_on_Tasks.cs" />
-    <Compile Include="specs\TryIt_Funcs_on_TaskTResults.cs" />
-    <Compile Include="specs\RunnerFactory_specs.cs" />
-    <Compile Include="specs\TaskRunner_specs.cs" />
-    <Compile Include="specs\TaskWithResultRunner_specs.cs" />
-    <Compile Include="specs\TryIt_UsingDelay_WithError_WithSuccess_specs.cs" />
-    <Compile Include="Tests\Tests.cs" />
+    <Compile Include="specs\Runners\TaskRunner_specs.cs" />
+    <Compile Include="specs\Runners\TaskRunner_T_specs.cs" />
+    <Compile Include="specs\TryIt_specs.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

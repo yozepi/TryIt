@@ -5,32 +5,19 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Retry.Runners
+namespace yozepi.Retry.Runners
 {
-    internal class FuncRunner<TResult> : BaseRunner
+    internal class FuncRunner<TResult> : BaseSyncRunner
     {
 
         internal TResult Result { get; set; }
 
 
-        protected internal override async Task ExecuteActorAsync(CancellationToken cancelationToken)
+        protected internal override void ExecuteActor()
         {
             Result = default(TResult);
-            Result = await RunTaskAsync(cancelationToken);
-        }
-
-        protected internal virtual async Task<TResult> RunTaskAsync(CancellationToken cancelationToken)
-        {
-            return await Task<TResult>.Run(() =>
-            {
-                return ExecuteFunc();
-            }, cancelationToken);
-        }
-
-        protected internal virtual TResult ExecuteFunc()
-        {
             var func = Actor as Func<TResult>;
-            return func();
+            Result = func();
         }
 
         protected override internal void HandleSuccessPolicy(int count)

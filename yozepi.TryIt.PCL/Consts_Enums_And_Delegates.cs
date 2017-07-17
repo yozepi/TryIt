@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Retry
+namespace yozepi.Retry
 {
     /// <summary>
     /// Pass an instance of this delegate to the 

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Retry.Delays
+namespace yozepi.Retry.Delays
 {
     /// <summary>
     /// Implementors of this interface provide Delay strategies for Tryit().UsingDelay().

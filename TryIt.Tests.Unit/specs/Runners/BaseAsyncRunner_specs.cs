@@ -1,5 +1,5 @@
 ﻿using NSpec;
-using Retry.Runners;
+using yozepi.Retry.Runners;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,57 +7,28 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Retry;
+using yozepi.Retry;
 using Moq;
-using Retry.Delays;
+using yozepi.Retry.Delays;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace TryIt.Tests.Unit.specs
+namespace TryIt.Tests.Unit.specs.Runners
 {
-    class BaseRunner_specs : nspec
+    [TestClass]
+    public class BaseAsyncRunner_specs : nSpecTestHarness
     {
-        void CopySettings_Method()
+        [TestMethod]
+        public void BaseAsyncRunnerTests()
         {
-            BaseRunner source = null;
-            BaseRunner target = null;
-
-            act = () =>
-            {
-                source = new ActionRunner
-                {
-                    Delay = Delay.DefaultDelay,
-                    ErrorPolicy = (ex, retries) => { return true; },
-                    SuccessPolicy = new Action(() => { }),
-                    RetryCount = 4,
-                    Actor = new Action(() => { })
-                };
-
-                target = new ActionRunner();
-                source.CopySettings(target);
-            };
-            it["should copy Delay to the target"] = () =>
-                target.Delay.Should().Be(source.Delay);
-
-            it["should copy ErrorPolicy to the target"] = () =>
-                target.ErrorPolicy.Should().Be(source.ErrorPolicy);
-
-            it["should copy SuccessPolicy to the target"] = () =>
-                target.SuccessPolicy.Should().Be(source.SuccessPolicy);
-
-            it["should copy RetryCount to the target"] = () =>
-                target.RetryCount.Should().Be(source.RetryCount);
-
-            it["should copy Actor to the target"] = () =>
-                target.Actor.Should().Be(source.Actor);
-
-
+            this.LoadSpecs(() => new Type[] { this.GetType() });
+            this.RunSpecs();
         }
 
         void RunAsync_Method()
         {
             context["when the actor succeeds"] = () =>
             {
-                BaseRunner subject = null;
+                BaseAsyncRunner subject = null;
                 Action subjectAction = null;
                 before = () =>
                 {
@@ -67,9 +38,9 @@ namespace TryIt.Tests.Unit.specs
 
                 actAsync = async () =>
                 {
-                    subject = new ActionRunner
+                    subject = new TaskRunner
                     {
-                        Actor = subjectAction,
+                        Actor = new Func<Task>(() => new Task(subjectAction)),
                         RetryCount = 3,
                     };
                     await subject.RunAsync(CancellationToken.None);
@@ -109,7 +80,7 @@ namespace TryIt.Tests.Unit.specs
 
             context["when there is a success policy"] = () =>
             {
-                BaseRunner subject = null;
+                BaseAsyncRunner subject = null;
                 Action subjectAction = null;
                 SuccessPolicyDelegate successPolicy = null;
                 before = () =>
@@ -121,9 +92,9 @@ namespace TryIt.Tests.Unit.specs
 
                 actAsync = async () =>
                 {
-                    subject = new ActionRunner
+                    subject = new TaskRunner
                     {
-                        Actor = subjectAction,
+                        Actor = new Func<Task>(() => new Task(subjectAction)),
                         RetryCount = 3,
                         SuccessPolicy = successPolicy
                     };
@@ -170,12 +141,12 @@ namespace TryIt.Tests.Unit.specs
                         subject.Status.Should().Be(RetryStatus.Fail);
                 };
 
-                context["when the policy fails before succeeding"] = () =>
+                context["when the policy fails first then succeeds"] = () =>
                 {
                     var expectedEx = new Exception();
                     before = () => successPolicy = (tries) =>
                     {
-                        if(tries == 1)
+                        if (tries == 1)
                             throw expectedEx;
                     };
 
@@ -189,7 +160,7 @@ namespace TryIt.Tests.Unit.specs
 
             context["when the actor never succeeds"] = () =>
             {
-                BaseRunner subject = null;
+                BaseAsyncRunner subject = null;
                 Action subjectAction = null;
                 before = () =>
                 {
@@ -202,9 +173,9 @@ namespace TryIt.Tests.Unit.specs
 
                 actAsync = async () =>
                 {
-                    subject = new ActionRunner
+                    subject = new TaskRunner
                     {
-                        Actor = subjectAction,
+                        Actor = new Func<Task>(() => new Task(subjectAction)),
                         RetryCount = 3,
                     };
 
@@ -220,7 +191,7 @@ namespace TryIt.Tests.Unit.specs
 
             context["when there is a failure policy"] = () =>
             {
-                BaseRunner subject = null;
+                BaseAsyncRunner subject = null;
                 Action subjectAction = null;
                 ErrorPolicyDelegate errorDelegate = null;
                 Exception thrown = null;
@@ -234,9 +205,9 @@ namespace TryIt.Tests.Unit.specs
 
                 actAsync = async () =>
                 {
-                    subject = new ActionRunner
+                    subject = new TaskRunner
                     {
-                        Actor = subjectAction,
+                        Actor = new Func<Task>(() => new Task(subjectAction)),
                         RetryCount = 3,
                         ErrorPolicy = errorDelegate
                     };
@@ -329,7 +300,7 @@ namespace TryIt.Tests.Unit.specs
 
             context["when RunAsync() is canceled."] = () =>
             {
-                BaseRunner subject = null;
+                BaseAsyncRunner subject = null;
                 Action subjectAction = null;
                 CancellationTokenSource tokenSource = null;
                 CancellationToken token = CancellationToken.None;
@@ -347,10 +318,10 @@ namespace TryIt.Tests.Unit.specs
 
                 actAsync = async () =>
                 {
-                    subject = new ActionRunner
+                    subject = new TaskRunner
                     {
                         RetryCount = 2,
-                        Actor = subjectAction,
+                        Actor = new Func<Task>(() => new Task(subjectAction)),
                         Delay = delayMock.Object
                     };
                     try
@@ -386,7 +357,7 @@ namespace TryIt.Tests.Unit.specs
                         delayMock.Verify(m => m.WaitAsync(It.IsAny<int>(), token), Times.Never);
 
                     it["should raise OperationCanceledException"] = () =>
-                        Assert.IsInstanceOfType(thrown, typeof(OperationCanceledException));
+                       thrown.Should().BeAssignableTo<OperationCanceledException>();
 
                     it["should set status to Canceled"] = () =>
                         subject.Status.Should().Be(RetryStatus.Canceled);
@@ -402,7 +373,7 @@ namespace TryIt.Tests.Unit.specs
                         delayMock.Verify(m => m.WaitAsync(It.IsAny<int>(), token), Times.Never);
 
                     it["should raise OperationCanceledException"] = () =>
-                        Assert.IsInstanceOfType(thrown, typeof(OperationCanceledException));
+                        thrown.Should().BeAssignableTo<OperationCanceledException>();
 
                     it["should set status to canceled"] = () =>
                            subject.Status.Should().Be(RetryStatus.Canceled);
@@ -419,7 +390,7 @@ namespace TryIt.Tests.Unit.specs
                         delayMock.Verify(m => m.WaitAsync(It.IsAny<int>(), token), Times.Once);
 
                     it["should raise OperationCanceledException"] = () =>
-                       Assert.IsInstanceOfType(thrown, typeof(OperationCanceledException));
+                       thrown.Should().BeAssignableTo<OperationCanceledException>();
 
                     it["should set status to canceled"] = () =>
                            subject.Status.Should().Be(RetryStatus.Canceled);

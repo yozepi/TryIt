@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Retry.Builders;
+using yozepi.Retry;
+using yozepi.Retry.Builders;
 
-namespace Retry
+namespace yozepi.Retry
 {
     public static class ActionExtensions
     {
@@ -14,5 +15,9 @@ namespace Retry
             return TryIt.Try(action, retries);
         }
 
+        public static TaskRetryBuilder TryAsync(this Action action, int retries)
+        {
+            return TryIt.TryAsync(action, retries);
+        }
     }
 }

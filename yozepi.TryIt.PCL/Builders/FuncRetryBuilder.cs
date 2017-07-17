@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Retry.Runners;
+using yozepi.Retry.Runners;
 using System.Threading;
 
-namespace Retry.Builders
+namespace yozepi.Retry.Builders
 {
-    public class FuncRetryBuilder<TResult> : BaseBuilder
+    public class FuncRetryBuilder<TResult> : BaseSyncBuilder
     {
 
         public TResult Go()
@@ -19,17 +19,6 @@ namespace Retry.Builders
         public TResult Go(CancellationToken cancellationToken)
         {
             Run(cancellationToken);
-            return (Winner as FuncRunner<TResult>).Result;
-        }
-
-        public Task<TResult> GoAsync()
-        {
-            return GoAsync(CancellationToken.None);
-        }
-
-        public async Task<TResult> GoAsync(CancellationToken cancellationToken)
-        {
-            await RunAsync(cancellationToken);
             return (Winner as FuncRunner<TResult>).Result;
         }
     }

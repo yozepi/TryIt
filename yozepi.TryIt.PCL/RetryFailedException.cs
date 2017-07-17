@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Retry
+namespace yozepi.Retry
 {
     /// <summary>
     /// This exception is thrown when every attempt in the Try-ThenTry chain fails.

@@ -3,44 +3,65 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Retry;
-using Retry.Builders;
-using Retry.Delays;
-using Retry.Runners;
+using yozepi.Retry.Builders;
+using yozepi.Retry.Delays;
+using yozepi.Retry.Runners;
 
-namespace Retry
+namespace yozepi.Retry
 {
     public static partial class TryIt
     {
 
-
-
-        public static FuncRetryBuilder<TResult> Try<TResult>(Func<TResult> func, int retries)
+        public static FuncRetryBuilder<T> Try<T>(Func<T> func, int retries) 
         {
-            return new FuncRetryBuilder<TResult>()
-                .AddRunner(new FuncRunner<TResult>())
+            return new FuncRetryBuilder<T>()
+                .AddRunner(new FuncRunner<T>())
                 .SetActor(func)
-                .SetRetryCount(retries) as FuncRetryBuilder<TResult>;
+                .SetRetryCount(retries) as FuncRetryBuilder<T>;
         }
 
 
-        public static FuncRetryBuilder<TResult> ThenTry<TResult>(this FuncRetryBuilder<TResult> builder, int retries)
+        public static FuncRetryBuilder<T> ThenTry<T>(this FuncRetryBuilder<T> builder, int retries)
         {
-            BaseRunner runner = RunnerFactory.GetRunner(builder.LastRunner);
+            BaseRunner runner = new FuncRunner<T>();
 
             return builder
                 .AddRunner(runner)
-                .SetRetryCount(retries) as FuncRetryBuilder<TResult>;
+                .SetRetryCount(retries) as FuncRetryBuilder<T>;
         }
 
 
-        public static FuncRetryBuilder<TResult> ThenTry<TResult>(this FuncRetryBuilder<TResult> builder, Func<TResult> altFunc, int retries)
+        public static FuncRetryBuilder<T> ThenTry<T>(this FuncRetryBuilder<T> builder, Func<T> func, int retries)
         {
             return builder
-                .AddRunner(new FuncRunner<TResult>())
-                .SetActor(altFunc)
-                .SetRetryCount(retries) as FuncRetryBuilder<TResult>;
+                .AddRunner(new FuncRunner<T>())
+                .SetActor(func)
+                .SetRetryCount(retries) as FuncRetryBuilder<T>;
         }
+
+
+        #region UsingDelay, WithErrorPolicy, WithSuccessPolicy
+
+        public static FuncRetryBuilder<T> UsingDelay<T>(this FuncRetryBuilder<T> builder, IDelay delay)
+        {
+            return builder
+                .SetDelay(delay) as FuncRetryBuilder<T>;
+
+        }
+
+        public static FuncRetryBuilder<T> WithErrorPolicy<T>(this FuncRetryBuilder<T> builder, ErrorPolicyDelegate errorPolicy)
+        {
+            return builder
+                .SetErrorPolicy(errorPolicy) as FuncRetryBuilder<T>;
+        }
+
+        public static FuncRetryBuilder<T> WithSuccessPolicy<T>(this FuncRetryBuilder<T> builder, SuccessPolicyDelegate<T> successPolicy)
+        {
+            return builder
+                .SetSuccessPolicy(successPolicy) as FuncRetryBuilder<T>;
+        }
+
+        #endregion //UsingDelay, WithErrorPolicy, WithSuccessPolicy
 
     }
 }

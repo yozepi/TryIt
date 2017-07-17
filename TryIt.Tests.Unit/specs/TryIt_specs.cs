@@ -9,6 +9,8 @@ using yozepi.Retry.Builders;
 using yozepi.Retry;
 using yozepi.Retry.Runners;
 using yozepi.Retry.Delays;
+using yozepi.Retry.Exceptions;
+using NSpec;
 
 namespace TryIt.Tests.Unit
 {
@@ -148,9 +150,10 @@ namespace TryIt.Tests.Unit
 
         }
 
+        [Tag("focus")]
         void Try_Funcs()
         {
-            describe["Try(Func)"] = () =>
+            describe["Try(Func<T>)"] = () =>
             {
                 FuncRetryBuilder<string> subject = null;
                 Func<string> actor = () => { return "Try to take over the world!"; };
@@ -169,6 +172,28 @@ namespace TryIt.Tests.Unit
 
                 it["should set the runners's RetryCount"] = () =>
                     subject.LastRunner.RetryCount.Should().Be(retries);
+
+                describe["when trying to pass a Func that returns a Task"] = () =>
+                {
+                    Func<Task> taskActor = () => new Task(() => { });
+                    Action action = () => yozepi.Retry.TryIt.Try(taskActor, retries);
+
+                    it["should throw TaskNotAllowedException"] = () =>
+                        action.ShouldThrow<TaskNotAllowedException>()
+                        .And.Message.Should().Be(yozepi.Retry.TryIt.TaskErrorMessage);
+
+                };
+
+                describe["when trying to pass a Func that returns a Task<T>"] = () =>
+                {
+                    Func<Task<int>> taskActor = () => new Task<int>(() => { return 2; });
+                    Action action = () => yozepi.Retry.TryIt.Try(taskActor, retries);
+
+                    it["should throw TaskNotAllowedException"] = () =>
+                        action.ShouldThrow<TaskNotAllowedException>()
+                        .And.Message.Should().Be(yozepi.Retry.TryIt.TaskErrorMessage);
+
+                };
             };
 
             describe["ThenTry"] = () =>
@@ -194,7 +219,7 @@ namespace TryIt.Tests.Unit
                     subject.LastRunner.RetryCount.Should().Be(retries);
             };
 
-            describe["ThenTry(altFunc)"] = () =>
+            describe["ThenTry(alternate Func<T>)"] = () =>
             {
                 FuncRetryBuilder<string> subject = null;
                 FuncRetryBuilder<string> sourceBuilder = null;

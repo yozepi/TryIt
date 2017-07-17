@@ -10,6 +10,7 @@ using yozepi.Retry.Runners;
 using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using yozepi.Retry.Exceptions;
 
 namespace TryIt.Tests.Unit.specs.Builders
 {
@@ -29,6 +30,29 @@ namespace TryIt.Tests.Unit.specs.Builders
         FuncRetryBuilder<string> subject = null;
         string expectedResult = "Hi mom!";
         string actualResult = null;
+
+        void Constructor_Behavior()
+        {
+            describe["when the generic result would be a Task"] = () =>
+            {
+                it["should throw TaskNotAllowedException"] = () =>
+                {
+                    Action constructor = () => new FuncRetryBuilder<Task>();
+                    constructor.ShouldThrow<TaskNotAllowedException>()
+                    .And.Message.Should().Be(FuncRetryBuilder<Task>.TaskErrorMessage);
+                };
+            };
+            describe["when the generic result would be a Task<T>"] = () =>
+            {
+                it["should throw TaskNotAllowedException"] = () =>
+                {
+                    Action constructor = () => new FuncRetryBuilder<Task<int>>();
+                    constructor.ShouldThrow<TaskNotAllowedException>()
+                    .And.Message.Should().Be(FuncRetryBuilder<Task>.TaskErrorMessage);
+                };
+            };
+        }
+
 
         void Go_Method()
         {

@@ -53,6 +53,7 @@
     <Compile Include="Delays\IDelay.cs" />
     <Compile Include="Delays\NoDelay.cs" />
     <Compile Include="ErrorPolicyException.cs" />
+    <Compile Include="Exceptions\TaskNotAllowedException.cs" />
     <Compile Include="Extensions\ActionExtensions.cs" />
     <Compile Include="Extensions\FuncExtensions.cs" />
     <Compile Include="Extensions\TaskExtensions.cs" />

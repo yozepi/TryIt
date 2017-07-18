@@ -8,7 +8,7 @@
     <ProjectGuid>{DC7307EC-9CBD-43F9-9933-B2193A37A8ED}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Retry</RootNamespace>
+    <RootNamespace>yozepi</RootNamespace>
     <AssemblyName>yozepi.TryIt</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <FileAlignment>512</FileAlignment>
@@ -38,9 +38,13 @@
     <None Include="TryIt.nuspec" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Builders\ActionRetryBuilder.cs" />
+    <Compile Include="Builders\MethodRetryBuilder.cs" />
+    <Compile Include="Builders\BaseAsyncBuilder.cs" />
     <Compile Include="Builders\BaseBuilder.cs" />
-    <Compile Include="Builders\FuncRetryBuilder.cs" />
+    <Compile Include="Builders\BaseSyncBuilder.cs" />
+    <Compile Include="Builders\MethodRetryBuilder_T.cs" />
+    <Compile Include="Builders\TaskRetryBuilder.cs" />
+    <Compile Include="Builders\Task_T_RetryBuilder.cs" />
     <Compile Include="Consts_Enums_And_Delegates.cs" />
     <Compile Include="Delays\BackoffDelay.cs" />
     <Compile Include="Delays\BasicDelay.cs" />
@@ -49,21 +53,22 @@
     <Compile Include="Delays\IDelay.cs" />
     <Compile Include="Delays\NoDelay.cs" />
     <Compile Include="ErrorPolicyException.cs" />
+    <Compile Include="Exceptions\TaskNotAllowedException.cs" />
     <Compile Include="Extensions\ActionExtensions.cs" />
     <Compile Include="Extensions\FuncExtensions.cs" />
+    <Compile Include="Extensions\TaskExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RetryFailedException.cs" />
     <Compile Include="Runners\ActionRunners.cs" />
+    <Compile Include="Runners\BaseAsyncRunner.cs" />
     <Compile Include="Runners\BaseRunner.cs" />
+    <Compile Include="Runners\BaseSyncRunner.cs" />
     <Compile Include="Runners\FuncRunners.cs" />
-    <Compile Include="Runners\IRunnerArgSource.cs" />
-    <Compile Include="Runners\RunnerFactory.cs" />
-    <Compile Include="Runners\TaskRunners.cs" />
-    <Compile Include="Runners\TaskWithResultRunners.cs" />
+    <Compile Include="Runners\TaskRunner.cs" />
+    <Compile Include="Runners\TaskRunner_T.cs" />
     <Compile Include="TryIt_ActionRetryBuilder_Methods.cs" />
     <Compile Include="TryIt_FuncRetryBuilder_Methods.cs" />
-    <Compile Include="TryIt_TaskTResult_Methods.cs" />
-    <Compile Include="TryIt_UsingDelay_WithError_WithSuccess_Methods.cs" />
+    <Compile Include="TryIt_TaskRetry_Methods.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

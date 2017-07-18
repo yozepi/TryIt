@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Retry
+namespace yozepi.Retry
 {
     /// <summary>
     /// Pass an instance of this delegate to the 
-    /// <see cref="TryIt.WithErrorPolicy{TResult}(Builders.FuncRetryBuilder{TResult}, ErrorPolicyDelegate)"/> extension methods.
+    /// <see cref="TryIt.WithErrorPolicy{TResult}(Builders.MethodRetryBuilder{TResult}, ErrorPolicyDelegate)"/> extension methods.
     /// </summary>
     /// <param name="ex">The exception that has been caught.</param>
     /// <param name="attemptCount">A count of the execution attempts so far.</param>
@@ -17,14 +17,14 @@ namespace Retry
     public delegate bool ErrorPolicyDelegate(Exception ex, int attemptCount);
 
     /// <summary>
-    /// Pass an instance of this deletate to the <see cref="TryIt.WithSuccessPolicy(Builders.ActionRetryBuilder, SuccessPolicyDelegate)" /> extension method.
+    /// Pass an instance of this deletate to the <see cref="TryIt.WithSuccessPolicy(Builders.MethodRetryBuilder, SuccessPolicyDelegate)" /> extension method.
     /// </summary>
     /// <param name="attemptCount">A count of the execution attempts so far.</param>
     public delegate void SuccessPolicyDelegate(int attemptCount);
 
     /// <summary>
     /// Pass an instance of this deletate to the
-    /// <see cref="TryIt.WithErrorPolicy{TResult}(Builders.FuncRetryBuilder{TResult}, ErrorPolicyDelegate)" /> extension method.
+    /// <see cref="TryIt.WithErrorPolicy{TResult}(Builders.MethodRetryBuilder{TResult}, ErrorPolicyDelegate)" /> extension method.
     /// </summary>
     /// <typeparam name="TResult">The type of the result returned upon a succesful try.</typeparam>
     /// <param name="result">The result of the succesfull attempt.</param>

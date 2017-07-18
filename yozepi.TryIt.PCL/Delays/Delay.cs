@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Retry.Delays
+namespace yozepi.Retry.Delays
 {
     /// <summary>
     /// Provides a base class for creating custom delay classes.

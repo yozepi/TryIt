@@ -11,7 +11,7 @@ namespace yozepi.Retry
     public static class FuncExcensions
     {
 
-        public static FuncRetryBuilder<T> Try<T>(this Func<T> func, int retries)
+        public static MethodRetryBuilder<T> Try<T>(this Func<T> func, int retries)
         {
             return TryIt.Try(func, retries);
         }

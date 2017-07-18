@@ -22,12 +22,12 @@ namespace yozepi.Retry
         /// <returns></returns>
         /// <exception cref="ArgumentNullException">Thrown when The action parameter is null.</exception>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when retries is less than 1.</exception>
-        public static ActionRetryBuilder Try(Action action, int retries)
+        public static MethodRetryBuilder Try(Action action, int retries)
         {
-            return new ActionRetryBuilder()
+            return new MethodRetryBuilder()
                 .AddRunner(new ActionRunner())
                 .SetActor(action)
-                .SetRetryCount(retries) as ActionRetryBuilder;
+                .SetRetryCount(retries) as MethodRetryBuilder;
         }
 
 
@@ -36,7 +36,7 @@ namespace yozepi.Retry
 
         #region ThenTry extensions:
 
-        public static ActionRetryBuilder ThenTry(this ActionRetryBuilder builder, int retries)
+        public static MethodRetryBuilder ThenTry(this MethodRetryBuilder builder, int retries)
         {
             BaseRunner runner = new ActionRunner();
             builder.AddRunner(runner);
@@ -44,12 +44,12 @@ namespace yozepi.Retry
             return builder;
         }
 
-        public static ActionRetryBuilder ThenTry(this ActionRetryBuilder builder, Action action, int retries)
+        public static MethodRetryBuilder ThenTry(this MethodRetryBuilder builder, Action action, int retries)
         {
             return builder
                 .AddRunner(new ActionRunner())
                 .SetActor(action)
-                .SetRetryCount(retries) as ActionRetryBuilder;
+                .SetRetryCount(retries) as MethodRetryBuilder;
         }
 
 
@@ -61,11 +61,11 @@ namespace yozepi.Retry
         /// <summary>
         /// Provide an optional delay policy for pausing between tries.
         /// </summary>
-        /// <param name="builder">The <see cref="ActionRetryBuilder"/> this method extends.</param>
+        /// <param name="builder">The <see cref="MethodRetryBuilder"/> this method extends.</param>
         /// <param name="delay">The delay policy (<see cref="IDelay"/> instance) to use.</param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException">Thrown when The delay parameter is null.</exception>
-        public static ActionRetryBuilder UsingDelay(this ActionRetryBuilder builder, IDelay delay)
+        public static MethodRetryBuilder UsingDelay(this MethodRetryBuilder builder, IDelay delay)
         {
             builder.SetDelay(delay);
             return builder;
@@ -76,7 +76,7 @@ namespace yozepi.Retry
         /// <summary>
         /// An optional policy (an <see cref="ErrorPolicyDelegate"/>) you can pass to override typical retry on error behavior.
         /// </summary>
-        /// <param name="builder">The <see cref="ActionRetryBuilder"/> this method extends.</param>
+        /// <param name="builder">The <see cref="MethodRetryBuilder"/> this method extends.</param>
         /// <param name="errorPolicy">The <see cref="ErrorPolicyDelegate"/> to execute when an exception occurs in you action.</param>
         /// <returns></returns>
         /// <remarks>
@@ -91,7 +91,7 @@ namespace yozepi.Retry
         ///     Returning true will cause normal behavior - recording the exception and retrying.
         /// </para>
         /// </remarks>
-        public static ActionRetryBuilder WithErrorPolicy(this ActionRetryBuilder builder, ErrorPolicyDelegate errorPolicy)
+        public static MethodRetryBuilder WithErrorPolicy(this MethodRetryBuilder builder, ErrorPolicyDelegate errorPolicy)
         {
             builder.SetErrorPolicy(errorPolicy);
             return builder;
@@ -101,18 +101,18 @@ namespace yozepi.Retry
         /// <summary>
         /// An optional policy (an <see cref="SuccessPolicyDelegate"/>) you can use to reject an otherwise successful try.
         /// </summary>
-        /// <param name="builder">The <see cref="ActionRetryBuilder"/> this method extends.</param>
+        /// <param name="builder">The <see cref="MethodRetryBuilder"/> this method extends.</param>
         /// <param name="successPolicy">The <see cref="SuccessPolicyDelegate"/> delegate to execute when a try succeeds (does not throw any exceptions).</param>
         /// <returns></returns>
         /// <remarks>Normally TryIt will consider any action that does not throw an exception to be a success. You can override this behavior to test if your action really meets a success criteria.
         /// <para>
-        /// Throw an exception to override typical behavior. The success will be ignored, your exception will be added to <see cref="ActionRetryBuilder.ExceptionList"/> and your action will be retried.
+        /// Throw an exception to override typical behavior. The success will be ignored, your exception will be added to <see cref="MethodRetryBuilder.ExceptionList"/> and your action will be retried.
         /// </para>
         /// <para>
-        /// Capture your exception in an <see cref="WithErrorPolicy(ActionRetryBuilder, ErrorPolicyDelegate)"/> policy to stop retrying and rethrow your exception.
+        /// Capture your exception in an <see cref="WithErrorPolicy(MethodRetryBuilder, ErrorPolicyDelegate)"/> policy to stop retrying and rethrow your exception.
         /// </para>
         /// </remarks>
-        public static ActionRetryBuilder WithSuccessPolicy(this ActionRetryBuilder builder, SuccessPolicyDelegate successPolicy)
+        public static MethodRetryBuilder WithSuccessPolicy(this MethodRetryBuilder builder, SuccessPolicyDelegate successPolicy)
         {
             builder.SetSuccessPolicy(successPolicy);
             return builder;

@@ -27,7 +27,7 @@ namespace TryIt.Tests.Unit.specs.Builders
 
         void Setter_Methods()
         {
-            BaseBuilder subject = new MethodRetryBuilder();
+            BaseBuilder subject = new RetryBuilder();
             subject.AddRunner(new ActionRunner { RetryCount = 1 });
 
             describe["SetRetryCount()"] = () =>

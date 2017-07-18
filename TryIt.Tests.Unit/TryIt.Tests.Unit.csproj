@@ -87,14 +87,14 @@
     <Compile Include="specs\Runners\BaseSyncRunner_specs.cs" />
     <Compile Include="specs\Builders\Task_T_RetryBuilder_T_specs .cs" />
     <Compile Include="specs\Builders\TaskRetryBuilder_specs.cs" />
-    <Compile Include="specs\Builders\ActionRetryBuilder_specs.cs" />
+    <Compile Include="specs\Builders\MethodRetryBuilder_specs.cs" />
     <Compile Include="specs\Runners\ActionRunner_specs.cs" />
     <Compile Include="specs\Builders\BaseBuilder_specs.cs" />
     <Compile Include="specs\Runners\BaseRunner_specs.cs" />
     <Compile Include="specs\Extensions\Action_Extension_Methods.cs" />
     <Compile Include="specs\Builders\BaseAsyncBuilder_specs.cs" />
     <Compile Include="specs\Builders\BaseSyncBuilder_specs.cs" />
-    <Compile Include="specs\Builders\FuncRetryBuilder_specs.cs" />
+    <Compile Include="specs\Builders\MethodRetryBuilder_T_specs.cs" />
     <Compile Include="specs\Runners\FuncRunner_specs.cs" />
     <Compile Include="specs\Extensions\Task_Extension_Methods.cs" />
     <Compile Include="specs\Extensions\Func_Extension_Methods.cs" />

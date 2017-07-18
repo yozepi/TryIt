@@ -107,7 +107,7 @@ namespace yozepi.Retry
         /// Throw an exception to override typical behavior. The success will be ignored, your exception will be added to <see cref="ITry.ExceptionList"/> and your action will be retried.
         /// </para>
         /// <para>
-        /// Capture your exception in an <see cref="WithErrorPolicy(ActionRetryBuilder, ErrorPolicyDelegate)"/> policy to stop retrying and rethrow your exception.
+        /// Capture your exception in an <see cref="WithErrorPolicy(MethodRetryBuilder, ErrorPolicyDelegate)"/> policy to stop retrying and rethrow your exception.
         /// </para>
         /// </remarks>
         public static TaskRetryBuilder WithSuccessPolicy(this TaskRetryBuilder builder, SuccessPolicyDelegate successPolicy)

@@ -35,8 +35,8 @@ namespace TryIt.Tests.Unit.specs
                 {
                     subject = func.Try(retries);
                 };
-                it["Should return a FuncRetryBuilder<T> instance"] = () =>
-                    subject.Should().BeOfType<FuncRetryBuilder<bool>>();
+                it["Should return a MethodRetryBuilder<T> instance"] = () =>
+                    subject.Should().BeOfType<MethodRetryBuilder<bool>>();
             };
 
             describe["Func<Tresult>.TryAsync(retries)"] = () =>

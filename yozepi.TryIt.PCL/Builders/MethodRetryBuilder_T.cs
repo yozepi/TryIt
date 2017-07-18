@@ -9,12 +9,12 @@ using yozepi.Retry.Exceptions;
 using System.Reflection;
 namespace yozepi.Retry.Builders
 {
-    public class FuncRetryBuilder<TResult> : BaseSyncBuilder
+    public class MethodRetryBuilder<TResult> : BaseSyncBuilder
     {
         internal const string TaskErrorMessage = "A Task is not allowed to be used as a result in this context. try using a TaskRetryBuilder (or a TaskRetryBuilder<T> if your task returns a result) instead";
 
         private static TypeInfo TaskInfo = typeof(Task).GetTypeInfo();
-        public FuncRetryBuilder()
+        public MethodRetryBuilder()
         {
             var TResultTypeInfo = typeof(TResult).GetTypeInfo();
 

@@ -28,13 +28,13 @@ namespace TryIt.Tests.Unit
         {
             describe["Try(Action)"] = () =>
             {
-                ActionRetryBuilder subject = null;
+                MethodRetryBuilder subject = null;
                 Action actor = () => { };
                 int retries = 5;
 
                 act = () => subject = yozepi.Retry.TryIt.Try(actor, retries);
 
-                it["should return an ActionRetryBuilder"] = () =>
+                it["should return a MethodRetryBuilder"] = () =>
                     subject.Should().NotBeNull();
 
                 it["should add a runner"] = () =>
@@ -49,8 +49,8 @@ namespace TryIt.Tests.Unit
 
             describe["ThenTry"] = () =>
             {
-                ActionRetryBuilder subject = null;
-                ActionRetryBuilder sourceBuilder = null;
+                MethodRetryBuilder subject = null;
+                MethodRetryBuilder sourceBuilder = null;
                 Action actor = () => { };
                 int retries = 5;
 
@@ -72,8 +72,8 @@ namespace TryIt.Tests.Unit
 
             describe["ThenTry(altAction)"] = () =>
             {
-                ActionRetryBuilder subject = null;
-                ActionRetryBuilder sourceBuilder = null;
+                MethodRetryBuilder subject = null;
+                MethodRetryBuilder sourceBuilder = null;
                 Action actor = () => { };
                 Action altActor = () => { };
                 int retries = 5;
@@ -99,8 +99,8 @@ namespace TryIt.Tests.Unit
 
             describe["UsingDelay Method"] = () =>
             {
-                ActionRetryBuilder subject = null;
-                ActionRetryBuilder sourceBuilder = null;
+                MethodRetryBuilder subject = null;
+                MethodRetryBuilder sourceBuilder = null;
                 Action actor = () => { };
                 IDelay expectedDelay = Delay.Basic(TimeSpan.FromSeconds(1));
 
@@ -116,8 +116,8 @@ namespace TryIt.Tests.Unit
 
             describe["WithErrorPolicy Method"] = () =>
             {
-                ActionRetryBuilder subject = null;
-                ActionRetryBuilder sourceBuilder = null;
+                MethodRetryBuilder subject = null;
+                MethodRetryBuilder sourceBuilder = null;
                 Action actor = () => { };
                 ErrorPolicyDelegate expectedPolicy = (ex, tries) => { return true; };
 
@@ -133,8 +133,8 @@ namespace TryIt.Tests.Unit
 
             describe["WithSuccessPolicy Method"] = () =>
             {
-                ActionRetryBuilder subject = null;
-                ActionRetryBuilder sourceBuilder = null;
+                MethodRetryBuilder subject = null;
+                MethodRetryBuilder sourceBuilder = null;
                 Action actor = () => { };
                 SuccessPolicyDelegate expectedPolicy = (tries) => { };
 
@@ -154,13 +154,13 @@ namespace TryIt.Tests.Unit
         {
             describe["Try(Func<T>)"] = () =>
             {
-                FuncRetryBuilder<string> subject = null;
+                MethodRetryBuilder<string> subject = null;
                 Func<string> actor = () => { return "Try to take over the world!"; };
                 int retries = 5;
 
                 act = () => subject = yozepi.Retry.TryIt.Try(actor, retries);
 
-                it["should return a FuncRetryBuilder"] = () =>
+                it["should return a MethodRetryBuilder<T>"] = () =>
                     subject.Should().NotBeNull();
 
                 it["should add a runner"] = () =>
@@ -197,8 +197,8 @@ namespace TryIt.Tests.Unit
 
             describe["ThenTry"] = () =>
             {
-                FuncRetryBuilder<string> subject = null;
-                FuncRetryBuilder<string> sourceBuilder = null;
+                MethodRetryBuilder<string> subject = null;
+                MethodRetryBuilder<string> sourceBuilder = null;
                 Func<string> actor = () => { return "Try to take over the world!"; };
                 int retries = 5;
 
@@ -220,8 +220,8 @@ namespace TryIt.Tests.Unit
 
             describe["ThenTry(alternate Func<T>)"] = () =>
             {
-                FuncRetryBuilder<string> subject = null;
-                FuncRetryBuilder<string> sourceBuilder = null;
+                MethodRetryBuilder<string> subject = null;
+                MethodRetryBuilder<string> sourceBuilder = null;
                 Func<string> actor = () => { return "What are we going to do tomorrow?"; };
                 Func<string> altActor = () => { return "Try to take over the world!"; };
                 int retries = 5;
@@ -247,8 +247,8 @@ namespace TryIt.Tests.Unit
 
             describe["UsingDelay Method"] = () =>
             {
-                FuncRetryBuilder<string> subject = null;
-                FuncRetryBuilder<string> sourceBuilder = null;
+                MethodRetryBuilder<string> subject = null;
+                MethodRetryBuilder<string> sourceBuilder = null;
                 Func<string> actor = () => { return "Hello world!"; };
                 IDelay expectedDelay = Delay.Basic(TimeSpan.FromSeconds(1));
 
@@ -264,8 +264,8 @@ namespace TryIt.Tests.Unit
 
             describe["WithErrorPolicy Method"] = () =>
             {
-                FuncRetryBuilder<string> subject = null;
-                FuncRetryBuilder<string> sourceBuilder = null;
+                MethodRetryBuilder<string> subject = null;
+                MethodRetryBuilder<string> sourceBuilder = null;
                 Func<string> actor = () => { return "Hello world!"; };
                 ErrorPolicyDelegate expectedPolicy = (ex, tries) => { return true; };
 
@@ -281,8 +281,8 @@ namespace TryIt.Tests.Unit
 
             describe["WithSuccessPolicy Method"] = () =>
             {
-                FuncRetryBuilder<string> subject = null;
-                FuncRetryBuilder<string> sourceBuilder = null;
+                MethodRetryBuilder<string> subject = null;
+                MethodRetryBuilder<string> sourceBuilder = null;
                 Func<string> actor = () => { return "Hello world!"; };
                 SuccessPolicyDelegate<string> expectedPolicy = (result, tries) => { };
 

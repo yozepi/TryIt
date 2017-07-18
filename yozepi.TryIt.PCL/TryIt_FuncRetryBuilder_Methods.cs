@@ -14,54 +14,54 @@ namespace yozepi.Retry
     public static partial class TryIt
     {
 
-        public static FuncRetryBuilder<T> Try<T>(Func<T> func, int retries) 
+        public static MethodRetryBuilder<T> Try<T>(Func<T> func, int retries) 
         {
             VerifyNotTask<T>();
-            return new FuncRetryBuilder<T>()
+            return new MethodRetryBuilder<T>()
                 .AddRunner(new FuncRunner<T>())
                 .SetActor(func)
-                .SetRetryCount(retries) as FuncRetryBuilder<T>;
+                .SetRetryCount(retries) as MethodRetryBuilder<T>;
         }
 
 
-        public static FuncRetryBuilder<T> ThenTry<T>(this FuncRetryBuilder<T> builder, int retries)
+        public static MethodRetryBuilder<T> ThenTry<T>(this MethodRetryBuilder<T> builder, int retries)
         {
             BaseRunner runner = new FuncRunner<T>();
 
             return builder
                 .AddRunner(runner)
-                .SetRetryCount(retries) as FuncRetryBuilder<T>;
+                .SetRetryCount(retries) as MethodRetryBuilder<T>;
         }
 
 
-        public static FuncRetryBuilder<T> ThenTry<T>(this FuncRetryBuilder<T> builder, Func<T> func, int retries)
+        public static MethodRetryBuilder<T> ThenTry<T>(this MethodRetryBuilder<T> builder, Func<T> func, int retries)
         {
             return builder
                 .AddRunner(new FuncRunner<T>())
                 .SetActor(func)
-                .SetRetryCount(retries) as FuncRetryBuilder<T>;
+                .SetRetryCount(retries) as MethodRetryBuilder<T>;
         }
 
 
         #region UsingDelay, WithErrorPolicy, WithSuccessPolicy
 
-        public static FuncRetryBuilder<T> UsingDelay<T>(this FuncRetryBuilder<T> builder, IDelay delay)
+        public static MethodRetryBuilder<T> UsingDelay<T>(this MethodRetryBuilder<T> builder, IDelay delay)
         {
             return builder
-                .SetDelay(delay) as FuncRetryBuilder<T>;
+                .SetDelay(delay) as MethodRetryBuilder<T>;
 
         }
 
-        public static FuncRetryBuilder<T> WithErrorPolicy<T>(this FuncRetryBuilder<T> builder, ErrorPolicyDelegate errorPolicy)
+        public static MethodRetryBuilder<T> WithErrorPolicy<T>(this MethodRetryBuilder<T> builder, ErrorPolicyDelegate errorPolicy)
         {
             return builder
-                .SetErrorPolicy(errorPolicy) as FuncRetryBuilder<T>;
+                .SetErrorPolicy(errorPolicy) as MethodRetryBuilder<T>;
         }
 
-        public static FuncRetryBuilder<T> WithSuccessPolicy<T>(this FuncRetryBuilder<T> builder, SuccessPolicyDelegate<T> successPolicy)
+        public static MethodRetryBuilder<T> WithSuccessPolicy<T>(this MethodRetryBuilder<T> builder, SuccessPolicyDelegate<T> successPolicy)
         {
             return builder
-                .SetSuccessPolicy(successPolicy) as FuncRetryBuilder<T>;
+                .SetSuccessPolicy(successPolicy) as MethodRetryBuilder<T>;
         }
 
         #endregion //UsingDelay, WithErrorPolicy, WithSuccessPolicy

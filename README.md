@@ -263,8 +263,8 @@ Task<string> GetDBResultsAsyncRoundRobin(string[] connStrings)
 Running this method will run through each connection string provided and call ```GetDBResultsAsync```, returning the results of the first succesful call and throwing ```RetryFailedException``` if it runs though all the connection strings.
 
 It does this by iterating through the connection strings and build a TryIt builder. In this case, a ```TaskRetryBuilder<string>```. TryIt works with four types of builders
-+ **```ActionRetryBuilder```** for working with void methods
-+ **```FuncRetryBuilder<TResult>```** for working with methods that return values
++ **```MethodRetryBuilder```** for working with void methods
++ **```MethodRetryBuilder<TResult>```** for working with methods that return values
 + **```TaskRetryBuilder```** for working with Tasks
 + **```TaskRetryBuilder<TResult>```** for working with Tasks that return a result (Task\<T\>)
 

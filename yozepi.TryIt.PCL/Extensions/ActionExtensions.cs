@@ -10,7 +10,7 @@ namespace yozepi.Retry
 {
     public static class ActionExtensions
     {
-        public static ActionRetryBuilder Try(this Action action, int retries)
+        public static MethodRetryBuilder Try(this Action action, int retries)
         {
             return TryIt.Try(action, retries);
         }

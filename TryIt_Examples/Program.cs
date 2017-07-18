@@ -717,7 +717,7 @@ namespace TryIt_Examples
             int retries = 4;
             string result = null;
 
-            FuncRetryBuilder<string> tryIt = null;
+            MethodRetryBuilder<string> tryIt = null;
             foreach (var conn in connStrings)
             {
                 if (tryIt == null)

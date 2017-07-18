@@ -25,7 +25,7 @@ namespace TryIt.Tests.Unit.specs.Builders
         }
 
 
-        MethodRetryBuilder subject = null;
+        RetryBuilder subject = null;
 
         void Run_Method()
         {
@@ -121,7 +121,7 @@ namespace TryIt.Tests.Unit.specs.Builders
                         RetryCount = retryCount,
                         Actor = actor
                     };
-                    subject = new MethodRetryBuilder();
+                    subject = new RetryBuilder();
                     subject.AddRunner(runner);
 
                     thrown = null;
@@ -223,7 +223,7 @@ namespace TryIt.Tests.Unit.specs.Builders
                     };
                     runner2 = new ActionRunner();
                     runner1.CopySettings(runner2);
-                    subject = new MethodRetryBuilder();
+                    subject = new RetryBuilder();
                     subject.AddRunner(runner1);
                     subject.SetErrorPolicy(errorPolicy);
                     subject.AddRunner(runner2);

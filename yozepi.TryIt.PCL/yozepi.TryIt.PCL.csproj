@@ -38,11 +38,11 @@
     <None Include="TryIt.nuspec" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Builders\ActionRetryBuilder.cs" />
+    <Compile Include="Builders\MethodRetryBuilder.cs" />
     <Compile Include="Builders\BaseAsyncBuilder.cs" />
     <Compile Include="Builders\BaseBuilder.cs" />
     <Compile Include="Builders\BaseSyncBuilder.cs" />
-    <Compile Include="Builders\FuncRetryBuilder.cs" />
+    <Compile Include="Builders\MethodRetryBuilder_T.cs" />
     <Compile Include="Builders\TaskRetryBuilder.cs" />
     <Compile Include="Builders\Task_T_RetryBuilder.cs" />
     <Compile Include="Consts_Enums_And_Delegates.cs" />

@@ -7,10 +7,7 @@ using System.Threading.Tasks;
 
 namespace yozepi.Retry.Builders
 {
-    /// <summary>
-    /// TryItBase is the base class for the Action and Func based TryIt classes. Most of the real work takes place here.
-    /// </summary>
-    public class ActionRetryBuilder : BaseSyncBuilder
+    public class MethodRetryBuilder : BaseSyncBuilder
     {
 
         #region instance properties and methods:

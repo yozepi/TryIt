@@ -10,7 +10,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace TryIt.Tests.Unit
 {
     [ExcludeFromCodeCoverage]
-    public class nSpecTestHarness
+    public class nSpecTestHarness: nspec
     {
 
         protected string Tags { get; set; }

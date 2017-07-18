@@ -3,102 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Retry.Builders;
+using yozepi.Retry;
+using yozepi.Retry.Builders;
 
-namespace Retry
+namespace yozepi.Retry
 {
     public static class FuncExcensions
     {
 
-        public static FuncRetryBuilder<TResult> Try<TResult>(this Func<TResult> func, int retries)
+        public static MethodRetryBuilder<T> Try<T>(this Func<T> func, int retries)
         {
             return TryIt.Try(func, retries);
         }
 
-
-        public static FuncRetryBuilder<TResult> Try<T, TResult>(this Func<T, TResult> func, T arg, int retries)
+        public static TaskRetryBuilder<T> TryAsync<T>(this Func<T> func, int retries)
         {
-            return TryIt.Try(func, arg, retries);
+            return TryIt.TryAsync(func, retries);
         }
-
-
-        public static FuncRetryBuilder<TResult> Try<T1, T2, TResult>(this Func<T1, T2, TResult> func, T1 arg1, T2 arg2, int retries)
-        {
-            return TryIt.Try(func, arg1, arg2, retries);
-        }
-
-
-        public static FuncRetryBuilder<TResult> Try<T1, T2, T3, TResult>(this Func<T1, T2, T3, TResult> func, T1 arg1, T2 arg2, T3 arg3, int retries)
-        {
-            return TryIt.Try(func, arg1, arg2, arg3, retries);
-        }
-
-
-        public static FuncRetryBuilder<TResult> Try<T1, T2, T3, T4, TResult>(this Func<T1, T2, T3, T4, TResult> func, T1 arg1, T2 arg2, T3 arg3, T4 arg4, int retries)
-        {
-            return TryIt.Try(func, arg1, arg2, arg3, arg4, retries);
-        }
-
-
-        public static ActionRetryBuilder Try(this Func<Task> func, int retries)
-        {
-            return TryIt.TryTask(func, retries);
-        }
-
-
-        public static ActionRetryBuilder Try<T>(this Func<T, Task> func, T arg, int retries)
-        {
-            return TryIt.TryTask(func, arg, retries);
-        }
-
-
-        public static ActionRetryBuilder Try<T1, T2>(this Func<T1, T2, Task> func, T1 arg1, T2 arg2, int retries)
-        {
-            return TryIt.TryTask(func, arg1, arg2, retries);
-        }
-
-
-        public static ActionRetryBuilder Try<T1, T2, T3>(this Func<T1, T2, T3, Task> func, T1 arg1, T2 arg2, T3 arg3, int retries)
-        {
-            return TryIt.TryTask(func, arg1, arg2, arg3, retries);
-        }
-
-
-        public static ActionRetryBuilder Try<T1, T2, T3, T4>(this Func<T1, T2, T3, T4, Task> func, T1 arg1, T2 arg2, T3 arg3, T4 arg4, int retries)
-        {
-            return TryIt.TryTask(func, arg1, arg2, arg3, arg4, retries);
-        }
-
-
-        public static FuncRetryBuilder<TResult> Try<TResult>(this Func<Task<TResult>> func, int retries)
-        {
-            return TryIt.TryTask(func, retries);
-        }
-
-
-        public static FuncRetryBuilder<TResult> Try<T, TResult>(this Func<T, Task<TResult>> func,T arg, int retries)
-        {
-            return TryIt.TryTask(func, arg, retries);
-        }
-
-
-        public static FuncRetryBuilder<TResult> Try<T1, T2, TResult>(this Func<T1, T2, Task<TResult>> func, T1 arg1, T2 arg2, int retries)
-        {
-            return TryIt.TryTask(func, arg1, arg2, retries);
-        }
-
-
-        public static FuncRetryBuilder<TResult> Try<T1, T2, T3, TResult>(this Func<T1, T2, T3, Task<TResult>> func, T1 arg1, T2 arg2, T3 arg3, int retries)
-        {
-            return TryIt.TryTask(func, arg1, arg2, arg3, retries);
-        }
-
-
-        public static FuncRetryBuilder<TResult> Try<T1, T2, T3, T4, TResult>(this Func<T1, T2, T3, T4, Task<TResult>> func, T1 arg1, T2 arg2, T3 arg3, T4 arg4, int retries)
-        {
-            return TryIt.TryTask(func, arg1, arg2, arg3, arg4, retries);
-        }
-
-
     }
 }

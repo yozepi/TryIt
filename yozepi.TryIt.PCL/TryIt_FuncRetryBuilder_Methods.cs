@@ -1,157 +1,84 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using Retry;
-using Retry.Builders;
-using Retry.Delays;
-using Retry.Runners;
+using yozepi.Retry.Builders;
+using yozepi.Retry.Delays;
+using yozepi.Retry.Exceptions;
+using yozepi.Retry.Runners;
 
-namespace Retry
+namespace yozepi.Retry
 {
     public static partial class TryIt
     {
 
-
-        #region Try methods:
-
-        public static FuncRetryBuilder<TResult> Try<TResult>(Func<TResult> func, int retries)
+        public static MethodRetryBuilder<T> Try<T>(Func<T> func, int retries) 
         {
-            return new FuncRetryBuilder<TResult>()
-                .AddRunner(new FuncRunner<TResult>())
+            VerifyNotTask<T>();
+            return new MethodRetryBuilder<T>()
+                .AddRunner(new FuncRunner<T>())
                 .SetActor(func)
-                .SetRetryCount(retries) as FuncRetryBuilder<TResult>;
+                .SetRetryCount(retries) as MethodRetryBuilder<T>;
         }
 
-        public static FuncRetryBuilder<TResult> Try<T, TResult>(Func<T, TResult> func, T arg, int retries)
+
+        public static MethodRetryBuilder<T> ThenTry<T>(this MethodRetryBuilder<T> builder, int retries)
         {
-            return new FuncRetryBuilder<TResult>()
-                .AddRunner(new FuncRunner<T, TResult>(arg))
+            BaseRunner runner = new FuncRunner<T>();
+
+            return builder
+                .AddRunner(runner)
+                .SetRetryCount(retries) as MethodRetryBuilder<T>;
+        }
+
+
+        public static MethodRetryBuilder<T> ThenTry<T>(this MethodRetryBuilder<T> builder, Func<T> func, int retries)
+        {
+            return builder
+                .AddRunner(new FuncRunner<T>())
                 .SetActor(func)
-                .SetRetryCount(retries) as FuncRetryBuilder<TResult>;
+                .SetRetryCount(retries) as MethodRetryBuilder<T>;
         }
 
-        public static FuncRetryBuilder<TResult> Try<T1, T2, TResult>(Func<T1, T2, TResult> func, T1 arg1, T2 arg2, int retries)
-        {
-            return new FuncRetryBuilder<TResult>()
-                   .AddRunner(new FuncRunner<T1, T2, TResult>(arg1, arg2))
-                   .SetActor(func)
-                   .SetRetryCount(retries) as FuncRetryBuilder<TResult>;
-        }
 
-        public static FuncRetryBuilder<TResult> Try<T1, T2, T3, TResult>(Func<T1, T2, T3, TResult> func, T1 arg1, T2 arg2, T3 arg3, int retries)
-        {
-            return new FuncRetryBuilder<TResult>()
-                       .AddRunner(new FuncRunner<T1, T2, T3, TResult>(arg1, arg2, arg3))
-                       .SetActor(func)
-                       .SetRetryCount(retries) as FuncRetryBuilder<TResult>;
-        }
+        #region UsingDelay, WithErrorPolicy, WithSuccessPolicy
 
-        public static FuncRetryBuilder<TResult> Try<T1, T2, T3, T4, TResult>(Func<T1, T2, T3, T4, TResult> func, T1 arg1, T2 arg2, T3 arg3, T4 arg4, int retries)
-        {
-            return new FuncRetryBuilder<TResult>()
-                         .AddRunner(new FuncRunner<T1, T2, T3, T4, TResult>(arg1, arg2, arg3, arg4))
-                         .SetActor(func)
-                         .SetRetryCount(retries) as FuncRetryBuilder<TResult>;
-        }
-
-        #endregion //Try methods:
-
-
-        #region ThenTry extensions:
-
-        public static FuncRetryBuilder<TResult> ThenTry<TResult>(this FuncRetryBuilder<TResult> builder, int retries)
-        {
-            BaseRunner runner = RunnerFactory.GetRunner(builder.LastRunner);
-
-            return builder
-                .AddRunner(runner)
-                .SetRetryCount(retries) as FuncRetryBuilder<TResult>;
-         }
-
-        public static FuncRetryBuilder<TResult> ThenTry<T, TResult>(this FuncRetryBuilder<TResult> builder, T arg, int retries)
-        {
-            BaseRunner runner = RunnerFactory.GetRunner(builder.LastRunner, arg);
-
-            return builder
-                .AddRunner(runner)
-                .SetRetryCount(retries) as FuncRetryBuilder<TResult>;
-        }
-
-        public static FuncRetryBuilder<TResult> ThenTry<T1, T2, TResult>(this FuncRetryBuilder<TResult> builder, T1 arg1, T2 arg2, int retries)
-        {
-            BaseRunner runner = RunnerFactory.GetRunner(builder.LastRunner, arg1, arg2);
-
-            return builder
-                .AddRunner(runner)
-                .SetRetryCount(retries) as FuncRetryBuilder<TResult>;
-        }
-
-        public static FuncRetryBuilder<TResult> ThenTry<T1, T2, T3, TResult>(this FuncRetryBuilder<TResult> builder, T1 arg1, T2 arg2, T3 arg3, int retries)
-        {
-            BaseRunner runner = RunnerFactory.GetRunner(builder.LastRunner, arg1, arg2, arg3);
-
-            return builder
-                 .AddRunner(runner)
-                 .SetRetryCount(retries) as FuncRetryBuilder<TResult>;
-        }
-
-        public static FuncRetryBuilder<TResult> ThenTry<T1, T2, T3, T4, TResult>(this FuncRetryBuilder<TResult> builder, T1 arg1, T2 arg2, T3 arg3, T4 arg4, int retries)
-        {
-            BaseRunner runner = RunnerFactory.GetRunner(builder.LastRunner, arg1, arg2, arg3, arg4);
-
-            return builder
-                 .AddRunner(runner)
-                 .SetRetryCount(retries) as FuncRetryBuilder<TResult>;
-        }
-
-        #endregion //ThenTry extensions:
-
-
-        #region ThenTry using Alt Func extensions:
-
-        public static FuncRetryBuilder<TResult> ThenTry<TResult>(this FuncRetryBuilder<TResult> builder, Func<TResult> altFunc, int retries)
+        public static MethodRetryBuilder<T> UsingDelay<T>(this MethodRetryBuilder<T> builder, IDelay delay)
         {
             return builder
-                .AddRunner(new FuncRunner<TResult>())
-                .SetActor(altFunc)
-                .SetRetryCount(retries) as FuncRetryBuilder<TResult>;
+                .SetDelay(delay) as MethodRetryBuilder<T>;
+
         }
 
-        public static FuncRetryBuilder<TResult> ThenTry<T, TResult>(this FuncRetryBuilder<TResult> builder, Func<T, TResult> altFunc, T arg, int retries)
+        public static MethodRetryBuilder<T> WithErrorPolicy<T>(this MethodRetryBuilder<T> builder, ErrorPolicyDelegate errorPolicy)
         {
             return builder
-                .AddRunner(new FuncRunner<T, TResult>(arg))
-                .SetActor(altFunc)
-                .SetRetryCount(retries) as FuncRetryBuilder<TResult>;
+                .SetErrorPolicy(errorPolicy) as MethodRetryBuilder<T>;
         }
 
-        public static FuncRetryBuilder<TResult> ThenTry<T1, T2, TResult>(this FuncRetryBuilder<TResult> builder, Func<T1, T2, TResult> altFunc, T1 arg1, T2 arg2, int retries)
+        public static MethodRetryBuilder<T> WithSuccessPolicy<T>(this MethodRetryBuilder<T> builder, SuccessPolicyDelegate<T> successPolicy)
         {
             return builder
-                .AddRunner(new FuncRunner<T1, T2, TResult>(arg1, arg2))
-                .SetActor(altFunc)
-                .SetRetryCount(retries) as FuncRetryBuilder<TResult>;
+                .SetSuccessPolicy(successPolicy) as MethodRetryBuilder<T>;
         }
 
-        public static FuncRetryBuilder<TResult> ThenTry<T1, T2, T3, TResult>(this FuncRetryBuilder<TResult> builder, Func<T1, T2, T3, TResult> altFunc, T1 arg1, T2 arg2, T3 arg3, int retries)
+        #endregion //UsingDelay, WithErrorPolicy, WithSuccessPolicy
+
+
+        private static TypeInfo TaskInfo = typeof(Task).GetTypeInfo();
+        internal const string TaskErrorMessage = "The Try method does not support Tasks. Use TryAsync instead";
+
+        private static void VerifyNotTask<T>()
         {
-            return builder
-                .AddRunner(new FuncRunner<T1, T2, T3, TResult>(arg1, arg2, arg3))
-                .SetActor(altFunc)
-                .SetRetryCount(retries) as FuncRetryBuilder<TResult>;
+            var TResultTypeInfo = typeof(T).GetTypeInfo();
+
+            if (TResultTypeInfo.IsAssignableFrom(TaskInfo)
+                || TResultTypeInfo.IsSubclassOf(typeof(Task)))
+            {
+                throw new TaskNotAllowedException(TaskErrorMessage);
+            }
         }
-
-        public static FuncRetryBuilder<TResult> ThenTry<T1, T2, T3, T4, TResult>(this FuncRetryBuilder<TResult> builder, Func<T1, T2, T3, T4, TResult> altFunc, T1 arg1, T2 arg2, T3 arg3, T4 arg4, int retries)
-        {
-            return builder
-                .AddRunner(new FuncRunner<T1, T2, T3, T4, TResult>(arg1, arg2, arg3, arg4))
-                .SetActor(altFunc)
-                .SetRetryCount(retries) as FuncRetryBuilder<TResult>;
-        }
-
-        #endregion //ThenTry using Alt Func extensions:
-
     }
 }

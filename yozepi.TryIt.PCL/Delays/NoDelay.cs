@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Retry.Delays
+namespace yozepi.Retry.Delays
 {
     /// <summary>
     /// An instance of Delay that returns without delaying.

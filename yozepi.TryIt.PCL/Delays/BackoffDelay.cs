@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Retry.Delays
+namespace yozepi.Retry.Delays
 {
     /// <summary>
     /// Implements the <see cref="IDelay"/> interface to create a delay that "backs off" with each attempt at retry.

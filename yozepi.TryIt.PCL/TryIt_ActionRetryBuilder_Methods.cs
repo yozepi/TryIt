@@ -56,7 +56,52 @@ namespace yozepi.Retry
         #endregion //ThenTry extensions:
 
 
-        #region UsingDelay, WithErrorPolicy, WithSuccessPolicy
+        #region Delay, WithErrorPolicy, WithSuccessPolicy
+
+        #region Delays
+
+        /// <summary>
+        /// Apply a delay that will pause for the duration of the provided pause time with each retry.
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <param name="pauseTime">The TimeSpan for the delay.</param>
+        /// <returns></returns>
+        public static MethodRetryBuilder UsingDelay(this MethodRetryBuilder builder, TimeSpan pauseTime)
+        {
+            return builder.SetDelay(new BasicDelay(pauseTime))
+                as MethodRetryBuilder;
+        }
+
+        /// <summary>
+        /// Apply a delay that will double the value of the initial delay with each retry'
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <param name="initialDelay">The TimeSpan for the initial delay.</param>
+        /// <returns></returns>
+        public static MethodRetryBuilder UsingBackoffDelay(this MethodRetryBuilder builder, TimeSpan initialDelay)
+        {
+            return builder.SetDelay(new BackoffDelay(initialDelay))
+                as MethodRetryBuilder;
+        }
+
+        /// <summary>
+        /// Apply a delay that will increase according to the Fibonacci sequence with each retry.
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <param name="initialDelay">The TimeSpan for the initial delay.</param>
+        /// <returns></returns>
+        public static MethodRetryBuilder UsingFibonacciDelay(this MethodRetryBuilder builder, TimeSpan initialDelay)
+        {
+            return builder.SetDelay(new FibonacciDelay(initialDelay))
+                as MethodRetryBuilder;
+        }
+
+        public static MethodRetryBuilder UsingNoDelay(this MethodRetryBuilder builder)
+        {
+            return builder.SetDelay(new NoDelay())
+                as MethodRetryBuilder;
+        }
+
 
         /// <summary>
         /// Provide an optional delay policy for pausing between tries.
@@ -67,10 +112,11 @@ namespace yozepi.Retry
         /// <exception cref="ArgumentNullException">Thrown when The delay parameter is null.</exception>
         public static MethodRetryBuilder UsingDelay(this MethodRetryBuilder builder, IDelay delay)
         {
-            builder.SetDelay(delay);
-            return builder;
-
+            return builder.SetDelay(delay)
+                as MethodRetryBuilder;
         }
+
+        #endregion //Delays
 
 
         /// <summary>
@@ -119,8 +165,7 @@ namespace yozepi.Retry
         }
 
 
-        #endregion //UsingDelay, WithErrorPolicy, WithSuccessPolicy
-
+        #endregion //Delay, WithErrorPolicy, WithSuccessPolicy
 
     }
 }

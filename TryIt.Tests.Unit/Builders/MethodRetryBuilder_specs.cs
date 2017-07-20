@@ -12,42 +12,43 @@ using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace TryIt.Tests.Unit.specs.Builders
+namespace TryIt.Tests.Unit.Builders
 {
     [TestClass]
-    public class TaskRetryBuilder_specs : nSpecTestHarness
+    public class MethodRetryBuilder_specs : nSpecTestHarness
     {
+
         [TestMethod]
-        public void TaskRetryBuilderTests()
+        public void MethodRetryBuilderTests()
         {
-            this.LoadSpecs(() => new Type[] { typeof(TaskRetryBuilder_specs) });
+            this.LoadSpecs(() => new Type[] { typeof(MethodRetryBuilder_specs) });
             this.RunSpecs();
         }
 
 
-        Mock<TaskRetryBuilder> subject = null;
+        Mock<MethodRetryBuilder> subject = null;
 
         void Go_Method()
         {
             before = () =>
             {
-                subject = new Mock<TaskRetryBuilder>();
+                subject = new Mock<MethodRetryBuilder>();
             };
 
             describe["Go()"] = () =>
             {
-                actAsync = () => subject.Object.Go();
+                act = () => subject.Object.Go();
 
-                it["should call the base class's internal RunAsync method"] = () =>
-                    subject.Verify(m => m.RunAsync(It.IsAny<CancellationToken>()), Times.Once);
+                it["should call the base class's internal Run method"] = () =>
+                    subject.Verify(m => m.Run(It.IsAny<CancellationToken>()), Times.Once);
             };
 
             describe["Go(CancellationToken)"] = () =>
             {
                 act = () => subject.Object.Go(CancellationToken.None);
 
-                it["should call the base class's internal RunAsync method"] = () =>
-                    subject.Verify(m => m.RunAsync(It.IsAny<CancellationToken>()), Times.Once);
+                it["should call the base class's internal Run method"] = () =>
+                    subject.Verify(m => m.Run(It.IsAny<CancellationToken>()), Times.Once);
             };
         }
     }

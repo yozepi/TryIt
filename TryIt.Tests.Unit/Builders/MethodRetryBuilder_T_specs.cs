@@ -12,22 +12,22 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using yozepi.Retry.Exceptions;
 
-namespace TryIt.Tests.Unit.specs.Builders
+namespace TryIt.Tests.Unit.Builders
 {
     [TestClass]
-    public class FuncRetryBuilder_specs : nSpecTestHarness
+    public class MethodRetryBuilder_T_specs : nSpecTestHarness
     {
 
         [TestMethod]
-        public void FuncRetryBuilderTests()
+        public void MethodRetryBuilderofTTests()
         {
             this.LoadSpecs(() => new Type[] { this.GetType() });
             this.RunSpecs();
         }
 
 
-        Mock<FuncRetryBuilder<string>> subjectMock = null;
-        FuncRetryBuilder<string> subject = null;
+        Mock<MethodRetryBuilder<string>> subjectMock = null;
+        MethodRetryBuilder<string> subject = null;
         string expectedResult = "Hi mom!";
         string actualResult = null;
 
@@ -37,18 +37,18 @@ namespace TryIt.Tests.Unit.specs.Builders
             {
                 it["should throw TaskNotAllowedException"] = () =>
                 {
-                    Action constructor = () => new FuncRetryBuilder<Task>();
+                    Action constructor = () => new MethodRetryBuilder<Task>();
                     constructor.ShouldThrow<TaskNotAllowedException>()
-                    .And.Message.Should().Be(FuncRetryBuilder<Task>.TaskErrorMessage);
+                    .And.Message.Should().Be(MethodRetryBuilder<Task>.TaskErrorMessage);
                 };
             };
             describe["when the generic result would be a Task<T>"] = () =>
             {
                 it["should throw TaskNotAllowedException"] = () =>
                 {
-                    Action constructor = () => new FuncRetryBuilder<Task<int>>();
+                    Action constructor = () => new MethodRetryBuilder<Task<int>>();
                     constructor.ShouldThrow<TaskNotAllowedException>()
-                    .And.Message.Should().Be(FuncRetryBuilder<Task>.TaskErrorMessage);
+                    .And.Message.Should().Be(MethodRetryBuilder<Task>.TaskErrorMessage);
                 };
             };
         }
@@ -60,7 +60,7 @@ namespace TryIt.Tests.Unit.specs.Builders
             {
                 actualResult = null;
                 var runner = new FuncRunner<string> { Result = expectedResult };
-                subjectMock = new Mock<FuncRetryBuilder<string>>();
+                subjectMock = new Mock<MethodRetryBuilder<string>>();
                 subjectMock.Setup(m => m.Run(It.IsAny<CancellationToken>()));
                 subjectMock.CallBase = true;
 

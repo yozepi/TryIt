@@ -13,7 +13,7 @@ using yozepi.Retry.Runners;
 using yozepi.Retry.Delays;
 using yozepi;
 
-namespace TryIt.Tests.Unit.specs.Builders
+namespace TryIt.Tests.Unit.Builders
 {
     [TestClass]
     public class BaseBuilder_specs : nSpecTestHarness
@@ -27,7 +27,7 @@ namespace TryIt.Tests.Unit.specs.Builders
 
         void Setter_Methods()
         {
-            BaseBuilder subject = new RetryBuilder();
+            BaseBuilder subject = new MethodRetryBuilder();
             subject.AddRunner(new ActionRunner { RetryCount = 1 });
 
             describe["SetRetryCount()"] = () =>

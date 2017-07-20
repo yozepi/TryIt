@@ -12,7 +12,7 @@ using yozepi.Retry.Runners;
 using yozepi;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace TryIt.Tests.Unit.specs.Builders
+namespace TryIt.Tests.Unit.Builders
 {
     [TestClass]
     public class BaseSyncBuilder_specs : nSpecTestHarness
@@ -25,7 +25,7 @@ namespace TryIt.Tests.Unit.specs.Builders
         }
 
 
-        RetryBuilder subject = null;
+        MethodRetryBuilder subject = null;
 
         void Run_Method()
         {
@@ -121,7 +121,7 @@ namespace TryIt.Tests.Unit.specs.Builders
                         RetryCount = retryCount,
                         Actor = actor
                     };
-                    subject = new RetryBuilder();
+                    subject = new MethodRetryBuilder();
                     subject.AddRunner(runner);
 
                     thrown = null;
@@ -223,7 +223,7 @@ namespace TryIt.Tests.Unit.specs.Builders
                     };
                     runner2 = new ActionRunner();
                     runner1.CopySettings(runner2);
-                    subject = new RetryBuilder();
+                    subject = new MethodRetryBuilder();
                     subject.AddRunner(runner1);
                     subject.SetErrorPolicy(errorPolicy);
                     subject.AddRunner(runner2);

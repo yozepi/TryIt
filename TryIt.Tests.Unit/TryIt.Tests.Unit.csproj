@@ -81,7 +81,6 @@
   </Choose>
   <ItemGroup>
     <Compile Include="Delays\IDelay_Implementor_Specs.cs" />
-    <Compile Include="Delays\NoDelay_specs.cs" />
     <Compile Include="nSpecTestHarness.cs" />
     <Compile Include="specs\Runners\BaseAsyncRunner_specs.cs" />
     <Compile Include="specs\Runners\BaseSyncRunner_specs.cs" />

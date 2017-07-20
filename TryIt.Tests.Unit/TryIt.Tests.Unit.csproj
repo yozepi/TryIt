@@ -82,25 +82,25 @@
   <ItemGroup>
     <Compile Include="Delays\IDelay_Implementor_Specs.cs" />
     <Compile Include="nSpecTestHarness.cs" />
-    <Compile Include="specs\Runners\BaseAsyncRunner_specs.cs" />
-    <Compile Include="specs\Runners\BaseSyncRunner_specs.cs" />
-    <Compile Include="specs\Builders\Task_T_RetryBuilder_T_specs .cs" />
-    <Compile Include="specs\Builders\TaskRetryBuilder_specs.cs" />
-    <Compile Include="specs\Builders\MethodRetryBuilder_specs.cs" />
-    <Compile Include="specs\Runners\ActionRunner_specs.cs" />
-    <Compile Include="specs\Builders\BaseBuilder_specs.cs" />
-    <Compile Include="specs\Runners\BaseRunner_specs.cs" />
-    <Compile Include="specs\Extensions\Action_Extension_Methods.cs" />
-    <Compile Include="specs\Builders\BaseAsyncBuilder_specs.cs" />
-    <Compile Include="specs\Builders\BaseSyncBuilder_specs.cs" />
-    <Compile Include="specs\Builders\MethodRetryBuilder_T_specs.cs" />
-    <Compile Include="specs\Runners\FuncRunner_specs.cs" />
-    <Compile Include="specs\Extensions\Task_Extension_Methods.cs" />
-    <Compile Include="specs\Extensions\Func_Extension_Methods.cs" />
+    <Compile Include="Runners\BaseAsyncRunner_specs.cs" />
+    <Compile Include="Runners\BaseSyncRunner_specs.cs" />
+    <Compile Include="Builders\Task_T_RetryBuilder_T_specs .cs" />
+    <Compile Include="Builders\TaskRetryBuilder_specs.cs" />
+    <Compile Include="Builders\MethodRetryBuilder_specs.cs" />
+    <Compile Include="Runners\ActionRunner_specs.cs" />
+    <Compile Include="Builders\BaseBuilder_specs.cs" />
+    <Compile Include="Runners\BaseRunner_specs.cs" />
+    <Compile Include="Extensions\Action_Extension_Methods.cs" />
+    <Compile Include="Builders\BaseAsyncBuilder_specs.cs" />
+    <Compile Include="Builders\BaseSyncBuilder_specs.cs" />
+    <Compile Include="Builders\MethodRetryBuilder_T_specs.cs" />
+    <Compile Include="Runners\FuncRunner_specs.cs" />
+    <Compile Include="Extensions\Task_Extension_Methods.cs" />
+    <Compile Include="Extensions\Func_Extension_Methods.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="specs\Runners\TaskRunner_specs.cs" />
-    <Compile Include="specs\Runners\TaskRunner_T_specs.cs" />
-    <Compile Include="specs\TryIt_specs.cs" />
+    <Compile Include="Runners\TaskRunner_specs.cs" />
+    <Compile Include="Runners\TaskRunner_T_specs.cs" />
+    <Compile Include="TryIt_specs.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -110,6 +110,9 @@
       <Project>{dc7307ec-9cbd-43f9-9933-b2193a37a8ed}</Project>
       <Name>yozepi.TryIt.PCL</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="specs\" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

@@ -12,7 +12,7 @@ using Moq;
 using yozepi.Retry.Delays;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace TryIt.Tests.Unit.specs.Runners
+namespace TryIt.Tests.Unit.Runners
 {
     [TestClass]
     public class BaseAsyncRunner_specs : nSpecTestHarness

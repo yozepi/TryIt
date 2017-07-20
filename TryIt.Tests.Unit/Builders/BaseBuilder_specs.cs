@@ -13,7 +13,7 @@ using yozepi.Retry.Runners;
 using yozepi.Retry.Delays;
 using yozepi;
 
-namespace TryIt.Tests.Unit.specs.Builders
+namespace TryIt.Tests.Unit.Builders
 {
     [TestClass]
     public class BaseBuilder_specs : nSpecTestHarness

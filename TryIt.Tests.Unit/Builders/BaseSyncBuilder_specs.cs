@@ -9,22 +9,23 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using yozepi.Retry;
 using yozepi.Retry.Runners;
+using yozepi;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace TryIt.Tests.Unit.specs.Builders
+namespace TryIt.Tests.Unit.Builders
 {
     [TestClass]
-    public class BaseAsyncBuilder_specs : nSpecTestHarness
+    public class BaseSyncBuilder_specs : nSpecTestHarness
     {
         [TestMethod]
-        public void BaseAsyncBuilderTests()
+        public void BaseSyncBuilderTests()
         {
             this.LoadSpecs(() => new Type[] { this.GetType() });
             this.RunSpecs();
         }
 
 
-        TaskRetryBuilder subject = null;
+        MethodRetryBuilder subject = null;
 
         void Run_Method()
         {
@@ -36,6 +37,19 @@ namespace TryIt.Tests.Unit.specs.Builders
                 CancellationTokenSource tokenSource = null;
                 CancellationToken token = CancellationToken.None;
                 Exception thrown = null;
+                Action subjectAction = new Action(() =>
+                {
+                    subject = yozepi.Retry.TryIt.Try(runnerAction, 1);
+                    subject = yozepi.Retry.TryIt.ThenTry(subject, 1);
+                    try
+                    {
+                        subject.Run(token);
+                    }
+                    catch (Exception ex)
+                    {
+                        thrown = ex;
+                    }
+                });
 
                 describe["when OperationCanceledException is raised"] = () =>
                 {
@@ -49,19 +63,7 @@ namespace TryIt.Tests.Unit.specs.Builders
                     };
                     after = () => tokenSource.Dispose();
 
-                    actAsync = async () =>
-                    {
-                        subject = yozepi.Retry.TryIt.TryAsync(runnerAction, 1);
-                        subject = yozepi.Retry.TryIt.ThenTry(subject, 1);
-                        try
-                        {
-                            await subject.RunAsync(token);
-                        }
-                        catch (Exception ex)
-                        {
-                            thrown = ex;
-                        }
-                    };
+                    act = subjectAction;
 
                     context["because Task was already canceled"] = () =>
                     {
@@ -103,29 +105,29 @@ namespace TryIt.Tests.Unit.specs.Builders
 
         void Runner_Behavior()
         {
-            BaseAsyncBuilder subject = null;
+            BaseSyncBuilder subject = null;
 
             describe["when there is only one runner"] = () =>
             {
-                Func<Task> actor = null;
-                TaskRunner runner = null;
+                Action actor = null;
+                ActionRunner runner = null;
                 int retryCount = default(int);
                 Exception thrown = null;
 
-                actAsync = async () =>
+                act = () =>
                 {
-                    runner = new TaskRunner()
+                    runner = new ActionRunner()
                     {
                         RetryCount = retryCount,
                         Actor = actor
                     };
-                    subject = new TaskRetryBuilder();
+                    subject = new MethodRetryBuilder();
                     subject.AddRunner(runner);
 
                     thrown = null;
                     try
                     {
-                        await subject.RunAsync(CancellationToken.None);
+                        subject.Run(CancellationToken.None);
                     }
                     catch (Exception ex)
                     {
@@ -137,7 +139,7 @@ namespace TryIt.Tests.Unit.specs.Builders
                 {
                     before = () =>
                     {
-                        actor = () => new Task(() => { });
+                        actor = () => { };
                         retryCount = 3;
                     };
 
@@ -155,11 +157,11 @@ namespace TryIt.Tests.Unit.specs.Builders
                 {
                     before = () =>
                     {
-                        actor = () => new Task(() =>
+                        actor = () =>
                         {
                             if (subject.LastRunner.Attempts <= 1)
                                 throw new Exception();
-                        });
+                        };
                         retryCount = 3;
                     };
 
@@ -177,10 +179,10 @@ namespace TryIt.Tests.Unit.specs.Builders
                 {
                     before = () =>
                     {
-                        actor = () => new Task(() =>
+                        actor = () =>
                         {
                             throw new Exception();
-                        });
+                        };
                         retryCount = 3;
                     };
 
@@ -204,24 +206,24 @@ namespace TryIt.Tests.Unit.specs.Builders
 
             describe["when there are two runners"] = () =>
             {
-                Func<Task> actor = null;
-                TaskRunner runner1 = null;
-                TaskRunner runner2 = null;
+                Action actor = null;
+                ActionRunner runner1 = null;
+                ActionRunner runner2 = null;
                 ErrorPolicyDelegate errorPolicy = null;
 
                 int retryCount = default(int);
                 Exception thrown = null;
 
-                actAsync = async () =>
+                act = () =>
                 {
-                    runner1 = new TaskRunner()
+                    runner1 = new ActionRunner()
                     {
                         RetryCount = retryCount,
                         Actor = actor
                     };
-                    runner2 = new TaskRunner();
+                    runner2 = new ActionRunner();
                     runner1.CopySettings(runner2);
-                    subject = new TaskRetryBuilder();
+                    subject = new MethodRetryBuilder();
                     subject.AddRunner(runner1);
                     subject.SetErrorPolicy(errorPolicy);
                     subject.AddRunner(runner2);
@@ -229,7 +231,7 @@ namespace TryIt.Tests.Unit.specs.Builders
                     thrown = null;
                     try
                     {
-                        await subject.RunAsync(CancellationToken.None);
+                        subject.Run(CancellationToken.None);
                     }
                     catch (Exception ex)
                     {
@@ -240,7 +242,7 @@ namespace TryIt.Tests.Unit.specs.Builders
                 {
                     before = () =>
                     {
-                        actor = () => new Task(() => { });
+                        actor = () => { };
                         retryCount = 3;
                     };
 
@@ -255,11 +257,11 @@ namespace TryIt.Tests.Unit.specs.Builders
                 {
                     before = () =>
                     {
-                        actor = () => new Task(() =>
+                        actor = () =>
                         {
                             if (runner2.Status == RetryStatus.NotStarted)
                                 throw new Exception();
-                        });
+                        };
                         retryCount = 3;
                     };
 
@@ -280,10 +282,10 @@ namespace TryIt.Tests.Unit.specs.Builders
                 {
                     before = () =>
                     {
-                        actor = () => new Task(() => 
+                        actor = () =>
                         {
                             throw new Exception();
-                        });
+                        };
                         retryCount = 3;
                     };
                     it["Status should be Fail"] = () =>

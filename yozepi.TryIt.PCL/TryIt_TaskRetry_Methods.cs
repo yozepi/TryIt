@@ -54,21 +54,67 @@ namespace yozepi.Retry
         #endregion //ThenTry Task extensions:
 
 
-        #region TaskRetryBuilder UsingDelay, WithErrorPolicy, WithSuccessPolicy
+        #region TaskRetryBuilder Delay, WithErrorPolicy, WithSuccessPolicy
+
+        #region Delays
+
+        /// <summary>
+        /// Apply a delay that will pause for the duration of the provided pause time with each retry.
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <param name="pauseTime">The TimeSpan for the delay.</param>
+        /// <returns></returns>
+        public static TaskRetryBuilder UsingDelay(this TaskRetryBuilder builder, TimeSpan pauseTime)
+        {
+            return builder.SetDelay(new BasicDelay(pauseTime))
+                as TaskRetryBuilder;
+        }
+
+        /// <summary>
+        /// Apply a delay that will double the value of the initial delay with each retry'
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <param name="initialDelay">The TimeSpan for the initial delay.</param>
+        /// <returns></returns>
+        public static TaskRetryBuilder UsingBackoffDelay(this TaskRetryBuilder builder, TimeSpan initialDelay)
+        {
+            return builder.SetDelay(new BackoffDelay(initialDelay))
+                as TaskRetryBuilder;
+        }
+
+        /// <summary>
+        /// Apply a delay that will increase according to the Fibonacci sequence with each retry.
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <param name="initialDelay">The TimeSpan for the initial delay.</param>
+        /// <returns></returns>
+        public static TaskRetryBuilder UsingFibonacciDelay(this TaskRetryBuilder builder, TimeSpan initialDelay)
+        {
+            return builder.SetDelay(new FibonacciDelay(initialDelay))
+                as TaskRetryBuilder;
+        }
+
+        public static TaskRetryBuilder UsingNoDelay(this TaskRetryBuilder builder)
+        {
+            return builder.SetDelay(new NoDelay())
+                as TaskRetryBuilder;
+        }
+
 
         /// <summary>
         /// Provide an optional delay policy for pausing between tries.
         /// </summary>
-        /// <param name="builder">The <see cref="ITry"/> this method extends.</param>
+        /// <param name="builder">The <see cref="MethodRetryBuilder"/> this method extends.</param>
         /// <param name="delay">The delay policy (<see cref="IDelay"/> instance) to use.</param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException">Thrown when The delay parameter is null.</exception>
         public static TaskRetryBuilder UsingDelay(this TaskRetryBuilder builder, IDelay delay)
         {
-            builder.SetDelay(delay);
-            return builder;
-
+            return builder.SetDelay(delay)
+                as TaskRetryBuilder;
         }
+
+        #endregion //Delays
 
 
         /// <summary>
@@ -117,73 +163,7 @@ namespace yozepi.Retry
         }
 
 
-        #endregion //TaskRetryBuilder UsingDelay, WithErrorPolicy, WithSuccessPolicy
-
-
-        public static TaskRetryBuilder<T> TryAsync<T>(Func<Task<T>> task, int retries)
-        {
-            return new TaskRetryBuilder<T>()
-            .AddRunner(new TaskRunner<T>())
-            .SetActor(task)
-            .SetRetryCount(retries) as TaskRetryBuilder<T>;
-        }
-
-        public static TaskRetryBuilder<T> TryAsync<T>(Func<T> func, int retries)
-        {
-            var ft = new Func<Task<T>>(() => new Task<T>(func));
-            return TryAsync(ft, retries);
-        }
-
-
-        #region ThenTry Task<T> extensions:
-
-        public static TaskRetryBuilder<T> ThenTry<T>(this TaskRetryBuilder<T> builder, int retries)
-        {
-            BaseRunner runner = new TaskRunner<T>();
-            builder.AddRunner(runner);
-            builder.SetRetryCount(retries);
-            return builder;
-        }
-
-        public static TaskRetryBuilder<T> ThenTry<T>(this TaskRetryBuilder<T> builder, Func<Task<T>> task, int retries)
-        {
-            return builder
-                .AddRunner(new TaskRunner<T>())
-                .SetActor(task)
-                .SetRetryCount(retries) as TaskRetryBuilder<T>;
-        }
-
-        public static TaskRetryBuilder<T> ThenTry<T>(this TaskRetryBuilder<T> builder, Func<T> func, int retries)
-        {
-            var ft = new Func<Task<T>>(() => new Task<T>(func));
-            return ThenTry(builder, ft, retries);
-        }
-
-        #endregion //ThenTry Task<T> extensions:
-
-
-        #region TaskRetryBuilder<T> UsingDelay, WithErrorPolicy, WithSuccessPolicy
-
-        public static TaskRetryBuilder<T> UsingDelay<T>(this TaskRetryBuilder<T> builder, IDelay delay)
-        {
-            return builder
-                .SetDelay(delay) as TaskRetryBuilder<T>;
-
-        }
-
-        public static TaskRetryBuilder<T> WithErrorPolicy<T>(this TaskRetryBuilder<T> builder, ErrorPolicyDelegate errorPolicy)
-        {
-            return builder
-                .SetErrorPolicy(errorPolicy) as TaskRetryBuilder<T>;
-        }
-
-        public static TaskRetryBuilder<T> WithSuccessPolicy<T>(this TaskRetryBuilder<T> builder, SuccessPolicyDelegate<T> successPolicy)
-        {
-            return builder
-                .SetSuccessPolicy(successPolicy) as TaskRetryBuilder<T>;
-        }
-
-        #endregion //TaskRetryBuilder<T> UsingDelay, WithErrorPolicy, WithSuccessPolicy
+        #endregion //TaskRetryBuilder Delay, WithErrorPolicy, WithSuccessPolicy
 
     }
 }

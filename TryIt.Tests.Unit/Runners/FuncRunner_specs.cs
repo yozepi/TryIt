@@ -10,7 +10,7 @@ using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using yozepi.Retry;
 
-namespace TryIt.Tests.Unit.specs.Runners
+namespace TryIt.Tests.Unit.Runners
 {
     [TestClass]
     public class FuncRunner_specs : nSpecTestHarness

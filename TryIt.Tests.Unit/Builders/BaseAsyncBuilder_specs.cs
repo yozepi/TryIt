@@ -11,7 +11,7 @@ using yozepi.Retry;
 using yozepi.Retry.Runners;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace TryIt.Tests.Unit.specs.Builders
+namespace TryIt.Tests.Unit.Builders
 {
     [TestClass]
     public class BaseAsyncBuilder_specs : nSpecTestHarness

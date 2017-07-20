@@ -69,6 +69,7 @@
     <Compile Include="TryIt_ActionRetryBuilder_Methods.cs" />
     <Compile Include="TryIt_FuncRetryBuilder_Methods.cs" />
     <Compile Include="TryIt_TaskRetry_Methods.cs" />
+    <Compile Include="TryIt_Task_T_Retry_Methods.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

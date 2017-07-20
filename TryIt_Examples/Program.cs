@@ -123,9 +123,7 @@ namespace TryIt_Examples
         {
             using (var request = new WebClient())
             {
-                var response = await TryIt.TryAsync(() => request.DownloadStringTaskAsync(url), 3)
-                    .UsingDelay(Delay.Backoff(TimeSpan.FromMilliseconds(200)))
-                    .Go();
+                var response = await request.DownloadStringTaskAsync(url);
                 return response;
             }
         }
@@ -160,7 +158,7 @@ namespace TryIt_Examples
 
             var url = "http://www.google.com";
             string result = TryIt.Try(() => DownloadString(url), 5)
-                .UsingDelay(Delay.Backoff(TimeSpan.FromMilliseconds(200)))
+                .UsingBackoffDelay(TimeSpan.FromMilliseconds(200))
                 .Go();
             Console.WriteLine(" - Response length: {0}", result.Length);
         }
@@ -177,7 +175,7 @@ namespace TryIt_Examples
                 using (var tokenSource = new CancellationTokenSource(4500))
                 {
                     result = TryIt.Try(() => DownloadString(url), 5)
-                        .UsingDelay(Delay.Basic(TimeSpan.FromMilliseconds(200)))
+                        .UsingDelay(TimeSpan.FromMilliseconds(200))
                         .Go(tokenSource.Token);
                 }
                 Console.WriteLine(" - Response length: {0}", result.Length);
@@ -196,7 +194,7 @@ namespace TryIt_Examples
             var url = "http://www.google.com";
             string result = TryIt.Try(() => DownloadString(url), 3)
                 .ThenTry(5)
-                .UsingDelay(Delay.Basic(TimeSpan.FromMilliseconds(200)))
+                .UsingBackoffDelay(TimeSpan.FromMilliseconds(200))
                 .Go();
             return result;
         }
@@ -208,7 +206,7 @@ namespace TryIt_Examples
 
             var url = "http://www.google.com";
             string response = await TryIt.TryAsync(() => DownloadString(url), 3)
-               .UsingDelay(Delay.Backoff(TimeSpan.FromMilliseconds(200)))
+               .UsingBackoffDelay(TimeSpan.FromMilliseconds(200))
                .Go();
 
             Console.WriteLine(" - Response length: {0}", response.Length);
@@ -244,7 +242,7 @@ namespace TryIt_Examples
 
             var url = "http://www.google.com";
             var response = TryIt.TryAsync(() => DownloadStringAsync(url), 3)
-                .UsingDelay(Delay.Backoff(TimeSpan.FromMilliseconds(200)))
+                .UsingBackoffDelay(TimeSpan.FromMilliseconds(200))
                 .Go().Result;
 
             Console.WriteLine(" - Response length: {0}", response.Length);
@@ -258,7 +256,7 @@ namespace TryIt_Examples
 
             var url = "http://www.google.com";
             var response = await TryIt.TryAsync(() => DownloadStringAsync(url), 3)
-                .UsingDelay(Delay.Backoff(TimeSpan.FromMilliseconds(200)))
+                .UsingBackoffDelay(TimeSpan.FromMilliseconds(200))
                 .Go();
 
             Console.WriteLine(" - Response length: {0}", response.Length);
@@ -276,9 +274,8 @@ namespace TryIt_Examples
             var urlA = "http://www.IdontExist.spoon";
             var urlB = "http://www.google.com";
 
-            var backoff = Delay.Backoff(TimeSpan.FromMilliseconds(200));
             string response = TryIt.Try(() => DownloadString(urlA), 3)
-               .UsingDelay(backoff)
+               .UsingBackoffDelay(TimeSpan.FromMilliseconds(200))
                .ThenTry(() => DownloadString(urlB), 3)
                .Go();
 
@@ -292,9 +289,8 @@ namespace TryIt_Examples
 
             var url = "http://www.IdontExist.spoon";
 
-            var backoff = Delay.Backoff(TimeSpan.FromMilliseconds(200));
             string response = TryIt.Try(() => DownloadString(url), 3)
-               .UsingDelay(backoff)
+               .UsingBackoffDelay(TimeSpan.FromMilliseconds(200))
                .ThenTry(GetDefaultContent, 1)
                .Go();
 
@@ -313,7 +309,6 @@ namespace TryIt_Examples
 
             var url = "http://www.IdontExist.spoon";
 
-            var backoff = Delay.Backoff(TimeSpan.FromMilliseconds(200));
             try
             {
                 string response = TryIt.Try(() => DownloadString(url), 4)
@@ -325,7 +320,7 @@ namespace TryIt_Examples
 
                         return true;
                     })
-                   .UsingDelay(backoff)
+                   .UsingBackoffDelay(TimeSpan.FromMilliseconds(200))
                    .Go();
             }
             catch (Exception ex)
@@ -344,9 +339,8 @@ namespace TryIt_Examples
             var urlA = "http://www.IdontExist.spoon";
             var urlB = "http://www.google.com";
 
-            var backoff = Delay.Backoff(TimeSpan.FromMilliseconds(200));
             string response = TryIt.Try(() => DownloadString(urlA), 3)
-              .UsingDelay(backoff)
+              .UsingBackoffDelay(TimeSpan.FromMilliseconds(200))
               .WithErrorPolicy((ex, retries) =>
               {
                   var policyEx = ex as WebException;
@@ -370,10 +364,9 @@ namespace TryIt_Examples
             var urlA = "http://www.IdontExist.spoon";
             var urlB = "http://www.google.com";
 
-            var backoff = Delay.Backoff(TimeSpan.FromMilliseconds(200));
             string response = TryIt.Try(() => DownloadString(urlA), 3)
                 .ThenTry(() => DownloadString(urlB), 3)
-                .UsingDelay(backoff)
+                .UsingBackoffDelay(TimeSpan.FromMilliseconds(200))
                 .Go();
             return response;
         }
@@ -388,10 +381,9 @@ namespace TryIt_Examples
             var urlA = "http://www.IdontExist.spoon";
             var urlB = "http://www.google.com";
 
-            var backoff = Delay.Backoff(TimeSpan.FromMilliseconds(200));
             var command = DownloadStringCommand(); // returns Func<string, string>
             string response = await TryIt.TryAsync(() => command(urlA), 5)
-                .UsingDelay(backoff)
+                .UsingBackoffDelay(TimeSpan.FromMilliseconds(200))
                 .ThenTry(() => command(urlB), 5)
                 .Go();
 
@@ -410,9 +402,8 @@ namespace TryIt_Examples
             //Then try request.DownloadString(urlB) 3 times using a Backoff delay.
             var urlA = "http://www.IdontExist.spoon";
             var urlB = "http://www.google.com";
-            var backoff = Delay.Backoff(TimeSpan.FromMilliseconds(200));
             string response = TryIt.TryAsync(() => DownloadStringAsync(urlA), 3)
-              .UsingDelay(backoff)
+              .UsingBackoffDelay(TimeSpan.FromMilliseconds(200))
                     .ThenTry(() => DownloadStringAsync(urlB), 3)
                     .Go().Result;
 
@@ -429,9 +420,9 @@ namespace TryIt_Examples
             //Then try request.DownloadString(urlB) 3 times using a Backoff delay.
             var urlA = "http://www.IdontExist.spoon";
             var urlB = "http://www.google.com";
-            var backoff = Delay.Backoff(TimeSpan.FromMilliseconds(200));
+
             string response = await TryIt.TryAsync(() => DownloadStringAsync(urlA), 3)
-                .UsingDelay(backoff)
+                .UsingBackoffDelay(TimeSpan.FromMilliseconds(200))
                 .ThenTry(() => DownloadStringAsync(urlB), 3)
                 .Go();
 
@@ -458,7 +449,7 @@ namespace TryIt_Examples
 
                     //...then try connA 6 times with using a back-off delay that starts at 100ms...
                     .ThenTry(() => GetDBResults(connA), 6)
-                      .UsingDelay(Delay.Fibonacci(TimeSpan.FromMilliseconds(100)))
+                      .UsingFibonacciDelay(TimeSpan.FromMilliseconds(100))
 
                     //...finaly try connB 6 times with using the same backoff delay.
                     .ThenTry(() => GetDBResults(connB), 6)
@@ -495,7 +486,7 @@ namespace TryIt_Examples
 
                     //...then try connA 6 times with using a back-off delay that starts at 100ms...
                     .ThenTry(() => GetDBResults(connA), 6)
-                      .UsingDelay(Delay.Backoff(TimeSpan.FromMilliseconds(100)))
+                      .UsingBackoffDelay(TimeSpan.FromMilliseconds(100))
 
                     //...finaly try connB 6 times with using a backoff delay.
                     .ThenTry(() => GetDBResults(connB), 6)
@@ -532,7 +523,7 @@ namespace TryIt_Examples
 
                     //...then try connA 6 times with using a back-off delay that starts at 100ms...
                     .ThenTry(() => GetDBResultsAsync(connA), 6)
-                      .UsingDelay(Delay.Backoff(TimeSpan.FromMilliseconds(100)))
+                      .UsingBackoffDelay(TimeSpan.FromMilliseconds(100))
 
                     //...finaly try connB 6 times with using the same backoff delay.
                     .ThenTry(() => GetDBResultsAsync(connB), 6)
@@ -553,9 +544,8 @@ namespace TryIt_Examples
         static string Try_WithSuccess_Policy()
         {
             var url = "http://www.google.com";
-            var backoff = Delay.Backoff(TimeSpan.FromMilliseconds(200));
             string response = TryIt.Try(() => DownloadString(url), 3)
-                .UsingDelay(backoff)
+                .UsingBackoffDelay(TimeSpan.FromMilliseconds(200))
                 .WithSuccessPolicy((result, trycount) =>
                 {
                     if (string.IsNullOrEmpty(result))
@@ -592,7 +582,7 @@ namespace TryIt_Examples
 
                     //...then try connA 6 times with using a back-off delay that starts at 100ms...
                     .ThenTry(() => GetDBResultsAsync(connA), 6)
-                      .UsingDelay(Delay.Backoff(TimeSpan.FromMilliseconds(100)))
+                      .UsingBackoffDelay(TimeSpan.FromMilliseconds(100))
 
                     //...finaly try connB 6 times with using the same backoff delay.
                     .ThenTry(() => GetDBResultsAsync(connB), 6)
@@ -623,7 +613,7 @@ namespace TryIt_Examples
             try
             {
                 result = TryIt.TryAsync(() => GetDBResultsAsyncRoundRobin(connStrings), 10)
-                    .UsingDelay(Delay.Backoff(TimeSpan.FromMilliseconds(100)))
+                    .UsingBackoffDelay(TimeSpan.FromMilliseconds(100))
                     .Go().Result;
             }
             catch (Exception ex)
@@ -654,7 +644,7 @@ namespace TryIt_Examples
                 {
                     var token = tokenSource.Token;
                     result = TryIt.TryAsync(() => GetDBResultsAsyncRoundRobinCancelable(token, connStrings), 10)
-                    .UsingDelay(Delay.Backoff(TimeSpan.FromMilliseconds(100)))
+                    .UsingBackoffDelay(TimeSpan.FromMilliseconds(100))
                     .Go(token).Result;
                 }
             }

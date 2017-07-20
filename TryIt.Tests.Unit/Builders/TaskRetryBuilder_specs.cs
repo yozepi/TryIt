@@ -12,7 +12,7 @@ using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace TryIt.Tests.Unit.specs.Builders
+namespace TryIt.Tests.Unit.Builders
 {
     [TestClass]
     public class TaskRetryBuilder_specs : nSpecTestHarness

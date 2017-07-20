@@ -11,7 +11,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using yozepi.Retry;
 using System.Reflection;
 
-namespace TryIt.Tests.Unit.specs.Runners
+namespace TryIt.Tests.Unit.Runners
 {
     [TestClass]
     public class ActionRunner_specs : nSpecTestHarness

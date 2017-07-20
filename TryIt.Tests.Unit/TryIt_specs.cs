@@ -58,7 +58,7 @@ namespace TryIt.Tests.Unit
                 act = () => subject = sourceBuilder.ThenTry(retries);
 
                 it["should return the the source builder"] = () =>
-                    subject.Should().NotBeNull();
+                    subject.Should().Be(sourceBuilder);
 
                 it["should add a new runner"] = () =>
                     subject.Runners.Count.Should().Be(2);
@@ -82,7 +82,7 @@ namespace TryIt.Tests.Unit
                 act = () => subject = sourceBuilder.ThenTry(altActor, retries);
 
                 it["should return the the source builder"] = () =>
-                    subject.Should().NotBeNull();
+                    subject.Should().Be(sourceBuilder);
 
                 it["should add a new runner"] = () =>
                     subject.Runners.Count.Should().Be(2);
@@ -99,19 +99,91 @@ namespace TryIt.Tests.Unit
 
             describe["UsingDelay Method"] = () =>
             {
+                context["when providing a TimeSpan"] = () =>
+                {
+                    MethodRetryBuilder subject = null;
+                    MethodRetryBuilder sourceBuilder = null;
+                    Action actor = () => { };
+                    var expectedTimeSpan = TimeSpan.FromSeconds(1);
+
+                    before = () => sourceBuilder = yozepi.Retry.TryIt.Try(actor, 1);
+                    act = () => subject = sourceBuilder.UsingDelay(expectedTimeSpan);
+
+                    it["should return the the source builder"] = () =>
+                        subject.Should().Be(sourceBuilder);
+
+                    it["should set the delay on the last runner to a basic delay with the provided timespan"] = () =>
+                        subject.LastRunner.Delay.Should().BeOfType<BasicDelay>()
+                            .And.Subject.As<BasicDelay>().PauseTime.Should().Be(expectedTimeSpan);
+                };
+                context["when providing an IDelay instance"] = () =>
+                {
+                    MethodRetryBuilder subject = null;
+                    MethodRetryBuilder sourceBuilder = null;
+                    Action actor = () => { };
+                    IDelay expectedDelay = Delay.Fibonacci(TimeSpan.FromSeconds(1));
+
+                    before = () => sourceBuilder = yozepi.Retry.TryIt.Try(actor, 1);
+                    act = () => subject = sourceBuilder.UsingDelay(expectedDelay);
+
+                    it["should return the the source builder"] = () =>
+                        subject.Should().Be(sourceBuilder);
+
+                    it["should set the delay on the last runner"] = () =>
+                        subject.LastRunner.Delay.Should().BeSameAs(expectedDelay);
+                };
+            };
+
+            describe["UsingBackoffDelay Method"] = () =>
+            {
                 MethodRetryBuilder subject = null;
                 MethodRetryBuilder sourceBuilder = null;
                 Action actor = () => { };
-                IDelay expectedDelay = Delay.Basic(TimeSpan.FromSeconds(1));
+                var expectedTimeSpan = TimeSpan.FromSeconds(1);
 
                 before = () => sourceBuilder = yozepi.Retry.TryIt.Try(actor, 1);
-                act = () => subject = sourceBuilder.UsingDelay(expectedDelay);
+                act = () => subject = sourceBuilder.UsingBackoffDelay(expectedTimeSpan);
 
                 it["should return the the source builder"] = () =>
-                    subject.Should().NotBeNull();
+                    subject.Should().Be(sourceBuilder);
 
-                it["should set the delay on the last runner"] = () =>
-                    subject.LastRunner.Delay.Should().BeSameAs(expectedDelay);
+                it["should set the delay on the last runner to a backoff delay with the provided timespan"] = () =>
+                    subject.LastRunner.Delay.Should().BeOfType<BackoffDelay>()
+                        .And.Subject.As<BackoffDelay>().InitialDelay.Should().Be(expectedTimeSpan);
+            };
+
+            describe["UsingFibonacciDelay Method"] = () =>
+            {
+                MethodRetryBuilder subject = null;
+                MethodRetryBuilder sourceBuilder = null;
+                Action actor = () => { };
+                var expectedTimeSpan = TimeSpan.FromSeconds(1);
+
+                before = () => sourceBuilder = yozepi.Retry.TryIt.Try(actor, 1);
+                act = () => subject = sourceBuilder.UsingFibonacciDelay(expectedTimeSpan);
+
+                it["should return the the source builder"] = () =>
+                    subject.Should().Be(sourceBuilder);
+
+                it["should set the delay on the last runner to a Fibonacci delay with the provided timespan"] = () =>
+                    subject.LastRunner.Delay.Should().BeOfType<FibonacciDelay>()
+                        .And.Subject.As<FibonacciDelay>().InitialDelay.Should().Be(expectedTimeSpan);
+            };
+
+            describe["UsingNoDelay Method"] = () =>
+            {
+                MethodRetryBuilder subject = null;
+                MethodRetryBuilder sourceBuilder = null;
+                Action actor = () => { };
+
+                before = () => sourceBuilder = yozepi.Retry.TryIt.Try(actor, 1);
+                act = () => subject = sourceBuilder.UsingNoDelay();
+
+                it["should return the the source builder"] = () =>
+                    subject.Should().Be(sourceBuilder);
+
+                it["should set the delay on the last runner to a NoDelay instance"] = () =>
+                    subject.LastRunner.Delay.Should().BeOfType<NoDelay>();
             };
 
             describe["WithErrorPolicy Method"] = () =>
@@ -125,7 +197,7 @@ namespace TryIt.Tests.Unit
                 act = () => subject = sourceBuilder.WithErrorPolicy(expectedPolicy);
 
                 it["should return the the source builder"] = () =>
-                    subject.Should().NotBeNull();
+                    subject.Should().Be(sourceBuilder);
 
                 it["should set the error policy on the last runner"] = () =>
                     subject.LastRunner.ErrorPolicy.Should().BeSameAs(expectedPolicy);
@@ -142,7 +214,7 @@ namespace TryIt.Tests.Unit
                 act = () => subject = sourceBuilder.WithSuccessPolicy(expectedPolicy);
 
                 it["should return the the source builder"] = () =>
-                    subject.Should().NotBeNull();
+                    subject.Should().Be(sourceBuilder);
 
                 it["should set the success policy on the last runner"] = () =>
                     subject.LastRunner.SuccessPolicy.Should().BeSameAs(expectedPolicy);
@@ -206,7 +278,7 @@ namespace TryIt.Tests.Unit
                 act = () => subject = sourceBuilder.ThenTry(retries);
 
                 it["should return the the source builder"] = () =>
-                    subject.Should().NotBeNull();
+                    subject.Should().Be(sourceBuilder);
 
                 it["should add a new runner"] = () =>
                     subject.Runners.Count.Should().Be(2);
@@ -230,7 +302,7 @@ namespace TryIt.Tests.Unit
                 act = () => subject = sourceBuilder.ThenTry(altActor, retries);
 
                 it["should return the the source builder"] = () =>
-                    subject.Should().NotBeNull();
+                    subject.Should().Be(sourceBuilder);
 
                 it["should add a new runner"] = () =>
                     subject.Runners.Count.Should().Be(2);
@@ -247,19 +319,91 @@ namespace TryIt.Tests.Unit
 
             describe["UsingDelay Method"] = () =>
             {
+                context["when providing a TimeSpan"] = () =>
+                {
+                    MethodRetryBuilder<string> subject = null;
+                    MethodRetryBuilder<string> sourceBuilder = null;
+                    Func<string> actor = () => { return "Hello world!"; };
+                    var expectedTimeSpan = TimeSpan.FromSeconds(1);
+
+                    before = () => sourceBuilder = yozepi.Retry.TryIt.Try(actor, 1);
+                    act = () => subject = sourceBuilder.UsingDelay(expectedTimeSpan);
+
+                    it["should return the the source builder"] = () =>
+                    subject.Should().Be(sourceBuilder);
+
+                    it["should set the delay on the last runner to a basic delay with the provided timespan"] = () =>
+                        subject.LastRunner.Delay.Should().BeOfType<BasicDelay>()
+                            .And.Subject.As<BasicDelay>().PauseTime.Should().Be(expectedTimeSpan);
+                };
+                context["when providing an IDelay instance"] = () =>
+                {
+                    MethodRetryBuilder<string> subject = null;
+                    MethodRetryBuilder<string> sourceBuilder = null;
+                    Func<string> actor = () => { return "Hello world!"; };
+                    IDelay expectedDelay = Delay.Basic(TimeSpan.FromSeconds(1));
+
+                    before = () => sourceBuilder = yozepi.Retry.TryIt.Try(actor, 1);
+                    act = () => subject = sourceBuilder.UsingDelay(expectedDelay);
+
+                    it["should return the the source builder"] = () =>
+                        subject.Should().Be(sourceBuilder);
+
+                    it["should set the delay on the last runner"] = () =>
+                        subject.LastRunner.Delay.Should().BeSameAs(expectedDelay);
+                };
+            };
+
+            describe["UsingBackoffDelay Method"] = () =>
+            {
                 MethodRetryBuilder<string> subject = null;
                 MethodRetryBuilder<string> sourceBuilder = null;
                 Func<string> actor = () => { return "Hello world!"; };
-                IDelay expectedDelay = Delay.Basic(TimeSpan.FromSeconds(1));
+                var expectedTimeSpan = TimeSpan.FromSeconds(1);
 
                 before = () => sourceBuilder = yozepi.Retry.TryIt.Try(actor, 1);
-                act = () => subject = sourceBuilder.UsingDelay(expectedDelay);
+                act = () => subject = sourceBuilder.UsingBackoffDelay(expectedTimeSpan);
 
                 it["should return the the source builder"] = () =>
-                    subject.Should().NotBeNull();
+                    subject.Should().Be(sourceBuilder);
 
-                it["should set the delay on the last runner"] = () =>
-                    subject.LastRunner.Delay.Should().BeSameAs(expectedDelay);
+                it["should set the delay on the last runner to a backoff delay with the provided timespan"] = () =>
+                    subject.LastRunner.Delay.Should().BeOfType<BackoffDelay>()
+                        .And.Subject.As<BackoffDelay>().InitialDelay.Should().Be(expectedTimeSpan);
+            };
+
+            describe["UsingFibonacciDelay Method"] = () =>
+            {
+                MethodRetryBuilder<string> subject = null;
+                MethodRetryBuilder<string> sourceBuilder = null;
+                Func<string> actor = () => { return "Hello world!"; };
+                var expectedTimeSpan = TimeSpan.FromSeconds(1);
+
+                before = () => sourceBuilder = yozepi.Retry.TryIt.Try(actor, 1);
+                act = () => subject = sourceBuilder.UsingFibonacciDelay(expectedTimeSpan);
+
+                it["should return the the source builder"] = () =>
+                    subject.Should().Be(sourceBuilder);
+
+                it["should set the delay on the last runner to a Fibonacci delay with the provided timespan"] = () =>
+                    subject.LastRunner.Delay.Should().BeOfType<FibonacciDelay>()
+                        .And.Subject.As<FibonacciDelay>().InitialDelay.Should().Be(expectedTimeSpan);
+            };
+
+            describe["UsingNoDelay Method"] = () =>
+            {
+                MethodRetryBuilder<string> subject = null;
+                MethodRetryBuilder<string> sourceBuilder = null;
+                Func<string> actor = () => { return "Hello world!"; };
+
+                before = () => sourceBuilder = yozepi.Retry.TryIt.Try(actor, 1);
+                act = () => subject = sourceBuilder.UsingNoDelay();
+
+                it["should return the the source builder"] = () =>
+                    subject.Should().Be(sourceBuilder);
+
+                it["should set the delay on the last runner to a NoDelay instance"] = () =>
+                    subject.LastRunner.Delay.Should().BeOfType<NoDelay>();
             };
 
             describe["WithErrorPolicy Method"] = () =>
@@ -273,7 +417,7 @@ namespace TryIt.Tests.Unit
                 act = () => subject = sourceBuilder.WithErrorPolicy(expectedPolicy);
 
                 it["should return the the source builder"] = () =>
-                    subject.Should().NotBeNull();
+                    subject.Should().Be(sourceBuilder);
 
                 it["should set the error policy on the last runner"] = () =>
                     subject.LastRunner.ErrorPolicy.Should().BeSameAs(expectedPolicy);
@@ -290,7 +434,7 @@ namespace TryIt.Tests.Unit
                 act = () => subject = sourceBuilder.WithSuccessPolicy(expectedPolicy);
 
                 it["should return the the source builder"] = () =>
-                    subject.Should().NotBeNull();
+                    subject.Should().Be(sourceBuilder);
 
                 it["should set the success policy on the last runner"] = () =>
                     subject.LastRunner.SuccessPolicy.Should().BeSameAs(expectedPolicy);
@@ -331,7 +475,7 @@ namespace TryIt.Tests.Unit
                 act = () => subject = sourceBuilder.ThenTry(retries);
 
                 it["should return the the source builder"] = () =>
-                    subject.Should().NotBeNull();
+                    subject.Should().Be(sourceBuilder);
 
                 it["should add a new runner"] = () =>
                     subject.Runners.Count.Should().Be(2);
@@ -355,7 +499,7 @@ namespace TryIt.Tests.Unit
                 act = () => subject = sourceBuilder.ThenTry(altActor, retries);
 
                 it["should return the the source builder"] = () =>
-                    subject.Should().NotBeNull();
+                    subject.Should().Be(sourceBuilder);
 
                 it["should add a new runner"] = () =>
                     subject.Runners.Count.Should().Be(2);
@@ -382,7 +526,7 @@ namespace TryIt.Tests.Unit
                 act = () => subject = sourceBuilder.ThenTry(altActor, retries);
 
                 it["should return the the source builder"] = () =>
-                    subject.Should().NotBeNull();
+                    subject.Should().Be(sourceBuilder);
 
                 it["should add a new runner"] = () =>
                     subject.Runners.Count.Should().Be(2);
@@ -399,19 +543,91 @@ namespace TryIt.Tests.Unit
 
             describe["UsingDelay Method"] = () =>
             {
+                context["when providing a TimeSpan"] = () =>
+                {
+                    TaskRetryBuilder subject = null;
+                    TaskRetryBuilder sourceBuilder = null;
+                    Action actor = () => { };
+                    var expectedTimeSpan = TimeSpan.FromSeconds(1);
+
+                    before = () => sourceBuilder = yozepi.Retry.TryIt.TryAsync(actor, 1);
+                    act = () => subject = sourceBuilder.UsingDelay(expectedTimeSpan);
+
+                    it["should return the the source builder"] = () =>
+                        subject.Should().Be(sourceBuilder);
+
+                    it["should set the delay on the last runner to a basic delay with the provided timespan"] = () =>
+                        subject.LastRunner.Delay.Should().BeOfType<BasicDelay>()
+                            .And.Subject.As<BasicDelay>().PauseTime.Should().Be(expectedTimeSpan);
+                };
+                context["when providing an IDelay instance"] = () =>
+                {
+                    TaskRetryBuilder subject = null;
+                    TaskRetryBuilder sourceBuilder = null;
+                    Action actor = () => { };
+                    IDelay expectedDelay = Delay.Fibonacci(TimeSpan.FromSeconds(1));
+
+                    before = () => sourceBuilder = yozepi.Retry.TryIt.TryAsync(actor, 1);
+                    act = () => subject = sourceBuilder.UsingDelay(expectedDelay);
+
+                    it["should return the the source builder"] = () =>
+                        subject.Should().Be(sourceBuilder);
+
+                    it["should set the delay on the last runner"] = () =>
+                        subject.LastRunner.Delay.Should().BeSameAs(expectedDelay);
+                };
+            };
+
+            describe["UsingBackoffDelay Method"] = () =>
+            {
                 TaskRetryBuilder subject = null;
                 TaskRetryBuilder sourceBuilder = null;
                 Action actor = () => { };
-                IDelay expectedDelay = Delay.Basic(TimeSpan.FromSeconds(1));
+                var expectedTimeSpan = TimeSpan.FromSeconds(1);
 
                 before = () => sourceBuilder = yozepi.Retry.TryIt.TryAsync(actor, 1);
-                act = () => subject = sourceBuilder.UsingDelay(expectedDelay);
+                act = () => subject = sourceBuilder.UsingBackoffDelay(expectedTimeSpan);
 
                 it["should return the the source builder"] = () =>
-                    subject.Should().NotBeNull();
+                    subject.Should().Be(sourceBuilder);
 
-                it["should set the delay on the last runner"] = () =>
-                    subject.LastRunner.Delay.Should().BeSameAs(expectedDelay);
+                it["should set the delay on the last runner to a backoff delay with the provided timespan"] = () =>
+                    subject.LastRunner.Delay.Should().BeOfType<BackoffDelay>()
+                        .And.Subject.As<BackoffDelay>().InitialDelay.Should().Be(expectedTimeSpan);
+            };
+
+            describe["UsingFibonacciDelay Method"] = () =>
+            {
+                TaskRetryBuilder subject = null;
+                TaskRetryBuilder sourceBuilder = null;
+                Action actor = () => { };
+                var expectedTimeSpan = TimeSpan.FromSeconds(1);
+
+                before = () => sourceBuilder = yozepi.Retry.TryIt.TryAsync(actor, 1);
+                act = () => subject = sourceBuilder.UsingFibonacciDelay(expectedTimeSpan);
+
+                it["should return the the source builder"] = () =>
+                    subject.Should().Be(sourceBuilder);
+
+                it["should set the delay on the last runner to a Fibonacci delay with the provided timespan"] = () =>
+                    subject.LastRunner.Delay.Should().BeOfType<FibonacciDelay>()
+                        .And.Subject.As<FibonacciDelay>().InitialDelay.Should().Be(expectedTimeSpan);
+            };
+
+            describe["UsingNoDelay Method"] = () =>
+            {
+                TaskRetryBuilder subject = null;
+                TaskRetryBuilder sourceBuilder = null;
+                Action actor = () => { };
+
+                before = () => sourceBuilder = yozepi.Retry.TryIt.TryAsync(actor, 1);
+                act = () => subject = sourceBuilder.UsingNoDelay();
+
+                it["should return the the source builder"] = () =>
+                    subject.Should().Be(sourceBuilder);
+
+                it["should set the delay on the last runner to a NoDelay instance"] = () =>
+                    subject.LastRunner.Delay.Should().BeOfType<NoDelay>();
             };
 
             describe["WithErrorPolicy Method"] = () =>
@@ -425,7 +641,7 @@ namespace TryIt.Tests.Unit
                 act = () => subject = sourceBuilder.WithErrorPolicy(expectedPolicy);
 
                 it["should return the the source builder"] = () =>
-                    subject.Should().NotBeNull();
+                    subject.Should().Be(sourceBuilder);
 
                 it["should set the error policy on the last runner"] = () =>
                     subject.LastRunner.ErrorPolicy.Should().BeSameAs(expectedPolicy);
@@ -442,14 +658,13 @@ namespace TryIt.Tests.Unit
                 act = () => subject = sourceBuilder.WithSuccessPolicy(expectedPolicy);
 
                 it["should return the the source builder"] = () =>
-                    subject.Should().NotBeNull();
+                    subject.Should().Be(sourceBuilder);
 
                 it["should set the success policy on the last runner"] = () =>
                     subject.LastRunner.SuccessPolicy.Should().BeSameAs(expectedPolicy);
             };
 
         }
-
 
         void Try_Task_T()
         {
@@ -485,7 +700,7 @@ namespace TryIt.Tests.Unit
                 act = () => subject = sourceBuilder.ThenTry(retries);
 
                 it["should return the the source builder"] = () =>
-                    subject.Should().NotBeNull();
+                    subject.Should().Be(sourceBuilder);
 
                 it["should add a new runner"] = () =>
                     subject.Runners.Count.Should().Be(2);
@@ -509,7 +724,7 @@ namespace TryIt.Tests.Unit
                 act = () => subject = sourceBuilder.ThenTry(altActor, retries);
 
                 it["should return the the source builder"] = () =>
-                    subject.Should().NotBeNull();
+                    subject.Should().Be(sourceBuilder);
 
                 it["should add a new runner"] = () =>
                     subject.Runners.Count.Should().Be(2);
@@ -536,7 +751,7 @@ namespace TryIt.Tests.Unit
                 act = () => subject = sourceBuilder.ThenTry(altActor, retries);
 
                 it["should return the the source builder"] = () =>
-                    subject.Should().NotBeNull();
+                    subject.Should().Be(sourceBuilder);
 
                 it["should add a new runner"] = () =>
                     subject.Runners.Count.Should().Be(2);
@@ -553,19 +768,91 @@ namespace TryIt.Tests.Unit
 
             describe["UsingDelay Method"] = () =>
             {
+                context["when providing a TimeSpan"] = () =>
+                {
+                    TaskRetryBuilder<string> subject = null;
+                    TaskRetryBuilder<string> sourceBuilder = null;
+                    Func<string> actor = () => { return "Hello world!"; };
+                    var expectedTimeSpan = TimeSpan.FromSeconds(1);
+
+                    before = () => sourceBuilder = yozepi.Retry.TryIt.TryAsync(actor, 1);
+                    act = () => subject = sourceBuilder.UsingDelay(expectedTimeSpan);
+
+                    it["should return the the source builder"] = () =>
+                        subject.Should().Be(sourceBuilder);
+
+                    it["should set the delay on the last runner to a basic delay with the provided timespan"] = () =>
+                        subject.LastRunner.Delay.Should().BeOfType<BasicDelay>()
+                            .And.Subject.As<BasicDelay>().PauseTime.Should().Be(expectedTimeSpan);
+                };
+                context["when providing an IDelay instance"] = () =>
+                {
+                    TaskRetryBuilder<string> subject = null;
+                    TaskRetryBuilder<string> sourceBuilder = null;
+                    Func<string> actor = () => { return "Hello world!"; };
+                    IDelay expectedDelay = Delay.Basic(TimeSpan.FromSeconds(1));
+
+                    before = () => sourceBuilder = yozepi.Retry.TryIt.TryAsync(actor, 1);
+                    act = () => subject = sourceBuilder.UsingDelay(expectedDelay);
+
+                    it["should return the the source builder"] = () =>
+                        subject.Should().Be(sourceBuilder);
+
+                    it["should set the delay on the last runner"] = () =>
+                        subject.LastRunner.Delay.Should().BeSameAs(expectedDelay);
+                };
+            };
+
+            describe["UsingBackoffDelay Method"] = () =>
+            {
                 TaskRetryBuilder<string> subject = null;
                 TaskRetryBuilder<string> sourceBuilder = null;
                 Func<string> actor = () => { return "Hello world!"; };
-                IDelay expectedDelay = Delay.Basic(TimeSpan.FromSeconds(1));
+                var expectedTimeSpan = TimeSpan.FromSeconds(1);
 
                 before = () => sourceBuilder = yozepi.Retry.TryIt.TryAsync(actor, 1);
-                act = () => subject = sourceBuilder.UsingDelay(expectedDelay);
+                act = () => subject = sourceBuilder.UsingBackoffDelay(expectedTimeSpan);
 
                 it["should return the the source builder"] = () =>
-                    subject.Should().NotBeNull();
+                    subject.Should().Be(sourceBuilder);
 
-                it["should set the delay on the last runner"] = () =>
-                    subject.LastRunner.Delay.Should().BeSameAs(expectedDelay);
+                it["should set the delay on the last runner to a backoff delay with the provided timespan"] = () =>
+                    subject.LastRunner.Delay.Should().BeOfType<BackoffDelay>()
+                        .And.Subject.As<BackoffDelay>().InitialDelay.Should().Be(expectedTimeSpan);
+            };
+
+            describe["UsingFibonacciDelay Method"] = () =>
+            {
+                TaskRetryBuilder<string> subject = null;
+                TaskRetryBuilder<string> sourceBuilder = null;
+                Func<string> actor = () => { return "Hello world!"; };
+                var expectedTimeSpan = TimeSpan.FromSeconds(1);
+
+                before = () => sourceBuilder = yozepi.Retry.TryIt.TryAsync(actor, 1);
+                act = () => subject = sourceBuilder.UsingFibonacciDelay(expectedTimeSpan);
+
+                it["should return the the source builder"] = () =>
+                    subject.Should().Be(sourceBuilder);
+
+                it["should set the delay on the last runner to a Fibonacci delay with the provided timespan"] = () =>
+                    subject.LastRunner.Delay.Should().BeOfType<FibonacciDelay>()
+                        .And.Subject.As<FibonacciDelay>().InitialDelay.Should().Be(expectedTimeSpan);
+            };
+
+            describe["UsingNoDelay Method"] = () =>
+            {
+                TaskRetryBuilder<string> subject = null;
+                TaskRetryBuilder<string> sourceBuilder = null;
+                Func<string> actor = () => { return "Hello world!"; };
+
+                before = () => sourceBuilder = yozepi.Retry.TryIt.TryAsync(actor, 1);
+                act = () => subject = sourceBuilder.UsingNoDelay();
+
+                it["should return the the source builder"] = () =>
+                    subject.Should().Be(sourceBuilder);
+
+                it["should set the delay on the last runner to a NoDelay instance"] = () =>
+                    subject.LastRunner.Delay.Should().BeOfType<NoDelay>();
             };
 
             describe["WithErrorPolicy Method"] = () =>
@@ -579,7 +866,7 @@ namespace TryIt.Tests.Unit
                 act = () => subject = sourceBuilder.WithErrorPolicy(expectedPolicy);
 
                 it["should return the the source builder"] = () =>
-                    subject.Should().NotBeNull();
+                    subject.Should().Be(sourceBuilder);
 
                 it["should set the error policy on the last runner"] = () =>
                     subject.LastRunner.ErrorPolicy.Should().BeSameAs(expectedPolicy);
@@ -596,7 +883,7 @@ namespace TryIt.Tests.Unit
                 act = () => subject = sourceBuilder.WithSuccessPolicy(expectedPolicy);
 
                 it["should return the the source builder"] = () =>
-                    subject.Should().NotBeNull();
+                    subject.Should().Be(sourceBuilder);
 
                 it["should set the success policy on the last runner"] = () =>
                     subject.LastRunner.SuccessPolicy.Should().BeSameAs(expectedPolicy);

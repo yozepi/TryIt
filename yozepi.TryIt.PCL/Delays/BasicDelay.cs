@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace yozepi.Retry.Delays
 {
     /// <summary>
-    /// An implementation of Delay that pauses for the duration of the provided TimeSpan.
+    /// Implements the <see cref="IDelay"/> interface to create a delay that pauses for the duration of the provided TimeSpan.
     /// </summary>
     public class BasicDelay : Delay
     {

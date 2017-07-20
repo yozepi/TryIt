@@ -45,28 +45,33 @@ This code will cause TryIt to try your method 5 times or until it succeeds. Whic
 Ok that was simple. But typically if a method fails once then chances are it’s going to fail again a microsecond or two later. That’s why TryIt allows you to add a pause between tries using the **`UsingDelay`** method. Look at this:
 ```c#
 string result = TryIt.Try(() => DownloadString(url), 5)
-    .UsingDelay(Delay.Backoff(TimeSpan.FromMilliseconds(200)))
+    .UsingBackoffDelay(TimeSpan.FromMilliseconds(200))
     .Go();
 ```
-Now your method will pause between each try. Notice how the `UsingDelay` method is chained into the call. This is typical syntax for **TryIt**. You can chain all of it's methods together in this fashion.
+Now your method will pause between each try. Notice how the `UsingBackoffDelay` method is chained into the call. This is typical syntax for **TryIt**. You can chain all of it's methods together in this fashion.
 
 **TryIt** comes with the following delays out of the box:
 
 |Delay Type|Description|
 |----|----|
-| **`NoDelay`** | No pause occurs between tries. |
-| **`BasicDelay`** | Delays for he provided `TimeSpan` between each try. |
-| **`BackOffDelay`** | Doubles the initial `TimeSpan` between each try (i.e. 100ms, 200ms, 400ms, 800ms, etc.) |
-| **`FibonacciDelay`** | Increases the initial `TimeSpan` using the Fibonacci scale (i.e. 100ms, 100ms, 200ms, 300ms, 500ms, etc.) |
+| **`UsingNoDelay`** | No pause occurs between tries. |
+| **`UsingDelay`** | Delays for the provided `TimeSpan` between each try. |
+| **`UsingBackOffDelay`** | Doubles the initial `TimeSpan` between each try (i.e. 100ms, 200ms, 400ms, 800ms, etc.) |
+| **`UsingFibonacciDelay`** | Increases the initial `TimeSpan` using the Fibonacci scale (i.e. 100ms, 100ms, 200ms, 300ms, 500ms, etc.) |
 
 If none of these delays fit your needs you can inherit from the abstract **`Delay`** class to create your own.
+```c#
+string result = TryIt.Try(() => DownloadString(url), 5)
+    .UsingDelay(myCustomDelay)
+    .Go();
+```
 
 # TryIt Again
 So what if you want to try with one delay 3 times and then another delay for 5 times? Or what if you need to try server A, and if that fails try server B? That’s where the `ThenTry` method comes in. Look at the code below:
 ```c#
 string result = TryIt.Try(() => DownloadString(url), 3)
     .ThenTry(5)
-    .UsingDelay(Delay.Basic(TimeSpan.FromMilliseconds(200)))
+    .UsingDelay(TimeSpan.FromMilliseconds(200))
     .Go();
 ```
 In this example DownloadString is called 3 times back to back with no delay and then called another 5 times using a 200 millisecond
@@ -75,11 +80,11 @@ delay between each call.
 Check this out:
 ```c#
 string result = TryIt.Try(() => DownloadString(urlA), 4)
-   .UsingDelay(Delay.Backoff(TimeSpan.FromMilliseconds(200)))
+   .UsingBackoffDelay(TimeSpan.FromMilliseconds(200))
    .ThenTry(() => DownloadString(urlB), 4)
    .Go();
 ```
-This code calls DownloadString using urlA four times and with a delay between each try. If none of those tries succeed it then calls 
+This code calls DownloadString using urlA four times and with a backoff delay between each try. If none of those tries succeed it then calls 
 DownloadString using urlB four times using the same delay.
 If you have a urlC, you can chain another ThenTry to the list. 
 
@@ -87,7 +92,7 @@ If you have a urlC, you can chain another ThenTry to the list.
 ```c#
 string response = TryIt.Try(() => DownloadString(urlA), 4)
     .ThenTry(() => DownloadString(urlB), 4)
-    .UsingDelay(Delay.Backoff(TimeSpan.FromMilliseconds(200)))
+    .UsingBackoffDelay(TimeSpan.FromMilliseconds(200))
     .Go();
 ```
 This code looks similar to the code above but there’s a **_subtle difference_**. Notice how `UsingDelay` is placed after `ThenTry`. This causes TryIt to first try using urlA *with no delay* then retry using urlB with the delay.
@@ -101,7 +106,7 @@ I’m sure you’ve noticed the `Go` method at the end of each of these examples
 # Alternate Actions/Funcs
 In addition to providing alternate parameters to your methods, you can provide *alternate methods* to try! The only caveat is that you need to be sure your alternate method returns the same type as the original method. Using an alternate method is how you can provide fallback results in case of failures.
 
-In this example, if the Download method fails 3 times, a method that returns alternate content gets called.
+In this example, if the Download method fails 3 times, a method that returns alternate content gets called. It also shows an alternate way to provide delays - by using the Delay factory methods.
 ```c#
 var backoff = Delay.Backoff(TimeSpan.FromMilliseconds(200));
 string result = TryIt.Try(() => DownloadString(url), 3)

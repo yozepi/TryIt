@@ -9,7 +9,7 @@ using yozepi.Retry;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using yozepi.Retry.Builders;
 
-namespace TryIt.Tests.Unit.specs
+namespace TryIt.Tests.Unit.Extensions
 {
     [TestClass]
     public class Action_Extension_Methods : nSpecTestHarness

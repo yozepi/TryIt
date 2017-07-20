@@ -58,7 +58,7 @@ namespace TryIt.Tests.Unit
                 act = () => subject = sourceBuilder.ThenTry(retries);
 
                 it["should return the the source builder"] = () =>
-                    subject.Should().NotBeNull();
+                    subject.Should().Be(sourceBuilder);
 
                 it["should add a new runner"] = () =>
                     subject.Runners.Count.Should().Be(2);
@@ -82,7 +82,7 @@ namespace TryIt.Tests.Unit
                 act = () => subject = sourceBuilder.ThenTry(altActor, retries);
 
                 it["should return the the source builder"] = () =>
-                    subject.Should().NotBeNull();
+                    subject.Should().Be(sourceBuilder);
 
                 it["should add a new runner"] = () =>
                     subject.Runners.Count.Should().Be(2);
@@ -110,7 +110,7 @@ namespace TryIt.Tests.Unit
                     act = () => subject = sourceBuilder.UsingDelay(expectedTimeSpan);
 
                     it["should return the the source builder"] = () =>
-                        subject.Should().NotBeNull();
+                        subject.Should().Be(sourceBuilder);
 
                     it["should set the delay on the last runner to a basic delay with the provided timespan"] = () =>
                         subject.LastRunner.Delay.Should().BeOfType<BasicDelay>()
@@ -127,7 +127,7 @@ namespace TryIt.Tests.Unit
                     act = () => subject = sourceBuilder.UsingDelay(expectedDelay);
 
                     it["should return the the source builder"] = () =>
-                        subject.Should().NotBeNull();
+                        subject.Should().Be(sourceBuilder);
 
                     it["should set the delay on the last runner"] = () =>
                         subject.LastRunner.Delay.Should().BeSameAs(expectedDelay);
@@ -145,7 +145,7 @@ namespace TryIt.Tests.Unit
                 act = () => subject = sourceBuilder.UsingBackoffDelay(expectedTimeSpan);
 
                 it["should return the the source builder"] = () =>
-                    subject.Should().NotBeNull();
+                    subject.Should().Be(sourceBuilder);
 
                 it["should set the delay on the last runner to a backoff delay with the provided timespan"] = () =>
                     subject.LastRunner.Delay.Should().BeOfType<BackoffDelay>()
@@ -163,7 +163,7 @@ namespace TryIt.Tests.Unit
                 act = () => subject = sourceBuilder.UsingFibonacciDelay(expectedTimeSpan);
 
                 it["should return the the source builder"] = () =>
-                    subject.Should().NotBeNull();
+                    subject.Should().Be(sourceBuilder);
 
                 it["should set the delay on the last runner to a Fibonacci delay with the provided timespan"] = () =>
                     subject.LastRunner.Delay.Should().BeOfType<FibonacciDelay>()
@@ -180,7 +180,7 @@ namespace TryIt.Tests.Unit
                 act = () => subject = sourceBuilder.UsingNoDelay();
 
                 it["should return the the source builder"] = () =>
-                    subject.Should().NotBeNull();
+                    subject.Should().Be(sourceBuilder);
 
                 it["should set the delay on the last runner to a NoDelay instance"] = () =>
                     subject.LastRunner.Delay.Should().BeOfType<NoDelay>();
@@ -197,7 +197,7 @@ namespace TryIt.Tests.Unit
                 act = () => subject = sourceBuilder.WithErrorPolicy(expectedPolicy);
 
                 it["should return the the source builder"] = () =>
-                    subject.Should().NotBeNull();
+                    subject.Should().Be(sourceBuilder);
 
                 it["should set the error policy on the last runner"] = () =>
                     subject.LastRunner.ErrorPolicy.Should().BeSameAs(expectedPolicy);
@@ -214,7 +214,7 @@ namespace TryIt.Tests.Unit
                 act = () => subject = sourceBuilder.WithSuccessPolicy(expectedPolicy);
 
                 it["should return the the source builder"] = () =>
-                    subject.Should().NotBeNull();
+                    subject.Should().Be(sourceBuilder);
 
                 it["should set the success policy on the last runner"] = () =>
                     subject.LastRunner.SuccessPolicy.Should().BeSameAs(expectedPolicy);
@@ -278,7 +278,7 @@ namespace TryIt.Tests.Unit
                 act = () => subject = sourceBuilder.ThenTry(retries);
 
                 it["should return the the source builder"] = () =>
-                    subject.Should().NotBeNull();
+                    subject.Should().Be(sourceBuilder);
 
                 it["should add a new runner"] = () =>
                     subject.Runners.Count.Should().Be(2);
@@ -302,7 +302,7 @@ namespace TryIt.Tests.Unit
                 act = () => subject = sourceBuilder.ThenTry(altActor, retries);
 
                 it["should return the the source builder"] = () =>
-                    subject.Should().NotBeNull();
+                    subject.Should().Be(sourceBuilder);
 
                 it["should add a new runner"] = () =>
                     subject.Runners.Count.Should().Be(2);
@@ -330,7 +330,7 @@ namespace TryIt.Tests.Unit
                     act = () => subject = sourceBuilder.UsingDelay(expectedTimeSpan);
 
                     it["should return the the source builder"] = () =>
-                        subject.Should().NotBeNull();
+                    subject.Should().Be(sourceBuilder);
 
                     it["should set the delay on the last runner to a basic delay with the provided timespan"] = () =>
                         subject.LastRunner.Delay.Should().BeOfType<BasicDelay>()
@@ -347,7 +347,7 @@ namespace TryIt.Tests.Unit
                     act = () => subject = sourceBuilder.UsingDelay(expectedDelay);
 
                     it["should return the the source builder"] = () =>
-                        subject.Should().NotBeNull();
+                        subject.Should().Be(sourceBuilder);
 
                     it["should set the delay on the last runner"] = () =>
                         subject.LastRunner.Delay.Should().BeSameAs(expectedDelay);
@@ -365,7 +365,7 @@ namespace TryIt.Tests.Unit
                 act = () => subject = sourceBuilder.UsingBackoffDelay(expectedTimeSpan);
 
                 it["should return the the source builder"] = () =>
-                    subject.Should().NotBeNull();
+                    subject.Should().Be(sourceBuilder);
 
                 it["should set the delay on the last runner to a backoff delay with the provided timespan"] = () =>
                     subject.LastRunner.Delay.Should().BeOfType<BackoffDelay>()
@@ -383,7 +383,7 @@ namespace TryIt.Tests.Unit
                 act = () => subject = sourceBuilder.UsingFibonacciDelay(expectedTimeSpan);
 
                 it["should return the the source builder"] = () =>
-                    subject.Should().NotBeNull();
+                    subject.Should().Be(sourceBuilder);
 
                 it["should set the delay on the last runner to a Fibonacci delay with the provided timespan"] = () =>
                     subject.LastRunner.Delay.Should().BeOfType<FibonacciDelay>()
@@ -400,7 +400,7 @@ namespace TryIt.Tests.Unit
                 act = () => subject = sourceBuilder.UsingNoDelay();
 
                 it["should return the the source builder"] = () =>
-                    subject.Should().NotBeNull();
+                    subject.Should().Be(sourceBuilder);
 
                 it["should set the delay on the last runner to a NoDelay instance"] = () =>
                     subject.LastRunner.Delay.Should().BeOfType<NoDelay>();
@@ -417,7 +417,7 @@ namespace TryIt.Tests.Unit
                 act = () => subject = sourceBuilder.WithErrorPolicy(expectedPolicy);
 
                 it["should return the the source builder"] = () =>
-                    subject.Should().NotBeNull();
+                    subject.Should().Be(sourceBuilder);
 
                 it["should set the error policy on the last runner"] = () =>
                     subject.LastRunner.ErrorPolicy.Should().BeSameAs(expectedPolicy);
@@ -434,7 +434,7 @@ namespace TryIt.Tests.Unit
                 act = () => subject = sourceBuilder.WithSuccessPolicy(expectedPolicy);
 
                 it["should return the the source builder"] = () =>
-                    subject.Should().NotBeNull();
+                    subject.Should().Be(sourceBuilder);
 
                 it["should set the success policy on the last runner"] = () =>
                     subject.LastRunner.SuccessPolicy.Should().BeSameAs(expectedPolicy);
@@ -475,7 +475,7 @@ namespace TryIt.Tests.Unit
                 act = () => subject = sourceBuilder.ThenTry(retries);
 
                 it["should return the the source builder"] = () =>
-                    subject.Should().NotBeNull();
+                    subject.Should().Be(sourceBuilder);
 
                 it["should add a new runner"] = () =>
                     subject.Runners.Count.Should().Be(2);
@@ -499,7 +499,7 @@ namespace TryIt.Tests.Unit
                 act = () => subject = sourceBuilder.ThenTry(altActor, retries);
 
                 it["should return the the source builder"] = () =>
-                    subject.Should().NotBeNull();
+                    subject.Should().Be(sourceBuilder);
 
                 it["should add a new runner"] = () =>
                     subject.Runners.Count.Should().Be(2);
@@ -526,7 +526,7 @@ namespace TryIt.Tests.Unit
                 act = () => subject = sourceBuilder.ThenTry(altActor, retries);
 
                 it["should return the the source builder"] = () =>
-                    subject.Should().NotBeNull();
+                    subject.Should().Be(sourceBuilder);
 
                 it["should add a new runner"] = () =>
                     subject.Runners.Count.Should().Be(2);
@@ -554,7 +554,7 @@ namespace TryIt.Tests.Unit
                     act = () => subject = sourceBuilder.UsingDelay(expectedTimeSpan);
 
                     it["should return the the source builder"] = () =>
-                        subject.Should().NotBeNull();
+                        subject.Should().Be(sourceBuilder);
 
                     it["should set the delay on the last runner to a basic delay with the provided timespan"] = () =>
                         subject.LastRunner.Delay.Should().BeOfType<BasicDelay>()
@@ -571,7 +571,7 @@ namespace TryIt.Tests.Unit
                     act = () => subject = sourceBuilder.UsingDelay(expectedDelay);
 
                     it["should return the the source builder"] = () =>
-                        subject.Should().NotBeNull();
+                        subject.Should().Be(sourceBuilder);
 
                     it["should set the delay on the last runner"] = () =>
                         subject.LastRunner.Delay.Should().BeSameAs(expectedDelay);
@@ -589,7 +589,7 @@ namespace TryIt.Tests.Unit
                 act = () => subject = sourceBuilder.UsingBackoffDelay(expectedTimeSpan);
 
                 it["should return the the source builder"] = () =>
-                    subject.Should().NotBeNull();
+                    subject.Should().Be(sourceBuilder);
 
                 it["should set the delay on the last runner to a backoff delay with the provided timespan"] = () =>
                     subject.LastRunner.Delay.Should().BeOfType<BackoffDelay>()
@@ -607,7 +607,7 @@ namespace TryIt.Tests.Unit
                 act = () => subject = sourceBuilder.UsingFibonacciDelay(expectedTimeSpan);
 
                 it["should return the the source builder"] = () =>
-                    subject.Should().NotBeNull();
+                    subject.Should().Be(sourceBuilder);
 
                 it["should set the delay on the last runner to a Fibonacci delay with the provided timespan"] = () =>
                     subject.LastRunner.Delay.Should().BeOfType<FibonacciDelay>()
@@ -624,7 +624,7 @@ namespace TryIt.Tests.Unit
                 act = () => subject = sourceBuilder.UsingNoDelay();
 
                 it["should return the the source builder"] = () =>
-                    subject.Should().NotBeNull();
+                    subject.Should().Be(sourceBuilder);
 
                 it["should set the delay on the last runner to a NoDelay instance"] = () =>
                     subject.LastRunner.Delay.Should().BeOfType<NoDelay>();
@@ -641,7 +641,7 @@ namespace TryIt.Tests.Unit
                 act = () => subject = sourceBuilder.WithErrorPolicy(expectedPolicy);
 
                 it["should return the the source builder"] = () =>
-                    subject.Should().NotBeNull();
+                    subject.Should().Be(sourceBuilder);
 
                 it["should set the error policy on the last runner"] = () =>
                     subject.LastRunner.ErrorPolicy.Should().BeSameAs(expectedPolicy);
@@ -658,7 +658,7 @@ namespace TryIt.Tests.Unit
                 act = () => subject = sourceBuilder.WithSuccessPolicy(expectedPolicy);
 
                 it["should return the the source builder"] = () =>
-                    subject.Should().NotBeNull();
+                    subject.Should().Be(sourceBuilder);
 
                 it["should set the success policy on the last runner"] = () =>
                     subject.LastRunner.SuccessPolicy.Should().BeSameAs(expectedPolicy);
@@ -700,7 +700,7 @@ namespace TryIt.Tests.Unit
                 act = () => subject = sourceBuilder.ThenTry(retries);
 
                 it["should return the the source builder"] = () =>
-                    subject.Should().NotBeNull();
+                    subject.Should().Be(sourceBuilder);
 
                 it["should add a new runner"] = () =>
                     subject.Runners.Count.Should().Be(2);
@@ -724,7 +724,7 @@ namespace TryIt.Tests.Unit
                 act = () => subject = sourceBuilder.ThenTry(altActor, retries);
 
                 it["should return the the source builder"] = () =>
-                    subject.Should().NotBeNull();
+                    subject.Should().Be(sourceBuilder);
 
                 it["should add a new runner"] = () =>
                     subject.Runners.Count.Should().Be(2);
@@ -751,7 +751,7 @@ namespace TryIt.Tests.Unit
                 act = () => subject = sourceBuilder.ThenTry(altActor, retries);
 
                 it["should return the the source builder"] = () =>
-                    subject.Should().NotBeNull();
+                    subject.Should().Be(sourceBuilder);
 
                 it["should add a new runner"] = () =>
                     subject.Runners.Count.Should().Be(2);
@@ -779,7 +779,7 @@ namespace TryIt.Tests.Unit
                     act = () => subject = sourceBuilder.UsingDelay(expectedTimeSpan);
 
                     it["should return the the source builder"] = () =>
-                        subject.Should().NotBeNull();
+                        subject.Should().Be(sourceBuilder);
 
                     it["should set the delay on the last runner to a basic delay with the provided timespan"] = () =>
                         subject.LastRunner.Delay.Should().BeOfType<BasicDelay>()
@@ -796,7 +796,7 @@ namespace TryIt.Tests.Unit
                     act = () => subject = sourceBuilder.UsingDelay(expectedDelay);
 
                     it["should return the the source builder"] = () =>
-                        subject.Should().NotBeNull();
+                        subject.Should().Be(sourceBuilder);
 
                     it["should set the delay on the last runner"] = () =>
                         subject.LastRunner.Delay.Should().BeSameAs(expectedDelay);
@@ -814,7 +814,7 @@ namespace TryIt.Tests.Unit
                 act = () => subject = sourceBuilder.UsingBackoffDelay(expectedTimeSpan);
 
                 it["should return the the source builder"] = () =>
-                    subject.Should().NotBeNull();
+                    subject.Should().Be(sourceBuilder);
 
                 it["should set the delay on the last runner to a backoff delay with the provided timespan"] = () =>
                     subject.LastRunner.Delay.Should().BeOfType<BackoffDelay>()
@@ -832,7 +832,7 @@ namespace TryIt.Tests.Unit
                 act = () => subject = sourceBuilder.UsingFibonacciDelay(expectedTimeSpan);
 
                 it["should return the the source builder"] = () =>
-                    subject.Should().NotBeNull();
+                    subject.Should().Be(sourceBuilder);
 
                 it["should set the delay on the last runner to a Fibonacci delay with the provided timespan"] = () =>
                     subject.LastRunner.Delay.Should().BeOfType<FibonacciDelay>()
@@ -849,7 +849,7 @@ namespace TryIt.Tests.Unit
                 act = () => subject = sourceBuilder.UsingNoDelay();
 
                 it["should return the the source builder"] = () =>
-                    subject.Should().NotBeNull();
+                    subject.Should().Be(sourceBuilder);
 
                 it["should set the delay on the last runner to a NoDelay instance"] = () =>
                     subject.LastRunner.Delay.Should().BeOfType<NoDelay>();
@@ -866,7 +866,7 @@ namespace TryIt.Tests.Unit
                 act = () => subject = sourceBuilder.WithErrorPolicy(expectedPolicy);
 
                 it["should return the the source builder"] = () =>
-                    subject.Should().NotBeNull();
+                    subject.Should().Be(sourceBuilder);
 
                 it["should set the error policy on the last runner"] = () =>
                     subject.LastRunner.ErrorPolicy.Should().BeSameAs(expectedPolicy);
@@ -883,7 +883,7 @@ namespace TryIt.Tests.Unit
                 act = () => subject = sourceBuilder.WithSuccessPolicy(expectedPolicy);
 
                 it["should return the the source builder"] = () =>
-                    subject.Should().NotBeNull();
+                    subject.Should().Be(sourceBuilder);
 
                 it["should set the success policy on the last runner"] = () =>
                     subject.LastRunner.SuccessPolicy.Should().BeSameAs(expectedPolicy);

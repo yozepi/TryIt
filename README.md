@@ -29,8 +29,8 @@ But this method calls a service that often fails intermittently.  Here’s how T
 
 First, include this using statement at the top of your code:
 ```c#
-using Retry;
-using Retry.Delays;
+using yozepi.Retry;
+using yozepi.Retry.Delays;
 ```
 Then replace
 ```c#
@@ -323,6 +323,7 @@ using (var tokenSource = new CancellationTokenSource(4500))
 
 ## Breaking Changes
 The following is a list of breaking changes:
++ Added yozepi namespace.
 + Paramatarized Actions (```Action<T1, T2, ...etc.>```), Funcs (```Func<T1, T2, ...etc.>```), or Tasks (```Task<T1, T2, ...TResult>```) are no longer supported in TryIt. Instead you will need to wrap inside a paramaterless Lamda expression. This improves your code readability and addresses some Generics issues exhibited by previous versions
   + Old: ```Try(myfunc, arg1, arg2, arg3, retries)...```
   + New: **```Try(() => myfunc(arg1, arg2, arg3), retries)...```**
